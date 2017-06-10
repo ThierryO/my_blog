@@ -1,0 +1,14 @@
+---
+title: Introduction
+author: Thierry Onkelinx
+date: '2017-06-11'
+slug: introduction
+categories: [about]
+tags: [introduction]
+coverImage: images/full_moon.jpg
+coverCaption: "Full moon (c) Thierry Onkelinx"
+---
+
+I have no idea where this blog will lead. Current plans are a review of the [PeerSonic  BatDetector](http://peersonic.co.uk/), some examples of how batdetector observations can be analysed and some questions that I get repeatedly while giving statistical consultancy to ecologists and other scientists.
+
+Another goal is more technical: learn to create a website with [blogdown](https://bookdown.org/yihui/blogdown/).
