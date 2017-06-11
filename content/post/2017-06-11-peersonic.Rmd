@@ -40,3 +40,38 @@ The RPA2 has three listening modes: heterodyne, frequency division and peak dete
 The third option is the _experimental_ **peak detect** method, which I personally find more of a gimmick. The detector will generate a synthetic sound related to the currently detected peak frequency. It is intended to give a stronger detect sound. The loss of information is in my opinion too much to be useful. At least I can no longer tell if the sound originated from a bat or something else (cricket, passing car, clothing, ...). A better option might be to couple the detected peak frequency to the heterodyne mixing frequency.
 
 I prefer the frequency division mode with factor around 18. This allows me the distinct bat sounds in the field from non bat sound so I can trigger the recordings efficiently. Examining a recording is quit time consuming, therefore you can save a lot of time by knowing in the field when not to trigger a recording. But of course better safe than sound: in case of doubt, trigger a recording.
+
+### Making a recording
+
+The RPA2 has an automatic and a manual mode for recording. The automatic mode will be discussed in an other blog post. A **manual recording** is triggered by pressing the left button. A full spectrum recording (up to 192 kHz with a 384 kHz sampling rate) will start and stop automatically. The recordings stops when the minimal recording time has elapsed and the left button is released. The minimal recording time is set in the menu in steps of 5 seconds.
+
+Each recording gets a file name based on 3 components: 1) a single letter indicating the detector, 2) 3 digits indicating the peak frequency detected in the recording and 3) 3 letters indicating the order of the recording^[First recording is `AAA`, the second `AAB`, the 27e is `ABA`. This system allows 26 x 26 26 = 17576 recordings]. When the files are sorted on file name, the recordings are sorted by peak frequency which is handy if you need to check a large number of files. You can place the sequence before the peak frequency but I recommend to sort the files on their time stamp.
+
+The recordings are saved as 16 bit WAV files on the internal 8 GB SD card. That allows around 1900 records of 5 seconds (4.2 MB). Larger SD cards are available when required.
+
+The RPA2 is clearly a winner in terms of user friendliness when compared with a D240x set-up.  Workflow for the RPA2:
+
+1. Listens for bats.
+1. Push the left button as soon as you hear a bat.
+1. Done.
+
+The workflow for the D240x + Edirol is quite elaborate:
+
+1. Listens for bats.
+1. Push the trigger on the D240x when you think you have the recording in the buffer (the last 0.1, 1.7 or 3.4 s). The D240x will now switch into time-expansion play-back mode which play an endless loop of the buffer 10 times slower.
+1. Start recording the output of the D240x with the Edirol.
+1. Stop the recording when you have the entire buffer, so 1, 17 or 34 s.
+1. Put the D240x back into recording mode.
+1. Done.
+
+| Task | RPA2 | D240x |
+| ---- | ---- | ----- |
+| Buttons to push | 1 | 5 |  
+| Recorded time (s) | 5 | 1.7 |
+| Minimal time between the start of two recordings (s) | 5 | 19 |
+
+## At home
+
+To download the recordings to a computer, you connect the RPA2 with a USB cable to a computer. The RPA2 will be recognised as an external storage device and you can use a file explorer to copy the file from the RPA2 to the computer. Note that the files on the RPA2 are read-only and can't be deleted from the computer. File deletions must be done from within the menu of the RPA2.
+
+Here the edirol is easier. Take the SD card from the Edirol and plug it in the computer. Do what ever you like to do with the file on the SD card.
