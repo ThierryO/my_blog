@@ -1,0 +1,5 @@
+box: emarginatus/render_website
+build:
+  steps:
+    - script:
+        code: Rscript -e "rmarkdown::render_site(encoding = 'UTF-8')"
