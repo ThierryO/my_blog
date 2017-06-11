@@ -1,0 +1,26 @@
+---
+title: Review of the Peersonic RPA2 bat detector
+author: Thierry Onkelinx
+date: '2017-06-11'
+slug: peersonic
+categories: ["bats", "tool review"]
+tags: ["peersonic", "bat detector", "review"]
+coverImage: images/peersonic/peersonic_rpa2_front.jpg
+thumbnailImagePosition: "left"
+---
+
+## Introduction
+
+I will compare the [Peersonic RPA2](http://peersonic.co.uk) with the combination of a [Petterson D240x](http://www.batsound.com/?p=9) and a [Roland Edirol R-05 recorder](https://www.roland.com/us/products/r-05/). Mainly because I have a lot of experience with the D240x-Edirol combo. Both set-ups are useful when a researcher wants to detect and record the echolocation of bats in the field.
+
+## Look and feel
+
+The RPA2 is housed in a plastic box and feels solid. It came with a **lanyard** attached to the lower right corner. The length of the lanyard is fine, you can wear it around your neck while holding the detector comfortably in your hand.
+
+[<img src="/images/peersonic/peersonic_rpa2_front.jpg" style="float: right;" height="200px", alt = "View of the front side of the RPA2 detector.">](/images/peersonic/peersonic_rpa2_right.jpg) The front has a display and a cover to access the **3 AA batteries**. The batteries fit tightly in their compartment. I often use the leverage of a pocket knife to gently get the batteries out. The **display** has two rows of 16 characters which are easily read in the field. The brightness can be set using the software menu.
+
+[<img src="/images/peersonic/peersonic_rpa2_left.jpg" style="float: left;" height="200px", alt = "View of the left side of the RPA2 detector.">](/images/peersonic/peersonic_rpa2_left.jpg) The left side has a 3.5 mm jack output and one push button. The **3.5 mm jack output** is used to connect a set of headphones. Unlike the D240x, the RPA2 has no build-in loudspeaker. I find that only an issue in case you want multiple persons to hear the sound at the same time, e.g. when educating people about bats. However, an external loudspeaker is for both detectors a better solution in such occasions. The main function of the **push button** is to start a manual recording. You can push it with your thumb when holding the detector in your left hand. The button is used in the software menus as well.
+
+[<img src="/images/peersonic/peersonic_rpa2_right.jpg" style="float: right;" height="200px", alt = "View of the right side of the RPA2 detector.">](/images/peersonic/peersonic_rpa2_right.jpg) The right side has an **on/off switch**, a push button, a turn knob and a USB micro B connector. The **push button** is used to open and enter the software menu. The function of the **turn knob** depends on the context. It is used to select menu items or update settings. The **USB micro B** connector allows to download recordings from the RPA2 to a computer or update the software. It also powers the RPA2 and can be used to connect an external battery pack, useful when the detector is used as an autonomous detector.
+
+[<img src="/images/peersonic/peersonic_rpa2_top.jpg" style="float: left;" height="200px", alt = "View of the top side of the RPA2 detector.">](/images/peersonic/peersonic_rpa2_top.jpg) The top side as an opening for the **build-in microphone**. The back side has a **trippod mount**. This is useful for static use of the detector or to mount it on a vehicle.
