@@ -7,6 +7,21 @@ categories: ["bats", "analysis"]
 tags: ["spatial point process", "kml"]
 ---
 
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE,
+  message = FALSE
+)
+library(dplyr)
+library(lubridate)
+library(curl)
+library(XML)
+library(sp)
+library(leaflet)
+```
+
+
 This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
 
 # The survey
@@ -27,3 +42,11 @@ kml <- read_kml(observation = observation)
 route <- kml$route
 point <- kml$point
 ```
+
+```{r fig.cap = "Map with all routes and all observations"}
+leaflet(route) %>%
+  addTiles() %>%
+  addPolylines() %>%
+  addMarkers(data = point)
+```
+
