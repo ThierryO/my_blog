@@ -23,4 +23,7 @@ First we have to download the surveys.
 id <- c(35745, 36309)
 source("../../source/waarnemingen_be.R")
 observation <- read_observation(id)
+kml <- read_kml(observation = observation)
+route <- kml$route
+point <- kml$point
 ```
