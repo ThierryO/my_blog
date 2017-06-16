@@ -1,0 +1,26 @@
+---
+title: Analysing data from bat observations along transects
+author: Thierry Onkelinx
+date: '2017-06-15'
+slug: analysing-data-from-bat-observations-along-transects
+categories: ["bats", "analysis"]
+tags: ["spatial point process", "kml"]
+---
+
+This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
+
+# The survey
+
+The principle of the survey is quite simple: walk around with a batdetector and note the route you took and were you encounter bats. Repeat this several times. I choose to take a different route each time so I can cover the same area at different times of night.
+
+I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en) to trace the route and the observations. The batdetector is a [Peersonic RPA2](../peersonic/index.html) with [Philips SHB9850NC headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones). This set-up is quite handy. At the start of the route you start listening to the batdetector and tell ObsMapp to start tracking the route. Each time you encounter a bat you a) make a sound recording of the bat and b) mark the observation in ObsMapp^[can be done in as little as three taps.]. At home you upload the observations to [waarnemingen.be](https://www.waarnemingen.be), [waarneming.nl](https://www.waarneming.nl) or [observation.org](https://www.observation.org/). Then you check the observations based on the recorded sounds and update the observations on the website. Each survey is downloadable from the website under several formats. Here we will use the [KML format](https://developers.google.com/kml/documentation/) because it contains both the track of each route and the observations.
+
+# Survey effort
+
+First we have to download the surveys.
+
+```{r}
+id <- c(35745, 36309)
+source("../../source/waarnemingen_be.R")
+observation <- read_observation(id)
+```
