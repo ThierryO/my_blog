@@ -25,6 +25,7 @@ library(XML)
 library(sp)
 library(leaflet)
 library(tidyr)
+library(INLA)
 ```
 
 
@@ -32,9 +33,9 @@ This post will handle observations of bats along a set of transects. It is a wor
 
 # The survey
 
-The principle of the survey is quite simple: walk around with a batdetector and note the route you took and were you encounter bats. Repeat this several times. I choose to take a different route each time so I can cover the same area at different times of night.
+The principle of the survey is quite simple: walk around with a bat detector and note the route you took and were you encounter bats. Repeat this several times. I choose to take a different route each time so I can cover the same area at different times of night.
 
-I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en) to trace the route and the observations. The batdetector is a [Peersonic RPA2](../peersonic/index.html) with [Philips SHB9850NC headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones). This set-up is quite handy. At the start of the route you start listening to the batdetector and tell ObsMapp to start tracking the route. Each time you encounter a bat you a) make a sound recording of the bat and b) mark the observation in ObsMapp^[can be done in as little as three taps.]. At home you upload the observations to [waarnemingen.be](https://www.waarnemingen.be), [waarneming.nl](https://www.waarneming.nl) or [observation.org](https://www.observation.org/). Then you check the observations based on the recorded sounds and update the observations on the website. Each survey is downloadable from the website under several formats. Here we will use both the [KML format](https://developers.google.com/kml/documentation/) and the csv format. The KML is required because it contains both the track of each route and the observations. The csv is needed for the date, the start time and end time of the track.
+I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en) to trace the route and the observations. The bat detector is a [Peersonic RPA2](../peersonic/index.html) with [Philips SHB9850NC headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones). This set-up is quite handy. At the start of the route you start listening to the bat detector and tell ObsMapp to start tracking the route. Each time you encounter a bat you a) make a sound recording of the bat and b) mark the observation in ObsMapp^[can be done in as little as three taps.]. At home you upload the observations to [waarnemingen.be](https://www.waarnemingen.be), [waarneming.nl](https://www.waarneming.nl) or [observation.org](https://www.observation.org/). Then you check the observations based on the recorded sounds and update the observations on the website. Each survey is downloadable from the website under several formats. Here we will use both the [KML format](https://developers.google.com/kml/documentation/) and the csv format. The KML is required because it contains both the track of each route and the observations. The csv is needed for the date, the start time and end time of the track.
 
 # Survey effort
 
@@ -56,7 +57,7 @@ leaflet(route) %>%
   addMarkers(data = point)
 ```
 
-We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution. Then we create of buffer on `r sprintf("%im", params$range)` around the tracks because assume that we can here most bats upto this distance on the batdetector. The result is a ribbon marking the area where we could have detected bats. The total area of ribbon per grid cell is an indicator of the survey effort per grid cell (figure \@ref(fig:survey-effort)).
+We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution. Then we create of buffer on `r sprintf("%im", params$range)` around the tracks because assume that we can here most bats up to this distance on the bat detector. The result is a ribbon marking the area where we could have detected bats. The total area of ribbon per grid cell is an indicator of the survey effort per grid cell (figure \@ref(fig:survey-effort)).
 
 ```{r}
 route_local <- spTransform(route, CRS(params$crs))
@@ -147,7 +148,7 @@ point@data %>%
   )
 ```
 
-Next we check for each combination of track and grid cell wether we detected pipistrelles or not. Figure \@ref(fig:presence) displays the average presence over all tracks.
+Next we check for each combination of track and grid cell whether we detected pipistrelles or not. Figure \@ref(fig:presence) displays the average presence over all tracks.
 
 ```{r}
 pipistrelle <- subset(point, species == "Pipistrellus pipistrellus")
@@ -187,6 +188,147 @@ leaflet(subset(grid, !is.na(pipistrelle))) %>%
   addPolygons(data = route_buffer, stroke = FALSE) %>%
   addLegend("bottomright", pal = pal, values = ~pipistrelle,
     title = "Presence of<br>common pipistrelle",
+    opacity = 1
+  )
+```
+
+# Analysis
+
+```{r}
+nx <- max(grid$dx) + 1
+ny <- max(grid$dy) + 1
+grid$node <- seq_along(grid$dx)
+survey_pipistrelle <- survey_pipistrelle %>%
+  inner_join(
+    grid@data %>% select(id, node),
+    by = c("grid_id" = "id")
+  )
+A.observation <- Diagonal(nrow(grid))[survey_pipistrelle$node, ]
+stack_observation <- inla.stack(
+  tag = "observation",
+  data = list(
+    present = survey_pipistrelle$present
+  ),
+  A = list(A.observation, 1),
+  effects = list(
+    node = seq_len(nrow(grid)),
+    survey_pipistrelle %>%
+      select(node, route_id) %>%
+      mutate(intercept = 1)
+  )
+)
+A.prediction <- Diagonal(nrow(grid))
+stack_predict <- inla.stack(
+  tag = "prediction",
+  data = list(
+    present = rep(NA, nrow(grid))
+  ),
+  A = list(A.prediction, 1),
+  effects = list(
+    node = seq_len(nrow(grid)),
+    grid@data %>%
+      select(node) %>%
+      mutate(intercept = 1)
+  )
+)
+stacks <- inla.stack(stack_observation, stack_predict)
+```
+
+```{r}
+m <- inla(
+  present ~ 0 +
+    intercept +
+    f(
+      node, 
+      model = "rw2d", 
+      nrow = nx, ncol = ny, 
+      scale.model = TRUE,
+      hyper = list(theta = list(prior = "pc.prec", param = c(1, 0.01)))
+    ),
+  family = "binomial",
+  data = inla.stack.data(stacks),
+  control.compute = list(waic = TRUE, dic = TRUE),
+  control.predictor = list(
+    link = 1,
+    A = inla.stack.A(stacks)
+  )
+)
+```
+
+```{r}
+grid_index <- inla.stack.index(stacks, "prediction")$data
+predicted <- grid
+predicted@data <- m$summary.fitted.values[grid_index, ] %>%
+  select(median = 4, lcl = 3, ucl = 5) %>%
+  bind_cols(
+    grid@data
+  )
+```
+
+Figure \@ref(fig:prediction-mean) show the median predicted probability for common pipistrelle. This is an estimation of the change to encounter common pipistrelles in each grid cell. The lower credible limit of these prediction are useful to detect the important locations (figure \@ref(fig:prediction-lcl)). The higher the lowel credible limit, the more certain the model is about the presence of common pipistrelles. Likewise, the upper credible limit is useful to detect locations where the model is more certain about the absence of common pipistrelle.
+
+```{r prediction-mean, fig.cap = "Median of predicted probability for common pipistrelle."}
+pal <- colorNumeric(
+  palette = "RdYlBu",
+  domain = predicted$median,
+  reverse = TRUE
+)
+leaflet(predicted) %>%
+  addTiles() %>%
+  addPolygons(
+    color = ~pal(median), 
+    stroke = FALSE,
+    fillOpacity = 0.5
+  ) %>%
+  addLegend(
+    "bottomright", 
+    pal = pal, 
+    values = ~median,
+    title = "Probability",
+    opacity = 1
+  )
+```
+
+```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle."}
+pal <- colorNumeric(
+  palette = "RdYlBu",
+  domain = predicted$lcl,
+  reverse = TRUE
+)
+leaflet(predicted) %>%
+  addTiles() %>%
+  addPolygons(
+    color = ~pal(lcl), 
+    stroke = FALSE,
+    fillOpacity = 0.5
+  ) %>%
+  addLegend(
+    "bottomright", 
+    pal = pal, 
+    values = ~lcl,
+    title = "Probability",
+    opacity = 1
+  )
+```
+
+```{r prediction-ucl, fig.cap = "Upper credible interval of predicted probability for common pipistrelle."}
+pal <- colorNumeric(
+  palette = "RdYlBu",
+  domain = predicted$ucl,
+  reverse = TRUE
+)
+leaflet(predicted) %>%
+  addTiles() %>%
+  addPolygons(
+    color = ~pal(ucl), 
+    stroke = FALSE,
+    fillOpacity = 0.5
+  ) %>%
+  addLegend(
+    "bottomright", 
+    pal = pal, 
+    values = ~ucl,
+    title = "Probability",
     opacity = 1
   )
 ```
