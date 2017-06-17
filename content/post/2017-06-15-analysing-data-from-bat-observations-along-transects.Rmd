@@ -26,8 +26,8 @@ library(sp)
 library(leaflet)
 library(tidyr)
 library(INLA)
+library(plotROC)
 ```
-
 
 This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
 
@@ -333,4 +333,19 @@ leaflet(predicted) %>%
     title = "Probability",
     opacity = 1
   )
+```
+
+```{r roc, fig.cap = "Receiver operating curve."}
+observed_index <- inla.stack.index(stacks, "observation")$data
+dataset <- data.frame(
+  fitted = m$summary.fitted.values[observed_index, "mean"],
+  observed = survey_pipistrelle$present
+)
+ggroc <- ggplot(dataset, aes(m = fitted, d = observed)) +
+  geom_roc(labelround = 3)
+auc <- calc_auc(ggroc)
+ggroc +
+  geom_abline(linetype = 3) +
+  coord_fixed() +
+  ggtitle(sprintf("AUC: %.3f", auc$AUC))
 ```
