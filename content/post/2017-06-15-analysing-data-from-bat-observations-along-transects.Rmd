@@ -79,8 +79,11 @@ grid <- expand.grid(
   mutate(
     dx = (x - min(x)) / params$resolution,
     dy = (y - min(y)) / params$resolution,
-    id = paste(dx, dy, sep = "-")
+    id = paste(dx, dy, sep = "-"),
+    node = seq_along(id)
   )
+nx <- max(grid$dx) + 1
+ny <- max(grid$dy) + 1
 grid_local <- lapply(
   seq_len(nrow(grid)),
   function(i){
@@ -95,6 +98,8 @@ grid_local <- lapply(
 ) %>%
   SpatialPolygons(proj4string = CRS(params$crs)) %>%
   SpatialPolygonsDataFrame(data = grid, match.ID = FALSE)
+hull <- gConvexHull(route_buffer_local)
+grid_local <- grid_local[!is.na(over(grid_local, hull)), ]
 survey_effort <- gIntersection(grid_local, route_buffer_local, byid = TRUE) %>%
   gArea(byid = TRUE)
 survey_effort <- data.frame(
@@ -195,15 +200,12 @@ leaflet(subset(grid, !is.na(pipistrelle))) %>%
 # Analysis
 
 ```{r}
-nx <- max(grid$dx) + 1
-ny <- max(grid$dy) + 1
-grid$node <- seq_along(grid$dx)
 survey_pipistrelle <- survey_pipistrelle %>%
   inner_join(
     grid@data %>% select(id, node),
     by = c("grid_id" = "id")
   )
-A.observation <- Diagonal(nrow(grid))[survey_pipistrelle$node, ]
+A.observation <- Diagonal(nx * ny)[survey_pipistrelle$node, ]
 stack_observation <- inla.stack(
   tag = "observation",
   data = list(
@@ -211,13 +213,13 @@ stack_observation <- inla.stack(
   ),
   A = list(A.observation, 1),
   effects = list(
-    node = seq_len(nrow(grid)),
+    node = seq_len(nx * ny),
     survey_pipistrelle %>%
       select(node, route_id) %>%
       mutate(intercept = 1)
   )
 )
-A.prediction <- Diagonal(nrow(grid))
+A.prediction <- Diagonal(nx * ny)[grid$node, ]
 stack_predict <- inla.stack(
   tag = "prediction",
   data = list(
@@ -225,7 +227,7 @@ stack_predict <- inla.stack(
   ),
   A = list(A.prediction, 1),
   effects = list(
-    node = seq_len(nrow(grid)),
+    node = seq_len(nx * ny),
     grid@data %>%
       select(node) %>%
       mutate(intercept = 1)
