@@ -5,6 +5,10 @@ date: '2017-06-15'
 slug: analysing-data-from-bat-observations-along-transects
 categories: ["bats", "analysis"]
 tags: ["spatial point process", "kml"]
+params:
+  resolution: 100
+  crs: "+init=epsg:31370"
+  range: 10
 ---
 
 ```{r setup, include=FALSE}
@@ -19,6 +23,7 @@ library(curl)
 library(XML)
 library(sp)
 library(leaflet)
+library(rgeos)
 ```
 
 
@@ -28,11 +33,11 @@ This post will handle observations of bats along a set of transects. It is a wor
 
 The principle of the survey is quite simple: walk around with a batdetector and note the route you took and were you encounter bats. Repeat this several times. I choose to take a different route each time so I can cover the same area at different times of night.
 
-I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en) to trace the route and the observations. The batdetector is a [Peersonic RPA2](../peersonic/index.html) with [Philips SHB9850NC headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones). This set-up is quite handy. At the start of the route you start listening to the batdetector and tell ObsMapp to start tracking the route. Each time you encounter a bat you a) make a sound recording of the bat and b) mark the observation in ObsMapp^[can be done in as little as three taps.]. At home you upload the observations to [waarnemingen.be](https://www.waarnemingen.be), [waarneming.nl](https://www.waarneming.nl) or [observation.org](https://www.observation.org/). Then you check the observations based on the recorded sounds and update the observations on the website. Each survey is downloadable from the website under several formats. Here we will use the [KML format](https://developers.google.com/kml/documentation/) because it contains both the track of each route and the observations.
+I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en) to trace the route and the observations. The batdetector is a [Peersonic RPA2](../peersonic/index.html) with [Philips SHB9850NC headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones). This set-up is quite handy. At the start of the route you start listening to the batdetector and tell ObsMapp to start tracking the route. Each time you encounter a bat you a) make a sound recording of the bat and b) mark the observation in ObsMapp^[can be done in as little as three taps.]. At home you upload the observations to [waarnemingen.be](https://www.waarnemingen.be), [waarneming.nl](https://www.waarneming.nl) or [observation.org](https://www.observation.org/). Then you check the observations based on the recorded sounds and update the observations on the website. Each survey is downloadable from the website under several formats. Here we will use both the [KML format](https://developers.google.com/kml/documentation/) and the csv format. The KML is required because it contains both the track of each route and the observations. The csv is needed for the date, the start time and end time of the track.
 
 # Survey effort
 
-First we have to download the surveys.
+First we have to download the surveys. We need some ugly code to get everything in a usable format. The code is available on [GitHub](https://github.com/ThierryO/my_blog/blob/master/content/post/2017-06-15-analysing-data-from-bat-observations-along-transects.Rmd).
 
 ```{r}
 id <- c(35745, 36309)
@@ -48,5 +53,56 @@ leaflet(route) %>%
   addTiles() %>%
   addPolylines() %>%
   addMarkers(data = point)
+```
+
+We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution.
+
+```{r}
+route_local <- spTransform(route, CRS(params$crs))
+route_buffer_local <- gBuffer(route_local, width = params$range, byid = TRUE)
+route_buffer <- spTransform(route_buffer_local, CRS("+proj=longlat +datum=WGS84"))
+bb <- bbox(route_buffer_local)
+grid <- expand.grid(
+  x = seq(
+    bb["x", "min"] - 0.5 * params$resolution, 
+    bb["x", "max"],
+    by = params$resolution
+  ),
+  y = seq(
+    bb["y", "min"] - 0.5 * params$resolution, 
+    bb["y", "max"],
+    by = params$resolution
+  )
+) %>%
+  mutate(
+    dx = (x - min(x)) / params$resolution,
+    dy = (y - min(y)) / params$resolution,
+    id = paste(dx, dy, sep = "-")
+  )
+polygon_coords <- cbind(
+  x = c(0, 1, 1, 0, 0) * params$resolution,
+  y = c(0, 0, 1, 1, 0) * params$resolution
+)
+grid_local <- lapply(
+  seq_len(nrow(grid)),
+  function(i){
+    cbind(
+      x = c(0, 1, 1, 0, 0) * params$resolution + grid$x[i],
+      y = c(0, 0, 1, 1, 0) * params$resolution + grid$y[i]
+    ) %>%
+      Polygon() %>%
+      list() %>%
+      Polygons(ID = grid$id[i])
+  }
+) %>%
+  SpatialPolygons(proj4string = CRS(params$crs))
+grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
+```
+
+```{r fig.cap = "Map with survey effort."}
+leaflet(route_buffer) %>%
+  addTiles() %>%
+  addPolygons(data = grid, color = "red") %>%
+  addPolygons()
 ```
 
