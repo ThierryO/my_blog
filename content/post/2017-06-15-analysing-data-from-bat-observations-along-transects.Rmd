@@ -8,7 +8,7 @@ tags: ["spatial point process", "kml"]
 params:
   resolution: 100
   crs: "+init=epsg:31370"
-  range: 10
+  range: 20
 ---
 
 ```{r setup, include=FALSE}
@@ -147,3 +147,46 @@ point@data %>%
   )
 ```
 
+Next we check for each combination of track and grid cell wether we detected pipistrelles or not. Figure \@ref(fig:presence) displays the average presence over all tracks.
+
+```{r}
+pipistrelle <- subset(point, species == "Pipistrellus pipistrellus")
+pipistrelle_local <- spTransform(pipistrelle, CRS(params$crs))
+pipistrelle_local$grid_id <- over(pipistrelle_local, grid_local["id"])$id
+survey_pipistrelle <- pipistrelle_local@data %>%
+  distinct(route_id, grid_id) %>%
+  mutate(present = 1) %>%
+  left_join(x = survey_effort, by = c("grid_id", "route_id")) %>%
+  mutate(present = ifelse(is.na(present), 0, present))
+grid_local@data <- survey_pipistrelle %>%
+  group_by(grid_id) %>%
+  summarise(pipistrelle = mean(present)) %>%
+  left_join(x = grid_local@data, by = c("id" = "grid_id")) %>%
+  mutate(
+    pipistrelle = ifelse(
+      is.na(pipistrelle),
+      ifelse(is.na(effort), NA, 0),
+      pipistrelle
+    )
+  )
+grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
+```
+
+```{r presence, fig.cap = "Map with presence of common pipistrelle."}
+pal <- colorNumeric(
+  palette = "RdYlBu",
+  domain = grid_local$pipistrelle
+)
+leaflet(subset(grid, !is.na(pipistrelle))) %>%
+  addTiles() %>%
+  addPolygons(
+    color = ~pal(pipistrelle), 
+    stroke = FALSE,
+    fillOpacity = 0.5
+  ) %>%
+  addPolygons(data = route_buffer, stroke = FALSE) %>%
+  addLegend("bottomright", pal = pal, values = ~pipistrelle,
+    title = "Presence of<br>common pipistrelle",
+    opacity = 1
+  )
+```
