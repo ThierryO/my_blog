@@ -37,7 +37,7 @@ I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en)
 
 # Survey effort
 
-First we have to download the surveys. We need some ugly code to get everything in a usable format. The code is available on [GitHub](https://github.com/ThierryO/my_blog/blob/master/content/post/2017-06-15-analysing-data-from-bat-observations-along-transects.Rmd).
+First we have to download the surveys. We need some ugly code to get everything in a usable format. The code is available on [GitHub](https://github.com/ThierryO/my_blog/blob/master/content/post/2017-06-15-analysing-data-from-bat-observations-along-transects.Rmd). The result is the set of all tracks and observations (figure \@ref(fig:raw-data)).
 
 ```{r}
 id <- c(35745, 36309)
@@ -48,14 +48,14 @@ route <- kml$route
 point <- kml$point
 ```
 
-```{r fig.cap = "Map with all routes and all observations"}
+```{r raw-data, fig.cap = "Map with all tracks and all observations."}
 leaflet(route) %>%
   addTiles() %>%
   addPolylines() %>%
   addMarkers(data = point)
 ```
 
-We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution.
+We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution. Then we create of buffer on `r sprintf("%im", params$range)` around the tracks because assume that we can here most bats upto this distance on the batdetector. The result is a ribbon marking the area where we could have detected bats. The total area of ribbon per grid cell is an indicator of the survey effort per grid cell (figure \@ref(fig:survey-effort)).
 
 ```{r}
 route_local <- spTransform(route, CRS(params$crs))
@@ -79,10 +79,6 @@ grid <- expand.grid(
     dy = (y - min(y)) / params$resolution,
     id = paste(dx, dy, sep = "-")
   )
-polygon_coords <- cbind(
-  x = c(0, 1, 1, 0, 0) * params$resolution,
-  y = c(0, 0, 1, 1, 0) * params$resolution
-)
 grid_local <- lapply(
   seq_len(nrow(grid)),
   function(i){
@@ -95,14 +91,39 @@ grid_local <- lapply(
       Polygons(ID = grid$id[i])
   }
 ) %>%
-  SpatialPolygons(proj4string = CRS(params$crs))
+  SpatialPolygons(proj4string = CRS(params$crs)) %>%
+  SpatialPolygonsDataFrame(data = grid, match.ID = FALSE)
+survey_effort <- gIntersection(grid_local, route_buffer_local, byid = TRUE) %>%
+  gArea(byid = TRUE)
+survey_effort <- data.frame(
+  grid_id = gsub(" .*", "", names(survey_effort)),
+  route_id = gsub(".* ", "", names(survey_effort)) %>%
+    as.integer(),
+  effort = survey_effort / params$resolution ^ 2,
+  stringsAsFactors = FALSE
+)
+grid_local@data <- survey_effort %>%
+  group_by(grid_id) %>%
+  summarise(effort = sum(effort)) %>%
+  left_join(x = grid_local@data, by = c("id" = "grid_id"))
 grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
 ```
 
-```{r fig.cap = "Map with survey effort."}
-leaflet(route_buffer) %>%
+```{r survey-effort, fig.cap = "Map with survey effort."}
+pal <- colorNumeric(
+  palette = "Reds",
+  domain = grid_local$effort
+)
+leaflet(subset(grid, !is.na(effort))) %>%
   addTiles() %>%
-  addPolygons(data = grid, color = "red") %>%
-  addPolygons()
+  addPolygons(
+    color = ~pal(effort), 
+    stroke = FALSE,
+    fillOpacity = 0.5
+  ) %>%
+  addPolygons(data = route_buffer, stroke = FALSE) %>%
+  addLegend("bottomright", pal = pal, values = ~effort,
+    title = "Survey<br>effort",
+    opacity = 1
+  )
 ```
-
