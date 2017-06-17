@@ -215,8 +215,11 @@ stack_observation <- inla.stack(
   effects = list(
     node = seq_len(nx * ny),
     survey_pipistrelle %>%
-      select(node, route_id) %>%
-      mutate(intercept = 1)
+      select(node, route_id, effort) %>%
+      mutate(
+        intercept = 1,
+        log_effort = log(effort)
+      )
   )
 )
 A.prediction <- Diagonal(nx * ny)[grid$node, ]
@@ -230,7 +233,10 @@ stack_predict <- inla.stack(
     node = seq_len(nx * ny),
     grid@data %>%
       select(node) %>%
-      mutate(intercept = 1)
+      mutate(
+        intercept = 1,
+        log_effort = log(1)
+      )
   )
 )
 stacks <- inla.stack(stack_observation, stack_predict)
@@ -240,6 +246,7 @@ stacks <- inla.stack(stack_observation, stack_predict)
 m <- inla(
   present ~ 0 +
     intercept +
+    log_effort +
     f(
       node, 
       model = "rw2d", 
