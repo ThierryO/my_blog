@@ -17,13 +17,14 @@ opts_chunk$set(
   echo = FALSE,
   message = FALSE
 )
+library(rgeos)
 library(dplyr)
 library(lubridate)
 library(curl)
 library(XML)
 library(sp)
 library(leaflet)
-library(rgeos)
+library(tidyr)
 ```
 
 
@@ -127,3 +128,22 @@ leaflet(subset(grid, !is.na(effort))) %>%
     opacity = 1
   )
 ```
+
+# Presence of bats
+
+The number of observations per species is quite different. Only the common pipistrelle (_Pipistrellus pipistrellus_) has currently enough observations for the analysis (table \@ref(tab:observation-species)).
+
+```{r observation-species}
+point@data %>%
+  group_by(date) %>%
+  count(species) %>%
+  ungroup() %>%
+  mutate(
+    species = reorder(species, -n, sum)
+  ) %>%
+  spread(key = date, value = n, fill = 0) %>%
+  kable(
+    caption = "Number of observations per species and per track"
+  )
+```
+
