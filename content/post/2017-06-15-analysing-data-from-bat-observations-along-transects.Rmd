@@ -5,7 +5,7 @@ date: '2017-06-15'
 slug: analysing-data-from-bat-observations-along-transects
 categories: ["bats", "analysis"]
 tags: ["spatial point process", "kml"]
-coverImage: images/analysis/thumb.png
+coverImage: images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png
 thumbnailImagePosition: "right"
 params:
   resolution: 100
@@ -370,14 +370,8 @@ map
 ```{r results="hide"}
 junk <- mapshot(
   map,
-  file = "thumb.png",
-  delay = 20
+  file = "../../static/images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png"
 )
-path <- "../../static/images/analysis"
-if (!dir.exists(path)) {
-  dir.create(path)
-}
-file.rename("thumb.png", paste(path, "thumb.png", sep = "/"))
 ```
 
 ```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle."}
