@@ -2,7 +2,7 @@ box: emarginatus/render_website
 build:
   steps:
     - script:
-        code: Rscript -e "rmarkdown::render_site(encoding = 'UTF-8')"
+        code: Rscript -e "blogdown::build_site()"
 
 deploy:
   steps:
