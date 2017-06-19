@@ -46,7 +46,7 @@ I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en)
 First we have to download the surveys. We need some ugly code to get everything in a usable format. The code is available on [GitHub](https://github.com/ThierryO/my_blog/blob/master/content/post/2017-06-15-analysing-data-from-bat-observations-along-transects.Rmd). The result is the set of all tracks and observations (figure \@ref(fig:raw-data)).
 
 ```{r}
-id <- c(35745, 36309)
+id <- c(35745, 36309, 37444)
 source("../../source/waarnemingen_be.R")
 observation <- read_observation(id)
 kml <- read_kml(observation = observation)
@@ -141,7 +141,7 @@ leaflet(subset(grid, !is.na(effort))) %>%
 
 # Presence of bats
 
-The number of observations per species is quite different. Only the common pipistrelle (_Pipistrellus pipistrellus_) has currently enough observations for the analysis (table \@ref(tab:observation-species)).
+The number of observations per species is quite different. Only the common pipistrelle (_Pipistrellus pipistrellus_) has currently enough observations for the analysis (table \@ref(tab:observation-species)). Note that the table also contains other mammal species because I note all mammal species that I encounter.
 
 ```{r observation-species}
 point@data %>%
@@ -344,7 +344,7 @@ predicted@data <- m$summary.fitted.values[grid_index, ] %>%
 
 Figure \@ref(fig:prediction-mean) show the median predicted probability for common pipistrelle. This is an estimation of the change to encounter common pipistrelles in each grid cell. The lower credible limit of these prediction are useful to detect the important locations (fig. \@ref(fig:prediction-lcl)). The higher the lower credible limit, the more certain the model is about the presence of common pipistrelles. Likewise, the upper credible limit (fig. \@ref(fig:prediction-ucl)) is useful to detect locations where the model is more certain about the absence of common pipistrelle.
 
-```{r prediction-mean, fig.cap = "Median of predicted probability for common pipistrelle."}
+```{r prediction-mean, fig.cap = "Median of predicted probability for common pipistrelle assuming fully surveyed grid cells."}
 pal <- colorNumeric(
   palette = "RdYlBu",
   domain = predicted$median,
@@ -374,7 +374,7 @@ junk <- mapshot(
 )
 ```
 
-```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle."}
+```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle assuming fully surveyed grid cells."}
 pal <- colorNumeric(
   palette = "RdYlBu",
   domain = predicted$lcl,
@@ -396,7 +396,7 @@ leaflet(predicted) %>%
   )
 ```
 
-```{r prediction-ucl, fig.cap = "Upper credible interval of predicted probability for common pipistrelle."}
+```{r prediction-ucl, fig.cap = "Upper credible interval of predicted probability for common pipistrelle assuming fully surveyed grid cells."}
 pal <- colorNumeric(
   palette = "RdYlBu",
   domain = predicted$ucl,
