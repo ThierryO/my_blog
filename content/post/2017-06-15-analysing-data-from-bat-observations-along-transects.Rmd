@@ -46,7 +46,7 @@ I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en)
 First we have to download the surveys. We need some ugly code to get everything in a usable format. The code is available on [GitHub](https://github.com/ThierryO/my_blog/blob/master/content/post/2017-06-15-analysing-data-from-bat-observations-along-transects.Rmd). The result is the set of all tracks and observations (figure \@ref(fig:raw-data)).
 
 ```{r}
-id <- c(35745, 36309)
+id <- c(35745, 36309, 37444)
 source("../../source/waarnemingen_be.R")
 observation <- read_observation(id)
 kml <- read_kml(observation = observation)
