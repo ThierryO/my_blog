@@ -344,7 +344,7 @@ predicted@data <- m$summary.fitted.values[grid_index, ] %>%
 
 Figure \@ref(fig:prediction-mean) show the median predicted probability for common pipistrelle. This is an estimation of the change to encounter common pipistrelles in each grid cell. The lower credible limit of these prediction are useful to detect the important locations (fig. \@ref(fig:prediction-lcl)). The higher the lower credible limit, the more certain the model is about the presence of common pipistrelles. Likewise, the upper credible limit (fig. \@ref(fig:prediction-ucl)) is useful to detect locations where the model is more certain about the absence of common pipistrelle.
 
-```{r prediction-mean, fig.cap = "Median of predicted probability for common pipistrelle."}
+```{r prediction-mean, fig.cap = "Median of predicted probability for common pipistrelle assuming fully surveyed grid cells."}
 pal <- colorNumeric(
   palette = "RdYlBu",
   domain = predicted$median,
@@ -374,7 +374,7 @@ junk <- mapshot(
 )
 ```
 
-```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle."}
+```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle assuming fully surveyed grid cells."}
 pal <- colorNumeric(
   palette = "RdYlBu",
   domain = predicted$lcl,
@@ -396,7 +396,7 @@ leaflet(predicted) %>%
   )
 ```
 
-```{r prediction-ucl, fig.cap = "Upper credible interval of predicted probability for common pipistrelle."}
+```{r prediction-ucl, fig.cap = "Upper credible interval of predicted probability for common pipistrelle assuming fully surveyed grid cells."}
 pal <- colorNumeric(
   palette = "RdYlBu",
   domain = predicted$ucl,
