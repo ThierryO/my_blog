@@ -30,6 +30,7 @@ library(tidyr)
 library(INLA)
 library(plotROC)
 library(mapview)
+library(scales)
 ```
 
 This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
@@ -178,6 +179,13 @@ grid_local@data <- survey_pipistrelle %>%
       pipistrelle
     )
   )
+grid_distance <- grid_local@data %>%
+  select(x, y) %>%
+  dist() %>%
+  as.matrix()
+diag(grid_distance) <- Inf
+grid_distance[grid_local$pipistrelle == 0 | is.na(grid_local$pipistrelle), ] <- Inf
+grid_local$pipi_nn <- apply(grid_distance, 2, min)
 grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
 ```
 
@@ -200,14 +208,66 @@ leaflet(subset(grid, !is.na(pipistrelle))) %>%
   )
 ```
 
-# Analysis
+Figure \@ref(fig:nearest-neighbour) show the distance from the centre of each grid cell to the centre of the nearest other grid cell were we detected common pipistrelle during the entire study. This can given an indication of clustering or repulsion.
+
+```{r nearest-neighbour, fig.cap = "Map with nearest neighbour distance of common pipistrelle."}
+pal <- colorNumeric(
+  palette = "RdYlBu",
+  domain = grid$pipi_nn
+)
+leaflet(grid) %>%
+  addTiles() %>%
+  addPolygons(
+    color = ~pal(pipi_nn), 
+    stroke = FALSE,
+    fillOpacity = 0.5
+  ) %>%
+  addPolygons(data = route_buffer, stroke = FALSE) %>%
+  addLegend("bottomright", pal = pal, values = ~pipi_nn,
+    title = "Nearest neighbour of<br>common pipistrelle",
+    opacity = 1
+  )
+```
+
+# Exploratory data analysis
+
+The current analysis used only very basic variables: survey effort (fig. \@ref(fig:eda-effort)) and nearest neighbour distance (fig. \@ref(fig:eda-nn)).
 
 ```{r}
 survey_pipistrelle <- survey_pipistrelle %>%
   inner_join(
-    grid@data %>% select(id, node),
+    grid@data %>% select(id, node, pipi_nn),
     by = c("grid_id" = "id")
   )
+```
+
+```{r eda-effort, fig.cap = "Dection of common pipistrelle in terms of survey effort."}
+ggplot(survey_pipistrelle, aes(x = effort, y = present)) +
+  geom_smooth(
+    method = "gam", 
+    formula = y ~ s(x, bs = "cs", k = 3), 
+    method.args = list(family = binomial)
+  ) +
+  geom_point(alpha = 0.2) +
+  xlab("sampling effort") + 
+  scale_y_continuous("Detection", labels = percent)
+```
+
+```{r eda-nn, fig.cap = "Dection of common pipistrelle in terms of distance to nearest neighbouring grid cell were common pipistrelle was observed. A small jitter was added due to heavy overlap between points."}
+ggplot(survey_pipistrelle, aes(x = pipi_nn, y = present)) +
+  geom_smooth(
+    method = "gam", 
+    formula = y ~ s(x, bs = "cs", k = 3), 
+    method.args = list(family = binomial)
+  ) +
+  geom_jitter(alpha = 0.1, height = 0.05, width = 10) +
+  scale_x_continuous("Distance to nearest neighbouring grid cell (m)") +
+  scale_y_continuous("Detection", labels = percent)
+```
+
+# Modelling
+
+```{r}
 A.observation <- Diagonal(nx * ny)[survey_pipistrelle$node, ]
 stack_observation <- inla.stack(
   tag = "observation",
@@ -218,10 +278,12 @@ stack_observation <- inla.stack(
   effects = list(
     node = seq_len(nx * ny),
     survey_pipistrelle %>%
-      select(node, route_id, effort) %>%
+      select(node, route_id, effort, pipi_nn) %>%
       mutate(
         intercept = 1,
-        log_effort = log(effort)
+        log_effort = log(effort),
+        pipi_nn1 = (pipi_nn / 100) - 2,
+        pipi_nn2 = pipi_nn1 ^ 2
       )
   )
 )
@@ -235,10 +297,12 @@ stack_predict <- inla.stack(
   effects = list(
     node = seq_len(nx * ny),
     grid@data %>%
-      select(node) %>%
+      select(node, pipi_nn) %>%
       mutate(
         intercept = 1,
-        log_effort = log(1)
+        log_effort = log(1),
+        pipi_nn1 = (pipi_nn / 100) - 2,
+        pipi_nn2 = pipi_nn1 ^ 2
       )
   )
 )
@@ -250,6 +314,7 @@ m <- inla(
   present ~ 0 +
     intercept +
     log_effort +
+    pipi_nn1 + pipi_nn2 +
     f(
       node, 
       model = "rw2d", 
@@ -277,7 +342,7 @@ predicted@data <- m$summary.fitted.values[grid_index, ] %>%
   )
 ```
 
-Figure \@ref(fig:prediction-mean) show the median predicted probability for common pipistrelle. This is an estimation of the change to encounter common pipistrelles in each grid cell. The lower credible limit of these prediction are useful to detect the important locations (figure \@ref(fig:prediction-lcl)). The higher the lowel credible limit, the more certain the model is about the presence of common pipistrelles. Likewise, the upper credible limit is useful to detect locations where the model is more certain about the absence of common pipistrelle.
+Figure \@ref(fig:prediction-mean) show the median predicted probability for common pipistrelle. This is an estimation of the change to encounter common pipistrelles in each grid cell. The lower credible limit of these prediction are useful to detect the important locations (fig. \@ref(fig:prediction-lcl)). The higher the lower credible limit, the more certain the model is about the presence of common pipistrelles. Likewise, the upper credible limit (fig. \@ref(fig:prediction-ucl)) is useful to detect locations where the model is more certain about the absence of common pipistrelle.
 
 ```{r prediction-mean, fig.cap = "Median of predicted probability for common pipistrelle."}
 pal <- colorNumeric(
@@ -359,6 +424,8 @@ leaflet(predicted) %>%
   )
 ```
 
+The [receiver operating characteristic](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) (ROC, fig. \@ref(fig:roc)) gives an indication of the quality of the model. It can be summarised by the [area under the curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve) (AUC). The closer the AUC value get to 1, the better the model.
+
 ```{r roc, fig.cap = "Receiver operating curve."}
 observed_index <- inla.stack.index(stacks, "observation")$data
 dataset <- data.frame(
@@ -366,10 +433,12 @@ dataset <- data.frame(
   observed = survey_pipistrelle$present
 )
 ggroc <- ggplot(dataset, aes(m = fitted, d = observed)) +
-  geom_roc(labelround = 3)
+  geom_roc(labels = FALSE, size.point = NA)
 auc <- calc_auc(ggroc)
 ggroc +
   geom_abline(linetype = 3) +
   coord_fixed() +
+  xlab("False positive fraction") + 
+  ylab("True positive fraction") + 
   ggtitle(sprintf("AUC: %.3f", auc$AUC))
 ```
