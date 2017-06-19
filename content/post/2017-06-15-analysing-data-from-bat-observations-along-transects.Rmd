@@ -5,6 +5,8 @@ date: '2017-06-15'
 slug: analysing-data-from-bat-observations-along-transects
 categories: ["bats", "analysis"]
 tags: ["spatial point process", "kml"]
+coverImage: images/analysis/thumb.png
+thumbnailImagePosition: "right"
 params:
   resolution: 100
   crs: "+init=epsg:31370"
@@ -27,6 +29,7 @@ library(leaflet)
 library(tidyr)
 library(INLA)
 library(plotROC)
+library(mapview)
 ```
 
 This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
@@ -282,7 +285,7 @@ pal <- colorNumeric(
   domain = predicted$median,
   reverse = TRUE
 )
-leaflet(predicted) %>%
+map <- leaflet(predicted) %>%
   addTiles() %>%
   addPolygons(
     color = ~pal(median), 
@@ -296,6 +299,20 @@ leaflet(predicted) %>%
     title = "Probability",
     opacity = 1
   )
+map
+```
+
+```{r results="hide"}
+junk <- mapshot(
+  map,
+  file = "thumb.png",
+  delay = 20
+)
+path <- "../../static/images/analysis"
+if (!dir.exists(path)) {
+  dir.create(path)
+}
+file.rename("thumb.png", paste(path, "thumb.png", sep = "/"))
 ```
 
 ```{r prediction-lcl, fig.cap = "Lower credible interval of predicted probability for common pipistrelle."}
