@@ -1,8 +1,8 @@
 theme = "hugo-tranquilpeak-theme"
-baseURL = "/"
+baseURL = "https://www.muscardinus.be/"
 languageCode = "en-us"
 defaultContentLanguage = "en-us"
-title = "The bat statistician"
+title = "Stats & bats"
 # disqusShortname = "hugo-tranquilpeak-theme"
 # googleAnalytics = "UA-123-45"
 paginate = 7
@@ -18,7 +18,7 @@ canonifyurls = true
 
 [author]
   name = "Thierry Onkelinx"
-  bio = "Statistician in daylight, chiropterologist after sunset. But things get mixed up."
+  bio = "Statistician in daylight, chiropterologist after sunset. But often things get mixed up."
   job = "Senior statistician"
   location = "Belgium"
   # Your Gravatar email. Overwrite `author.picture` everywhere in the blog
