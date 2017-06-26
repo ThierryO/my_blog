@@ -7,9 +7,11 @@ categories: ["statistics", "reproducible research"]
 tags: ["bookdown", "Rmarkdown", "gitbook"]
 ---
 
+[Bookdown](https://bookdown.org/yihui/bookdown/) is an [R package](https://www.r-project.org/) that makes writing technical documents based on R much easier. One of the nice things is that you can create a corporate identity using [LaTex](https://www.latextemplates.com/what-is-latex) styles for pdf output and [Cascading Style Sheets](https://en.wikipedia.org/wiki/Cascading_Style_Sheets) for HTML output. I'm in the process of preparing such styles for the [Research Institute for Nature and Forest](https://www.inbo.be/en).
+
 Here are a few things that I figured out while testing a complex `bookdown` report. You can find the document in the [inbomd_examples](https://github.com/inbo/inbomd_examples) repository on [GitHub](https://github.com/inbo).
 
-# `split_by`
+# split_by
 
 `gitbook` will split the document in several pages. The default is by "chapter" (level 1 header: `#`). Another option is by "section" (level 2 header: `##`). Each page must start with a header of the selected level.
 
