@@ -53,3 +53,9 @@ The filename of each page is based on the title of the heading of that page. All
 However you can use an neat trick: add a label to the title. Bookdown will base the filename of the label when a label is available. Adding a label is easy. Just place ` {#my-label}` at the end of the title.
 
 Using labels adds two bonusses: 1) you can use to label to refer to create [cross-references](https://bookdown.org/yihui/bookdown/cross-references.html) to the heading; 2) the url of the page becomes more stable because only changing the title won't change the filename.
+
+# Unnumbered headings
+
+Unnumbered headings are created by adding ` {-}` at the end of the table. Note that unnumbered headings currently (bookdown [version 0.4.1](https://github.com/rstudio/bookdown/tree/7fe1b999ef4bd41671af384ce739812542144df1)) don't work levels 5 and 6 for pdf output.
+
+In case you want both and unnumbered heading and a labeled heading, you need to combine both within a single set of curly braces. E.g. ` {- #my-label}`
