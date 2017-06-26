@@ -43,3 +43,5 @@ If such errors occur, you get the following error message when rendering the doc
     Error in split_chapters(output, gitbook_page, number_sections, split_by,  :
     The document must start with a first (#) or second level (##) heading
     Calls: <Anonymous> ... render_cur_session -> <Anonymous> -> <Anonymous> -> split_chapters`
+
+`split_by` has currently two more options: `"chapter+number"` and `"section+number"`. They work in exactly the same way. The only difference is that they will add the heading number the filename of each page.
