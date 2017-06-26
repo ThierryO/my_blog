@@ -1,0 +1,43 @@
+---
+title: Some things I learned about bookdown::gitbook
+author: Thierry Onkelinx
+date: '2017-06-26'
+slug: some-things-i-learned-about-bookdown-gitbook
+categories: ["statistics", "reproducible research"]
+tags: ["bookdown", "Rmarkdown", "gitbook"]
+---
+
+Here are a few things that I figured out while testing a complex `bookdown` report. You can find the document in the [inbomd_examples](https://github.com/inbo/inbomd_examples) repository on [GitHub](https://github.com/inbo).
+
+# `split_by`
+
+`gitbook` will split the document in several pages. The default is by "chapter" (level 1 header: `#`). Another option is by "section" (level 2 header: `##`). Each page must start with a header of the selected level.
+
+So in case of `split_by = "chapter"`, you can't have text starting without a `#`. The example below therefore won't work due to the text prior to the first chapter.
+
+    Some text before the first chapter
+    
+    # First chapter
+    Text in the first chapter
+
+Things are a bit more tricky in case of `split_by = "section"`. Here text must always start after a `##`. Here are a list of things that can go wrong
+
+     Text before the first chapter will yield an error.
+     
+     # First chapter
+     
+     Text between the chapter and the first second will yield the same error.
+     
+     ## First section in first chapter
+     
+     This is ok.
+     
+     # Second chapter
+     
+     A chapter without sections will fail as well.
+
+If such errors occur, you get the following error message when rendering the document: 
+
+    Error in split_chapters(output, gitbook_page, number_sections, split_by,  :
+    The document must start with a first (#) or second level (##) heading
+    Calls: <Anonymous> ... render_cur_session -> <Anonymous> -> <Anonymous> -> split_chapters`
