@@ -2,7 +2,7 @@
 title: Some things I learned about bookdown::gitbook
 author: Thierry Onkelinx
 date: '2017-06-26'
-slug: some-things-i-learned-about-bookdown-gitbook
+slug: bookdown-gitbook
 categories: ["statistics", "reproducible research"]
 tags: ["bookdown", "Rmarkdown", "gitbook"]
 ---
@@ -45,3 +45,11 @@ If such errors occur, you get the following error message when rendering the doc
     Calls: <Anonymous> ... render_cur_session -> <Anonymous> -> <Anonymous> -> split_chapters`
 
 `split_by` has currently two more options: `"chapter+number"` and `"section+number"`. They work in exactly the same way. The only difference is that they will add the heading number the filename of each page.
+
+# Long titles
+
+The filename of each page is based on the title of the heading of that page. All text is converted to lower case and space are replaced by dashes. E.g. `This is a long title` becomes `this-is-a-long-title.html`. If the title is really long, then the filename is too long. Probably you should rethink the title anyway and make it shorter and easier to read.
+
+However you can use an neat trick: add a label to the title. Bookdown will base the filename of the label when a label is available. Adding a label is easy. Just place ` {#my-label}` at the end of the title.
+
+Using labels adds two bonusses: 1) you can use to label to refer to create [cross-references](https://bookdown.org/yihui/bookdown/cross-references.html) to the heading; 2) the url of the page becomes more stable because only changing the title won't change the filename.
