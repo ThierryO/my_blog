@@ -32,3 +32,43 @@ points@proj4string <- crs_wgs84
 points_lambert <- spTransform(points, crs_lambert)
 ```
 
+Once we have the points into a porjected coordinate system, we can calculate the densities. We start by defining a grid. `cellsize` is the dimension of the square gridcell in the units of the projected coordinate system. Meters in case of Lambert72. The boundaries of the grid are defined using `pretty()`, which turns a vector of numbers into a "pretty" vector with rounded numbers. The combination of the boundaries and the cellsize determine the number of gridcells `n` in each dimension. `diff()` calculates the difference between to adjacent numbers of a vector. The density is calculated with `MASS::kde2d()` based on the vectors with the longitude and latitude, the number of grid cells in each dimension and the boundaries of the grid. This returns the grid as a list with elements `x` (a vector of longitude coordinates of the centroids),  `y` (a vector of latitude coordinates of the centroids) and `z` (a matrix with densities). We use [`dplyr::mutate()`](http://dplyr.tidyverse.org/) to convert it into a `data.frame`. The last two steps convert the centroids into a set of coordinates for square polygons.
+
+```{r}
+library(MASS)
+library(dplyr)
+cellsize <- 20
+xlim <- range(pretty(points_lambert$lon))
+ylim <- range(pretty(points_lambert$lat))
+n <- c(
+  diff(xlim),
+  diff(ylim)
+) / cellsize + 1
+dens <- kde2d(
+  x = points_lambert$lon,
+  y = points_lambert$lat,
+  n = n,
+  lims = c(xlim, ylim)
+)
+dx <- diff(dens$x[1:2])
+dy <- diff(dens$y[1:2])
+dens <- expand.grid(
+  lon = dens$x,
+  lat = dens$y
+) %>%
+  mutate(
+    density = as.vector(dens$z) * length(points_lambert),
+    id = seq_along(density)
+  ) %>%
+  merge(
+    data.frame(
+      x = dx * (c(0, 0, 1, 1, 0) - 0.5),
+      y = dy * (c(0, 1, 1, 0, 0) - 0.5)
+    )
+  ) %>%
+  mutate(
+    lon = lon + x,
+    lat = lat + y
+  )
+```
+
