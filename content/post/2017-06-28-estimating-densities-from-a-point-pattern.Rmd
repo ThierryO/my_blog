@@ -15,10 +15,15 @@ First we must read the data into R. Plotting the raw data helps to check errors 
 
 ```{r read-data, fig.cap = "Raw data"}
 points <- read.delim("points.txt", sep = " ")
-library(leaflet)
-leaflet(points) %>%
-  addTiles() %>%
-  addMarkers(lng = ~ lon, lat = ~lat)
+library(ggmap)
+map <- get_map(
+  location = c(lon = mean(dens_wgs$lon), lat = mean(dens_wgs$lat)),
+  zoom = 17,
+  maptype = "satellite",
+  source = "google"
+)
+ggmap(map) +
+  geom_point(data = points, alpha = 0.1, colour = "blue", shape = 4)
 ```
 
 The next step is to convert the dataset in to a `SpatialPoints` object with WGS84 project and re-project it into Lambert72. `sp::CRS()` defines the coordinate systems. `sp::coordinates()<-` is an easy way to convert a `data.frame` into a `SpatialPointsDataFrame`, but without specifying a coordinate system. Therefore we need to override the `proj4string` slot with the correct coordinate system. `sp::spTransform()` converts the spatial object from the current coordinate system to another coordinate system.
@@ -79,13 +84,6 @@ coordinates(dens) <- ~lon + lat
 dens@proj4string <- crs_lambert
 dens_wgs <- spTransform(dens, crs_wgs84) %>%
   as.data.frame()
-library(ggmap)
-map <- get_map(
-  location = c(lon = mean(dens_wgs$lon), lat = mean(dens_wgs$lat)),
-  zoom = 17,
-  maptype = "satellite",
-  source = "google"
-)
 ggmap(map) +
   geom_polygon(data = dens_wgs, aes(group = id, fill = density), alpha = 0.5) +
   scale_fill_gradientn(
@@ -119,6 +117,7 @@ dens_sp <- lapply(
 `leaflet` requires a predefined function with a colour pallete. We use `leaflet::colourNumeric()` to get a continous pallete. Setting `stroke = FALSE` removes the borders of the polygon. `fillOpacity` sets the transparancy of the polygons.
 
 ```{r fig.cap = "Dynamic map of density"}
+library(leaflet)
 pal <- colorNumeric(
   palette = rev(rainbow(100, start = 0, end = .7)),
   domain = c(0, dens_sp$density)
