@@ -120,7 +120,7 @@ dens_sp <- lapply(
   )
 ```
 
-`leaflet` requires a predefined function with a colour pallet. We use `leaflet::colourNumeric()` to get a continuous pallet. Setting `stroke = FALSE` removes the borders of the polygon. `fillOpacity` sets the transparency of the polygons.
+`leaflet` requires a predefined function with a colour pallet. We use `leaflet::colorNumeric()` to get a continuous pallet. Setting `stroke = FALSE` removes the borders of the polygon. `fillOpacity` sets the transparency of the polygons.
 
 ```{r leaflet, fig.cap = "Dynamic map of density"}
 library(leaflet)
