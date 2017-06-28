@@ -5,6 +5,8 @@ date: '2017-06-28'
 slug: estimating-densities-from-a-point-pattern
 categories: ["statistics", "point pattern"]
 tags: ["point pattern", "density", "leaflet", "ggmap", "projection"]
+coverImage: post/2017-06-28-estimating-densities-from-a-point-pattern_files/figure-html/ggmap-1.png
+thumbnailImagePosition: "left"
 params:
   cellsize: 20
 ---
