@@ -72,3 +72,26 @@ dens <- expand.grid(
   )
 ```
 
+In order to visualise the result, we have to reproject the coordinates back to WGS84. Then we can display the raster with a webbased background image.
+
+```{r ggmap, fig.cap = "Static image of density"}
+coordinates(dens) <- ~lon + lat
+dens@proj4string <- crs_lambert
+dens_wgs <- spTransform(dens, crs_wgs84) %>%
+  as.data.frame()
+library(ggmap)
+map <- get_map(
+  location = c(lon = mean(dens_wgs$lon), lat = mean(dens_wgs$lat)),
+  zoom = 17,
+  maptype = "satellite",
+  source = "google"
+)
+ggmap(map) +
+  geom_polygon(data = dens_wgs, aes(group = id, fill = density), alpha = 0.5) +
+  scale_fill_gradientn(
+    "density\n(#/m²)",
+    colours = rev(rainbow(100, start = 0, end = .7)),
+    limits = c(0, NA)
+  )
+```
+
