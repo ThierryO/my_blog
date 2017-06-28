@@ -14,7 +14,7 @@ The data used in this example is real data by centred to a different location fo
 First we must read the data into R. Plotting the raw data helps to check errors in the data.
 
 ```{r read-data, fig.cap = "Raw data"}
-points <- read.delim("points.txt", sep = " ")
+points <- read.delim("../../data/20170628/points.txt", sep = " ")
 library(ggmap)
 map <- get_map(
   location = c(lon = mean(points$lon), lat = mean(points$lat)),
