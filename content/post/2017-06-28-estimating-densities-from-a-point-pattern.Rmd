@@ -43,7 +43,7 @@ Once we have the points into a projected coordinate system, we can calculate the
 
 We use [`dplyr::mutate()`](http://dplyr.tidyverse.org/) to convert it into a `data.frame`. The last two steps convert the centroids into a set of coordinates for square polygons.
 
-```{r}
+```{r density}
 library(MASS)
 library(dplyr)
 xlim <- range(pretty(points_lambert$lon)) + c(-100, 100)
@@ -120,7 +120,7 @@ dens_sp <- lapply(
 
 `leaflet` requires a predefined function with a colour pallet. We use `leaflet::colourNumeric()` to get a continuous pallet. Setting `stroke = FALSE` removes the borders of the polygon. `fillOpacity` sets the transparency of the polygons.
 
-```{r fig.cap = "Dynamic map of density"}
+```{r leaflet, fig.cap = "Dynamic map of density"}
 library(leaflet)
 pal <- colorNumeric(
   palette = rev(rainbow(100, start = 0, end = .7)),
