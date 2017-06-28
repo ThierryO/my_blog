@@ -17,7 +17,7 @@ First we must read the data into R. Plotting the raw data helps to check errors 
 points <- read.delim("points.txt", sep = " ")
 library(ggmap)
 map <- get_map(
-  location = c(lon = mean(dens_wgs$lon), lat = mean(dens_wgs$lat)),
+  location = c(lon = mean(points$lon), lat = mean(points$lat)),
   zoom = 17,
   maptype = "satellite",
   source = "google"
