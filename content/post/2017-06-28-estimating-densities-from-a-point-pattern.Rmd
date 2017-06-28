@@ -5,6 +5,8 @@ date: '2017-06-28'
 slug: estimating-densities-from-a-point-pattern
 categories: ["statistics", "point pattern"]
 tags: ["point pattern", "density", "leaflet", "ggmap", "projection"]
+params:
+  cellsize: 20
 ---
 
 In this example we focus on a set of 10450 coordinates in a small area. The goal is to estimate the local density of points, expressed as the number of point per unit area. The raw coordinates are given in [WGS84 (EPSG:4326)](https://epsg.io/4326), which is a geodetic coordinate system. That is not suited for calculating distances, so we need to re-project the points into a local projected coordinate system. In this case we use [Lambert72 (EPSG:3170)](https://epsg.io/31370). Next we calculate the density. To visualise the density, we have to transform the results back in to WGS84. 
@@ -37,18 +39,19 @@ points@proj4string <- crs_wgs84
 points_lambert <- spTransform(points, crs_lambert)
 ```
 
-Once we have the points into a projected coordinate system, we can calculate the densities. We start by defining a grid. `cellsize` is the dimension of the square grid cell in the units of the projected coordinate system. Meters in case of Lambert72. The boundaries of the grid are defined using `pretty()`, which turns a vector of numbers into a "pretty" vector with rounded numbers. The combination of the boundaries and the cell size determine the number of grid cells `n` in each dimension. `diff()` calculates the difference between to adjacent numbers of a vector. The density is calculated with `MASS::kde2d()` based on the vectors with the longitude and latitude, the number of grid cells in each dimension and the boundaries of the grid. This returns the grid as a list with elements `x` (a vector of longitude coordinates of the centroids),  `y` (a vector of latitude coordinates of the centroids) and `z` (a matrix with densities). We use [`dplyr::mutate()`](http://dplyr.tidyverse.org/) to convert it into a `data.frame`. The last two steps convert the centroids into a set of coordinates for square polygons.
+Once we have the points into a projected coordinate system, we can calculate the densities. We start by defining a grid. `cellsize` is the dimension of the square grid cell in the units of the projected coordinate system. Meters in case of Lambert72. The boundaries of the grid are defined using `pretty()`, which turns a vector of numbers into a "pretty" vector with rounded numbers. The combination of the boundaries and the cell size determine the number of grid cells `n` in each dimension. `diff()` calculates the difference between to adjacent numbers of a vector. The density is calculated with `MASS::kde2d()` based on the vectors with the longitude and latitude, the number of grid cells in each dimension and the boundaries of the grid. This returns the grid as a list with elements `x` (a vector of longitude coordinates of the centroids),  `y` (a vector of latitude coordinates of the centroids) and `z` (a matrix with densities). The values in `z` are densities for the 'average' point per unit area. When we multiply the value `z` with the area of the grid cell and sum all of them we get 1. So if we multiple `z` with the number of points we get the density of the points per unit area.
+
+We use [`dplyr::mutate()`](http://dplyr.tidyverse.org/) to convert it into a `data.frame`. The last two steps convert the centroids into a set of coordinates for square polygons.
 
 ```{r}
 library(MASS)
 library(dplyr)
-cellsize <- 20
-xlim <- range(pretty(points_lambert$lon))
-ylim <- range(pretty(points_lambert$lat))
+xlim <- range(pretty(points_lambert$lon)) + c(-100, 100)
+ylim <- range(pretty(points_lambert$lat)) + c(-100, 100)
 n <- c(
   diff(xlim),
   diff(ylim)
-) / cellsize + 1
+) / params$cellsize + 1
 dens <- kde2d(
   x = points_lambert$lon,
   y = points_lambert$lat,
@@ -57,6 +60,7 @@ dens <- kde2d(
 )
 dx <- diff(dens$x[1:2])
 dy <- diff(dens$y[1:2])
+sum(dens$z * dx * dy)
 dens <- expand.grid(
   lon = dens$x,
   lat = dens$y
@@ -114,7 +118,7 @@ dens_sp <- lapply(
   )
 ```
 
-`leaflet` requires a predefined function with a colour pallete. We use `leaflet::colourNumeric()` to get a continous pallete. Setting `stroke = FALSE` removes the borders of the polygon. `fillOpacity` sets the transparancy of the polygons.
+`leaflet` requires a predefined function with a colour pallet. We use `leaflet::colourNumeric()` to get a continuous pallet. Setting `stroke = FALSE` removes the borders of the polygon. `fillOpacity` sets the transparency of the polygons.
 
 ```{r fig.cap = "Dynamic map of density"}
 library(leaflet)
