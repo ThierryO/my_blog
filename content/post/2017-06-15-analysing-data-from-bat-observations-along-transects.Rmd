@@ -191,7 +191,7 @@ grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
 
 ```{r presence, fig.cap = "Map with presence of common pipistrelle."}
 pal <- colorNumeric(
-  palette = "RdYlBu",
+  palette = rainbow(20, start = 2 / 3, end = 1),
   domain = grid_local$pipistrelle
 )
 leaflet(subset(grid, !is.na(pipistrelle))) %>%
