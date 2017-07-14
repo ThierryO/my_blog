@@ -71,7 +71,7 @@ plot(truth_spec, col = rainbow(10))
 Then do the same thing with the file [A013_AMS.WAV](/data/test_peersonic/A013_AMS.WAV) as recorded by the Peersonic RPA2. The Peersonic RPA2 records multiple of 5 seconds, hence the silence a the end. Note that the test file did not contain frenquencies above `r sprintf("%.0fkHz", max(sound.freq.range) / 1e3)`. The noise around 35kHz is probably due to the fan of my laptop.
 
 ```{r rec-spec-full, fig.cap = "Complete spectrogram of the recorded test file"}
-recording <- readWave("../../public/data/test_peersonic/A013_AMS.WAV")
+recording <- readWave("../../static/data/test_peersonic/A013_AMS.WAV")
 window.n <- 1024
 record_spec <- specgram(
   x = recording@left,
