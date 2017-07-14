@@ -46,7 +46,7 @@ I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en)
 First we have to download the surveys. We need some ugly code to get everything in a usable format. The code is available on [GitHub](https://github.com/ThierryO/my_blog/blob/master/content/post/2017-06-15-analysing-data-from-bat-observations-along-transects.Rmd). The result is the set of all tracks and observations (figure \@ref(fig:raw-data)).
 
 ```{r}
-id <- c(35745, 36309, 37444)
+id <- c(35745, 36309, 37444, 38379)
 source("../../source/waarnemingen_be.R")
 observation <- read_observation(id)
 kml <- read_kml(observation = observation)
@@ -61,7 +61,7 @@ leaflet(route) %>%
   addMarkers(data = point)
 ```
 
-We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution. Then we create of buffer on `r sprintf("%im", params$range)` around the tracks because assume that we can here most bats up to this distance on the bat detector. The result is a ribbon marking the area where we could have detected bats. The total area of ribbon per grid cell is an indicator of the survey effort per grid cell (figure \@ref(fig:survey-effort)).
+We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey. So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution. Then we create of buffer on `r sprintf("%im", params$range)` around the tracks because assume that we can here most bats up to this distance on the bat detector. The result is a ribbon marking the area where we could have detected bats. The total area of ribbon per grid cell is an indicator of the total survey effort per grid cell (figure \@ref(fig:survey-effort)).
 
 ```{r}
 route_local <- spTransform(route, CRS(params$crs))
@@ -120,7 +120,7 @@ grid_local@data <- survey_effort %>%
 grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
 ```
 
-```{r survey-effort, fig.cap = "Map with survey effort."}
+```{r survey-effort, fig.cap = "Map with total survey effort."}
 pal <- colorNumeric(
   palette = "Reds",
   domain = grid_local$effort
@@ -134,7 +134,7 @@ leaflet(subset(grid, !is.na(effort))) %>%
   ) %>%
   addPolygons(data = route_buffer, stroke = FALSE) %>%
   addLegend("bottomright", pal = pal, values = ~effort,
-    title = "Survey<br>effort",
+    title = "Total<br>survey<br>effort",
     opacity = 1
   )
 ```
@@ -191,7 +191,7 @@ grid <- spTransform(grid_local, CRS("+proj=longlat +datum=WGS84"))
 
 ```{r presence, fig.cap = "Map with presence of common pipistrelle."}
 pal <- colorNumeric(
-  palette = "RdYlBu",
+  palette = rainbow(20, start = 2 / 3, end = 1),
   domain = grid_local$pipistrelle
 )
 leaflet(subset(grid, !is.na(pipistrelle))) %>%
