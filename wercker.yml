@@ -2,7 +2,9 @@ box: emarginatus/render_website
 build:
   steps:
     - script:
-        code: Rscript -e "blogdown::build_site()"
+        code: |
+          Rscript -e "install.packages('osmplotr')"
+          Rscript -e "blogdown::build_site()"
 
 deploy:
   steps:
