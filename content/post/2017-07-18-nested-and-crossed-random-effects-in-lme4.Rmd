@@ -7,7 +7,7 @@ categories: ["statistics", "mixed models"]
 tags: ["lme4", "random effect"]
 ---
 
-People often get confused on how to code nested and crossed random effects in the [`lme4`](https://cran.rstudio.com/web/packages/lme4/) package. I will try to make this more clear using some artificial datasets.
+People often get confused on how to code nested and crossed random effects in the [`lme4`](https://cran.rstudio.com/web/packages/lme4/) package. I will try to make this more clear using some artificial data sets.
 
 ## Nested random effects
 
@@ -35,7 +35,7 @@ mean_n_class <- 7
 mean_n_student <- 5
 
 n_class <- rpois(n_school, mean_n_class)
-dataset <- map2_df(
+schools <- map2_df(
   seq_len(n_school), 
   n_class, 
   ~data_frame(
@@ -58,7 +58,7 @@ dataset <- map2_df(
 
 ```{r echo = FALSE}
 htmlwidgets::saveWidget(
-  datatable(dataset, caption = "Design of the dataset"),
+  datatable(schools, caption = "Design of the `schools` data set"),
   file = "../../public/post/nested_crossed_nested_design.html", 
   selfcontained = TRUE
 )
@@ -66,7 +66,7 @@ htmlwidgets::saveWidget(
 
 <iframe seamless src="../../../post/nested_crossed_nested_design.html" width="100%" height="500"></iframe>
 
-`dataset` contains 3 design variables: `school`, `class` and `student`. Each numbering restarts at 1 when the higher level number changes. Hence the id of class and student are not unique. Therefore I added two new variables `class2` and `student2` which are unique id's for each class and student. The next step is adding the expected and observed values.
+`schools` contains 3 design variables: `school`, `class` and `student`. Each numbering restarts at 1 when the higher level number changes. Hence the id of class and student are not unique. Therefore I added two new variables `class2` and `student2` which are unique id's for each class and student. The next step is adding the expected and observed values.
 
 ```{r nesting-values}
 school_sd <- 2
@@ -75,8 +75,8 @@ noise_sd <- 1
 intercept <- 50
 
 school_effect <- rnorm(n_school, mean = 0, sd = school_sd)
-class_effect <- rnorm(length(levels(dataset$class2)), mean = 0, sd = class_sd)
-dataset <- dataset %>%
+class_effect <- rnorm(length(levels(schools$class2)), mean = 0, sd = class_sd)
+schools <- schools %>%
   mutate(
     mu = intercept + school_effect[school] + class_effect[class2],
     y = mu + rnorm(n(), mean = 0, sd = noise_sd)
@@ -88,8 +88,8 @@ dataset <- dataset %>%
 The first option is to use explicit nesting. Here we add a random effect for each hierarchical level and use the `:` notation to add all higher levels. This can be expanded to more than two levels. E.g. `(1|A) + (1|A:B) + (1|A:B:C) + (1|A:B:C:D)`. The nice thing about this notation is twofold: a) the nesting is explicit and clear for all readers; b) it is insensitive for the order: e.g. `(1|A) + (1|A:B)` is identical to `(1|B:A) + (1|A)`.
 
 ```{r}
-lmer(y ~ (1|school) + (1|school:class), data = dataset)
-lmer(y ~ (1|class:school) + (1|school), data = dataset)
+lmer(y ~ (1|school) + (1|school:class), data = schools)
+lmer(y ~ (1|class:school) + (1|school), data = schools)
 ```
 
 ### Shorthand nesting
@@ -97,8 +97,8 @@ lmer(y ~ (1|class:school) + (1|school), data = dataset)
 `(1|A) + (1|A:B)` can be abbreviated into `(1|A/B)`. However, I recommend against it because here the order is important as seen in the example below. `(1|B/A)` expands to `(1|B) + (1|B:A)`, which is clearly a different model than `(1|A) + (1|A:B)`. I've seen many people being confused about the order, therefore I recommend to be explicit instead of using shorthand.
 
 ```{r}
-lmer(y ~ (1|school/class), data = dataset)
-lmer(y ~ (1|class/school), data = dataset)
+lmer(y ~ (1|school/class), data = schools)
+lmer(y ~ (1|class/school), data = schools)
 ```
 
 ### Implicit nesting
@@ -106,8 +106,74 @@ lmer(y ~ (1|class/school), data = dataset)
 With implicit nesting, the nesting is 'defined' in the data. That is each level of a random effect has a one-to-many relation with the levels of the lower random effect. E.g. each class id is unique for a given class in a given school and cannot refer to a class in any other school. This is how we constructed the `class2` variable in our data. With implicit nesting the code can be abbreviated to `(1|A) + (1|B)`. Note that the `(1|A) + (1|A:B)` and `(1|A/B)` notations remain valid.
 
 ```{r}
-lmer(y ~ (1|school) + (1|class2), data = dataset)
-lmer(y ~ (1|school) + (1|school:class2), data = dataset)
-lmer(y ~ (1|school/class2), data = dataset)
+lmer(y ~ (1|school) + (1|class2), data = schools)
+lmer(y ~ (1|school) + (1|school:class2), data = schools)
+lmer(y ~ (1|school/class2), data = schools)
 ```
 
+## Crossed random effects
+
+Crossed random effects appear when two (or more) variables can be used to create distinct groupings. Think about factories and products where a factory can produce a range of products, and a product can be manufactured in different factories.
+
+```{r crossed-design}
+n_factory <- 10
+n_product <- 10
+mean_n_sample <- 5
+
+factories <- expand.grid(
+  factory = seq_len(n_factory),
+  product = seq_len(n_product)
+) %>%
+  mutate(
+    samples = rpois(n(), mean_n_sample)
+  ) %>%
+  group_by(factory, product) %>%
+  do(
+    sample = data_frame(sample = seq_len(.$samples))
+  ) %>%
+  unnest(sample) %>%
+  mutate(
+    sample2 = interaction(factory, product, sample, drop = TRUE)
+  )
+```
+
+```{r echo = FALSE}
+htmlwidgets::saveWidget(
+  datatable(factories, caption = "Design of the `factories` data set"),
+  file = "../../public/post/nested_crossed_crossed_design.html", 
+  selfcontained = TRUE
+)
+```
+
+<iframe seamless src="../../../post/nested_crossed_crossed_design.html" width="100%" height="500"></iframe>
+
+`factories` contains 3 design variables: `factory`, `product` and `sample`. Most of the `factory` and `product` combinations are present in the data and they are meaningfull. Product 1 in factory 1 is the same product as product 1 in factory 2.
+
+```{r crossed-values}
+factory_sd <- 3
+product_sd <- 2
+noise_sd <- 1
+intercept <- 50
+
+factory_effect <- rnorm(n_factory, mean = 0, sd = factory_sd)
+product_effect <- rnorm(n_product, mean = 0, sd = product_sd)
+factories <- factories %>%
+  mutate(
+    mu = intercept + factory_effect[factory] + product_effect[product],
+    y = mu + rnorm(n(), mean = 0, sd = noise_sd)
+  )
+```
+
+### Coding
+
+The coding for crossed random effects is easy: `(1|A) + (1|B) + (1|C)`. 
+
+```{r}
+lmer(y ~ (1|factory) + (1|product), data = factories)
+```
+
+## Recommendations
+
+- each level of a random effect should be defined by a single variable: e.g. `class2` and `student2` in `schools`; `factory`, `product` and `sample2` in `factories`
+- use explict nesting even when the data set would allow implicit nesting
+- don't use the shorthand nesting
