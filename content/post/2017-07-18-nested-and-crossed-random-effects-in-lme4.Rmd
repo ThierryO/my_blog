@@ -57,6 +57,9 @@ schools <- map2_df(
 ```
 
 ```{r echo = FALSE}
+if (!dir.exists("../../public/post")) {
+  dir.create("../../public/post", recursive = TRUE)
+}
 htmlwidgets::saveWidget(
   datatable(schools, caption = "Design of the `schools` data set"),
   file = "../../public/post/nested_crossed_nested_design.html", 
