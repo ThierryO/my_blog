@@ -3,8 +3,6 @@ build:
   steps:
     - script:
         code: |
-          Rscript -e "install.packages('osmplotr')"
-          Rscript -e "install.packages('lme4')"
           Rscript -e "blogdown::build_site()"
 
 deploy:
