@@ -1,0 +1,113 @@
+---
+title: Nested and crossed random effects in `lme4`
+author: Thierry Onkelinx
+date: '2017-07-18'
+slug: lme4-random-effects
+categories: ["statistics", "mixed models"]
+tags: ["lme4", "random effect"]
+---
+
+People often get confused on how to code nested and crossed random effects in the [`lme4`](https://cran.rstudio.com/web/packages/lme4/) package. I will try to make this more clear using some artificial datasets.
+
+## Nested random effects
+
+Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes. There is a one-to-many relationship between the random effects. E.g. a school can contain multiple classes but a class can only be part of one school. Lets start by creating a simple example with fake data to explain the design.
+
+```{r setup, include = FALSE}
+library(knitr)
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r load-package}
+library(DT)
+library(lme4)
+library(tidyverse)
+library(htmlwidgets)
+```
+
+```{r nested-design}
+set.seed(123)
+n_school <- 10
+mean_n_class <- 7
+mean_n_student <- 5
+
+n_class <- rpois(n_school, mean_n_class)
+dataset <- map2_df(
+  seq_len(n_school), 
+  n_class, 
+  ~data_frame(
+    school = .x, 
+    class = seq_len(.y),
+    students = rpois(.y, mean_n_student)
+  )
+) %>%
+  group_by(school, class) %>%
+  do(
+    student = data_frame(student = seq_len(.$students))
+  ) %>%
+  unnest(student) %>%
+  mutate(
+    class2 = interaction(school, class, drop = TRUE),
+    student2 = interaction(class2, student, drop = TRUE)
+  )
+
+```
+
+```{r echo = FALSE}
+htmlwidgets::saveWidget(
+  datatable(dataset, caption = "Design of the dataset"),
+  file = "../../public/post/nested_crossed_nested_design.html", 
+  selfcontained = TRUE
+)
+```
+
+<iframe seamless src="../../../post/nested_crossed_nested_design.html" width="100%" height="500"></iframe>
+
+`dataset` contains 3 design variables: `school`, `class` and `student`. Each numbering restarts at 1 when the higher level number changes. Hence the id of class and student are not unique. Therefore I added two new variables `class2` and `student2` which are unique id's for each class and student. The next step is adding the expected and observed values.
+
+```{r nesting-values}
+school_sd <- 2
+class_sd <- 2
+noise_sd <- 1
+intercept <- 50
+
+school_effect <- rnorm(n_school, mean = 0, sd = school_sd)
+class_effect <- rnorm(length(levels(dataset$class2)), mean = 0, sd = class_sd)
+dataset <- dataset %>%
+  mutate(
+    mu = intercept + school_effect[school] + class_effect[class2],
+    y = mu + rnorm(n(), mean = 0, sd = noise_sd)
+  )
+```
+
+### Explicit nesting
+
+The first option is to use explicit nesting. Here we add a random effect for each hierarchical level and use the `:` notation to add all higher levels. This can be expanded to more than two levels. E.g. `(1|A) + (1|A:B) + (1|A:B:C) + (1|A:B:C:D)`. The nice thing about this notation is twofold: a) the nesting is explicit and clear for all readers; b) it is insensitive for the order: e.g. `(1|A) + (1|A:B)` is identical to `(1|B:A) + (1|A)`.
+
+```{r}
+lmer(y ~ (1|school) + (1|school:class), data = dataset)
+lmer(y ~ (1|class:school) + (1|school), data = dataset)
+```
+
+### Shorthand nesting
+
+`(1|A) + (1|A:B)` can be abbreviated into `(1|A/B)`. However, I recommend against it because here the order is important as seen in the example below. `(1|B/A)` expands to `(1|B) + (1|B:A)`, which is clearly a different model than `(1|A) + (1|A:B)`. I've seen many people being confused about the order, therefore I recommend to be explicit instead of using shorthand.
+
+```{r}
+lmer(y ~ (1|school/class), data = dataset)
+lmer(y ~ (1|class/school), data = dataset)
+```
+
+### Implicit nesting
+
+With implicit nesting, the nesting is 'defined' in the data. That is each level of a random effect has a one-to-many relation with the levels of the lower random effect. E.g. each class id is unique for a given class in a given school and cannot refer to a class in any other school. This is how we constructed the `class2` variable in our data. With implicit nesting the code can be abbreviated to `(1|A) + (1|B)`. Note that the `(1|A) + (1|A:B)` and `(1|A/B)` notations remain valid.
+
+```{r}
+lmer(y ~ (1|school) + (1|class2), data = dataset)
+lmer(y ~ (1|school) + (1|school:class2), data = dataset)
+lmer(y ~ (1|school/class2), data = dataset)
+```
+
