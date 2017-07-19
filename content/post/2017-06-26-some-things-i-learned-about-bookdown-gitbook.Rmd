@@ -3,7 +3,7 @@ title: Some things I learned about bookdown::gitbook
 author: Thierry Onkelinx
 date: '2017-06-26'
 slug: bookdown-gitbook
-categories: ["statistics", "reproducible research"]
+categories: ["reproducible research", "text"]
 tags: ["bookdown", "Rmarkdown", "gitbook"]
 ---
 

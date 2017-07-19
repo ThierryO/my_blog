@@ -3,14 +3,15 @@ title: Creating continuous coloured maps with osmplotr
 author: Thierry Onkelinx
 date: '2017-07-17'
 slug: creating-maps-with-osmplotr
-categories: ["statistics", "reproducible-research"]
+categories: ["reproducible-research", "maps"]
 tags: ["maps", "osm", "openstreetmap"]
+banner: post/2017-07-17-creating-maps-with-osmplotr_files/figure-html/osmplotr-1.png
 params:
   cellsize: 20
   scale: 2
 ---
 
-During [useR!2017](https://user2017.brussels/) I attend a talk by Mark Padgham titled [Maps are data, so why no plot data on a map](https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Maps-are-data-so-why-plot-data-on-a-map). In this blog post I will recreate the map from an earlier blogpost on [estimating density on a point pattern](../../06/estimating-densities-from-a-point-pattern).
+During [useR!2017](https://user2017.brussels/) I attended a talk by Mark Padgham titled [Maps are data, so why no plot data on a map](https://channel9.msdn.com/Events/useR-international-R-User-conferences/useR-International-R-User-2017-Conference/Maps-are-data-so-why-plot-data-on-a-map). In this blog post I will recreate the map from an earlier blogpost on [estimating densities from a point pattern](../../06/estimating-densities-from-a-point-pattern).
 
 Let's start by loading all required packages.
 

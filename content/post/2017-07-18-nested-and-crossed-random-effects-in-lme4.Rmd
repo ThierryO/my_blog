@@ -1,17 +1,18 @@
 ---
-title: Nested and crossed random effects in `lme4`
+title: Nested and crossed random effects in "lme4"
 author: Thierry Onkelinx
 date: '2017-07-18'
 slug: lme4-random-effects
 categories: ["statistics", "mixed models"]
 tags: ["lme4", "random effect"]
+banner: "post/2017-07-18-nested-and-crossed-random-effects-in-lme4_files/figure-html/school-design-1.png"
 ---
 
 People often get confused on how to code nested and crossed random effects in the [`lme4`](https://cran.rstudio.com/web/packages/lme4/) package. I will try to make this more clear using some artificial data sets.
 
 ## Nested random effects
 
-Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes. There is a one-to-many relationship between the random effects. E.g. a school can contain multiple classes but a class can only be part of one school. Lets start by creating a simple example with fake data to explain the design.
+Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes. There is a one-to-many relationship between the random effects. E.g. a school can contain multiple classes but a class can only be part of one school. Lets start by creating a simple example with fake data to explain the design. Figure \@ref(fig:school-design) shows the contigency matrix for the dataset.
 
 ```{r setup, include = FALSE}
 library(knitr)
@@ -25,7 +26,6 @@ opts_chunk$set(
 library(DT)
 library(lme4)
 library(tidyverse)
-library(htmlwidgets)
 ```
 
 ```{r nested-design}
@@ -50,26 +50,27 @@ schools <- map2_df(
   ) %>%
   unnest(student) %>%
   mutate(
-    class2 = interaction(school, class, drop = TRUE),
+    class2 = interaction(class, school, drop = TRUE),
     student2 = interaction(class2, student, drop = TRUE)
   )
-
 ```
-
-```{r echo = FALSE}
-if (!dir.exists("../../public/post")) {
-  dir.create("../../public/post", recursive = TRUE)
-}
-htmlwidgets::saveWidget(
-  datatable(schools, caption = "Design of the `schools` data set"),
-  file = "../../public/post/nested_crossed_nested_design.html", 
-  selfcontained = TRUE
-)
-```
-
-<iframe seamless src="../../../post/nested_crossed_nested_design.html" width="100%" height="500"></iframe>
 
 `schools` contains 3 design variables: `school`, `class` and `student`. Each numbering restarts at 1 when the higher level number changes. Hence the id of class and student are not unique. Therefore I added two new variables `class2` and `student2` which are unique id's for each class and student. The next step is adding the expected and observed values.
+
+```{r echo = FALSE}
+datatable(schools, caption = "Design of the `schools` data set")
+```
+
+```{r school-design, fig.cap = "Contingency matrix for the `schools`data set"}
+with(schools, table(class2, school)) %>%
+  image(
+    col = grey.colors(10, start = 1, end = 0), 
+    axes = FALSE, 
+    xlab = "Class", 
+    ylab = "School"
+  )
+```
+
 
 ```{r nesting-values}
 school_sd <- 2
@@ -116,7 +117,7 @@ lmer(y ~ (1|school/class2), data = schools)
 
 ## Crossed random effects
 
-Crossed random effects appear when two (or more) variables can be used to create distinct groupings. Think about factories and products where a factory can produce a range of products, and a product can be manufactured in different factories.
+Crossed random effects appear when two (or more) variables can be used to create distinct groupings. Think about factories and products where a factory can produce a range of products, and a product can be manufactured in different factories. The contigency matrix of such a design is shown in figure \@ref(fig:factory-design).
 
 ```{r crossed-design}
 n_factory <- 10
@@ -140,17 +141,21 @@ factories <- expand.grid(
   )
 ```
 
+`factories` contains 3 design variables: `factory`, `product` and `sample`. Most of the `factory` and `product` combinations are present in the data and they are meaningfull. Product 1 in factory 1 is the same product as product 1 in factory 2.
+
 ```{r echo = FALSE}
-htmlwidgets::saveWidget(
-  datatable(factories, caption = "Design of the `factories` data set"),
-  file = "../../public/post/nested_crossed_crossed_design.html", 
-  selfcontained = TRUE
-)
+datatable(factories, caption = "Design of the `factories` data set")
 ```
 
-<iframe seamless src="../../../post/nested_crossed_crossed_design.html" width="100%" height="500"></iframe>
-
-`factories` contains 3 design variables: `factory`, `product` and `sample`. Most of the `factory` and `product` combinations are present in the data and they are meaningfull. Product 1 in factory 1 is the same product as product 1 in factory 2.
+```{r factory-design, fig.cap = "Contingency matrix for the `factories`data set"}
+with(factories, table(product, factory)) %>%
+  image(
+    col = grey.colors(10, start = 1, end = 0), 
+    axes = FALSE, 
+    xlab = "Product", 
+    ylab = "Factory"
+  )
+```
 
 ```{r crossed-values}
 factory_sd <- 3
