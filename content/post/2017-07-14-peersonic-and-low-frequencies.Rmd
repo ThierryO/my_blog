@@ -7,6 +7,7 @@ categories: ["bats", "tool-review"]
 tags: ["peersonic", "bat-detector", "review"]
 coverImage: images/peersonic/peersonic_headphones.jpg
 thumbnailImagePosition: "right"
+banner: post/2017-07-14-peersonic-and-low-frequencies_files/figure-html/rec-spec-detail-1.png
 ---
 
 Recently René Janssen from [Bionet Natuuronderzoek](http://www.bionetnatuur.eu/) was looking for an automatic bat-detector which could record sounds starting from 4 kHz. That was an incentive to put the Peersonic RPA2 to the test.

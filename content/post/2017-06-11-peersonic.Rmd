@@ -7,6 +7,7 @@ categories: ["bats", "tool review"]
 tags: ["peersonic", "bat detector", "review"]
 coverImage: images/peersonic/peersonic_rpa2_front.jpg
 thumbnailImagePosition: "left"
+banner: images/peersonic/peersonic_rpa2_front.jpg
 ---
 
 ## Introduction
