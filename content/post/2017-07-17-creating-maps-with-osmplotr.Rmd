@@ -5,6 +5,7 @@ date: '2017-07-17'
 slug: creating-maps-with-osmplotr
 categories: ["reproducible-research", "maps"]
 tags: ["maps", "osm", "openstreetmap"]
+banner: post/2017-07-17-creating-maps-with-osmplotr_files/figure-html/osmplotr-1.png
 params:
   cellsize: 20
   scale: 2
