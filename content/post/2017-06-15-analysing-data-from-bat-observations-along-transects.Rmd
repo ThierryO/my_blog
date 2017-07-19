@@ -7,6 +7,7 @@ categories: ["bats", "analysis"]
 tags: ["spatial point process", "kml"]
 coverImage: images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png
 thumbnailImagePosition: "right"
+banner: images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png
 params:
   resolution: 100
   crs: "+init=epsg:31370"
