@@ -1,0 +1,55 @@
+---
+title: Peersonic bat-detector in waterproof IP67 enclosure
+author: Thierry Onkelinx
+date: '2017-07-24'
+slug: peersonic-ip67
+categories: ["bats", "tool review"]
+tags: ["bat-detector", "peersonic", "review"]
+banner: "images/peersonic/peersonic_ip67_setup.jpg"
+images: ["images/peersonic/peersonic_ip67_closed.jpg", "images/peersonic/peersonic_ip67_open.jpg", "images/peersonic/peersonic_ip67_setup.jpg", "images/peersonic/peersonic_ip67_mic.jpg"]
+---
+
+```{r setup, include = FALSE}
+library(knitr)
+library(readr)
+opts_chunk$set(echo = FALSE)
+```
+
+
+I've reviewed the [standard version](http://peersonic.co.uk) the Peersonic RPA2 bat-detector in an [earlier blog post](../../06/peersonic). Today I will take about the RPA2 in a [waterproof IP67 enclosure](http://peersonic.co.uk/advanced/) and my experiences on using it as on autonomous bat-detector.
+
+## The differences
+
+The most obvious difference between both versions is their enclosure. [IP 67](https://en.wikipedia.org/wiki/IP_Code) stands for dust tight and water tight under immersion up to 1m depth. As you can see on fig. \@ref(fig:open), the display and all controls are inside the enclosure. Hence this version is only relevant in automatic mode.
+
+The enclosure is much larger than the standard version: 180 mm long, 125 mm wide and 90 mm thick (standard version: 145 mm long, 79 mm wide and 37 mm thick). The enclosure holds 3 D cell batteries compared to 3 AA batteries in the standard version. I had the set-up running for 5 consecutive nights on a single set of alkaline batteries and the detector was still running.
+
+```{r open, fig.cap = "Open RPA2 detector in IP67 version."}
+include_graphics("/images/peersonic/peersonic_ip67_open.jpg")
+```
+
+One essential part of the electronic must be outside of the enclosure: the microphone (fig. \@ref(fig:mic)). A standard 3.5 mm audio jack cable protrudes from the enclosure. Mine has 3m cable but you can order them with different lengths of cable. Note that about 20 cm of the cable is inside the enclosure. The jack cable is plugged into the external microphone. This is also water proof. The microphone itself is protected by a membrane. Several replacement membranes were supplied with the detector. So far I'm still using the original membrane. The microphone has a tripod thread for easy mounting on a tripod.
+
+```{r mic, fig.cap = "External microphone mounted on a tripod."}
+include_graphics("/images/peersonic/peersonic_ip67_mic.jpg")
+```
+
+## The similarities
+
+The electronics hardware and software in both versions are identical. The controls are at the same location so switching to the other version is easy. [Peersonic](http://peersonic.co.uk) suggested to switch off the audio output. Audio output it not needed in automatic mode. Removing the audio output saves (a little bit of) power. Another option is the leave the audio output intake and place a Bluetooth audio transmitter in the enclosure so you can listen to the detector with a pair of Bluetooth headphones. This would however increase the power consumption. So I choose to have the audio output removed. Note that it can be replaced if I wanted so.
+
+## Recording in automatic mode
+
+The user has to specify two settings in automatic mode: 1) the threshold and 2) the maximal length of a recording. Exceeding the threshold sound level triggers the start of a recording. Each recording will last at least 5 seconds. The recording will continue as long as the sound level exceeds the threshold and the maximal length isn't reached. The maximal length can be set from 5 seconds to 4 minutes in steps of 5 seconds.
+
+## Room for improvement
+
+> The biggest room in the world is the room for improvement.
+
+- The IP67 enclosure has 2 LED's that blink when batteries are mounted in the detector. One amber LED is situated inside the enclosure. A green LED is located on the outside near the exit of the audio cable (fig. \@ref(fig:closed)). The LED makes visible that the batteries still have enough power without having to open the enclosure. The downside is that it make the enclosure more visible and potentially draws unwanted attention. It would be nice to have a software setting to turn of the outside LED. For now I tend to cover it with a piece of card board when stealth is needed.
+
+- The audio cable is mounted near the edge of the enclosure (fig. \@ref(fig:open)). Closing it requires some care as the connector sometimes hits the bottom halve of the enclosure. The trick is to push the connector slightly and gently inwards when closing. An L-shaped connector instead of a straight connector would probably solve this.
+
+```{r closed, fig.cap = "Closed RPA2 detector in IP67 version."}
+include_graphics("/images/peersonic/peersonic_ip67_closed.jpg")
+```
