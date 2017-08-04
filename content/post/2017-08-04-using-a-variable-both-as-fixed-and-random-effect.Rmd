@@ -1,0 +1,124 @@
+---
+title: Using a variable both as fixed and random effect
+author: Thierry Onkelinx
+date: '2017-08-04'
+slug: fixed-and-random
+categories: ["statistics", "mixed-models"]
+tags: ["lme4", "INLA"]
+banner: ''
+description: ''
+images: []
+menu: ''
+---
+
+One of the questions to answer when using mixed models is wether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn't make sense. Much will depend on the nature of the variable. Therefore to post is split into three sections: categorical, discrete and continuous. I will only display to most relevant parts of the code. The full code is available on [GitHub](https:/github.com/thierryo/my_blog).
+
+# Categorical variable
+
+To make this clear, we start by creating a dummy dataset with 3 categorical covariates. `B` is nested within `A` and crossed with `C`. The resulting dataset is displayed in fig \@ref(fig:cat-dummy).
+
+```{r include = FALSE}
+library(knitr)
+library(ggplot2)
+opts_chunk$set(echo = TRUE)
+```
+
+```{r message = FALSE}
+library(tidyverse)
+library(lme4)
+library(INLA)
+```
+
+```{r}
+n_a <- 6
+n_b <- 2
+n_c <- 3
+sd_A <- 2
+sd_B <- 1
+sd_C <- 1
+sd_noise <- 0.5
+dataset <- expand.grid(
+  B = paste0("b", seq_len(n_a * n_b)),
+  C = paste0("c", seq_len(n_c)),
+  sample = 1:2
+) %>%
+  mutate(
+    A = paste0("a", as.integer(B) %% n_a) %>%
+      factor(),
+    mu = rnorm(n_a, sd = sd_A)[A] + 
+      rnorm(n_a * n_b, sd = sd_B)[B] +
+      rnorm(n_c, sd = sd_C)[C],
+    Y = mu + rnorm(n(), sd = sd_noise)
+  )
+
+```
+
+```{r cat-dummy, fig.cap = "Dummy dataset with categorical variables.", echo = FALSE}
+ggplot(dataset, aes(x = paste(A, B), y = Y, colour = C)) +
+  geom_point()
+```
+
+The first model is one that doesn't make sense. Using a categorical variable both as random and a fixed effect. In this case both effects are competing for the same information. Below is the resulting fit from `lme4` and `INLA`. Note the warning in the `lme4` output, the model failed to converge. Nevertheless, both `lme4` and `INLA` yield the same parameter estimate (fig \@ref(cat-fixed)), albeit the much wider confidence intervals for `lme4`. The estimates for the random effects in both packages are equivalent to zero (fig. \@ref(fig:cat-random)). Again the `lme4` estimate has more uncertainty.
+
+```{r}
+model.1 <- lmer(Y ~ 0 + A + (1|A), data = dataset)
+summary(model.1)
+model.2 <- inla(Y ~ 0 + A + f(A, model = "iid"), data = dataset)
+summary(model.2)
+```
+
+```{r cat-fixed, fig.cap = "Comparison of fixed effects parameters for model `A + (1|A)`", echo = FALSE}
+coef(summary(model.1)) %>%
+  as.data.frame() %>%
+  select(mean.1 = 1, se.1 = 2) %>%
+  mutate(
+    lcl.1 = qnorm(0.025, mean.1, se.1),
+    ucl.1 = qnorm(0.975, mean.1, se.1)
+  ) %>%
+  bind_cols(
+    model.2$summary.fixed %>%
+      select(mean.2 = 1, lcl.2 = 3, ucl.2 = 5)
+  ) %>%
+  ggplot(
+    aes(
+      x = mean.1, xmin = lcl.1, xmax = ucl.1, 
+      y = mean.2, ymin = lcl.2, ymax = ucl.2
+    )
+  ) +
+  geom_abline(linetype = 3) +
+  geom_point() +
+  geom_errorbar() +
+  geom_errorbarh() +
+  xlab("lme4") +
+  ylab("INLA")
+```
+
+```{r cat-random, fig.cap = "Comparison of random effects parameters for model `A + (1|A)`", echo = FALSE}
+rf.1 <- ranef(model.1, condVar = TRUE)$A
+rf.1 %>%
+  select(mean.1 = 1) %>%
+  mutate(
+    se.1 = attr(rf.1, "postVar") %>%
+      as.vector() %>%
+      sqrt(),
+    lcl.1 = qnorm(0.025, mean.1, se.1),
+    ucl.1 = qnorm(0.975, mean.1, se.1)
+  ) %>%
+  bind_cols(
+    model.2$summary.random$A %>%
+      select(mean.2 = 2, lcl.2 = 4, ucl.2 = 6)
+  ) %>%
+  ggplot(
+    aes(
+      x = mean.1, xmin = lcl.1, xmax = ucl.1, 
+      y = mean.2, ymin = lcl.2, ymax = ucl.2
+    )
+  ) +
+  geom_abline(linetype = 3) +
+  geom_point() +
+  geom_errorbar() +
+  geom_errorbarh() +
+  xlab("lme4") +
+  ylab("INLA")
+```
+
