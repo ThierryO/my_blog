@@ -15,7 +15,7 @@ One of the questions to answer when using mixed models is wether to use a variab
 
 # Categorical variable
 
-To make this clear, we start by creating a dummy dataset with 3 categorical covariates. `B` is nested within `A` and crossed with `C`. The resulting dataset is displayed in fig \@ref(fig:cat-dummy).
+To make this clear, we start by creating a dummy dataset with 3 categorical covariates. `B` is nested within `A`. The resulting dataset is displayed in fig \@ref(fig:cat-dummy).
 
 ```{r include = FALSE}
 library(knitr)
@@ -32,33 +32,30 @@ library(INLA)
 ```{r}
 n_a <- 6
 n_b <- 2
-n_c <- 3
+n_sample <- 3
 sd_A <- 2
 sd_B <- 1
-sd_C <- 1
 sd_noise <- 0.5
 dataset <- expand.grid(
   B = paste0("b", seq_len(n_a * n_b)),
-  C = paste0("c", seq_len(n_c)),
-  sample = 1:2
+  sample = seq_len(n_sample)
 ) %>%
   mutate(
     A = paste0("a", as.integer(B) %% n_a) %>%
       factor(),
     mu = rnorm(n_a, sd = sd_A)[A] + 
-      rnorm(n_a * n_b, sd = sd_B)[B] +
-      rnorm(n_c, sd = sd_C)[C],
+         rnorm(n_a * n_b, sd = sd_B)[B],
     Y = mu + rnorm(n(), sd = sd_noise)
   )
 
 ```
 
 ```{r cat-dummy, fig.cap = "Dummy dataset with categorical variables.", echo = FALSE}
-ggplot(dataset, aes(x = paste(A, B), y = Y, colour = C)) +
+ggplot(dataset, aes(x = B, y = Y, colour = A)) +
   geom_point()
 ```
 
-The first model is one that doesn't make sense. Using a categorical variable both as random and a fixed effect. In this case both effects are competing for the same information. Below is the resulting fit from `lme4` and `INLA`. Note the warning in the `lme4` output, the model failed to converge. Nevertheless, both `lme4` and `INLA` yield the same parameter estimate (fig \@ref(cat-fixed)), albeit the much wider confidence intervals for `lme4`. The estimates for the random effects in both packages are equivalent to zero (fig. \@ref(fig:cat-random)). Again the `lme4` estimate has more uncertainty.
+The first model is one that doesn't make sense. Using a categorical variable both as random and a fixed effect. In this case both effects are competing for the same information. Below is the resulting fit from `lme4` and `INLA`. Note the warning in the `lme4` output, the model failed to converge. Nevertheless, both `lme4` and `INLA` yield the same parameter estimate (fig \@ref(fig:cat-fixed)), albeit the much wider confidence intervals for `lme4`. The estimates for the random effects in both packages are equivalent to zero (fig. \@ref(fig:cat-random)). Again the `lme4` estimate has more uncertainty.
 
 ```{r}
 model.1 <- lmer(Y ~ 0 + A + (1|A), data = dataset)
@@ -122,3 +119,18 @@ rf.1 %>%
   ylab("INLA")
 ```
 
+What if we want to add variable `B` as a nested random effect? We allready know that adding `A` to both the fixed and the random effects is nonsense. The correct way of doing this is to use `A` as a fixed effect and `B` as an [implicit nested](../../07/lme4-random-effects/index.html#implicit-nesting) random effect.
+
+```{r}
+model.1 <- lmer(Y ~ 0 + A + (1|A/B), data = dataset)
+summary(model.1)
+model.1b <- lmer(Y ~ 0 + A + (1|B), data = dataset)
+summary(model.1b)
+model.2 <- inla(
+  Y ~ 0 + A + f(A, model = "iid") + f(B, model = "iid"), 
+  data = dataset
+)
+summary(model.2)
+model.2b <- inla(Y ~ 0 + A + f(B, model = "iid"), data = dataset)
+summary(model.2b)
+```
