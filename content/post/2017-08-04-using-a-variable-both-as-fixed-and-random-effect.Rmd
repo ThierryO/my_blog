@@ -9,6 +9,9 @@ banner: ''
 description: ''
 images: []
 menu: ''
+output:
+  blogdown::html_page:
+    toc: TRUE
 ---
 
 One of the questions to answer when using mixed models is wether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn't make sense. Much will depend on the nature of the variable. Therefore to post is split into three sections: categorical, discrete and continuous. I will only display to most relevant parts of the code. The full code is available on [GitHub](https:/github.com/thierryo/my_blog).
@@ -35,7 +38,7 @@ n_b <- 2
 n_sample <- 3
 sd_A <- 2
 sd_B <- 1
-sd_noise <- 0.5
+sd_noise <- 1
 dataset <- expand.grid(
   B = paste0("b", seq_len(n_a * n_b)),
   sample = seq_len(n_sample)
@@ -134,3 +137,56 @@ summary(model.2)
 model.2b <- inla(Y ~ 0 + A + f(B, model = "iid"), data = dataset)
 summary(model.2b)
 ```
+
+# Discrete variable
+
+A discrete variable is a numerical variable but each interval between two values is an integer multiple of a fixed step size. Typical examples are related to time, e.g. the year in steps of 1 year, months expressed in terms of years (step size 1/12), ...
+
+We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable.
+
+```{r}
+n_x <- 25
+n_sample <- 10
+sd_noise <- 10
+dataset <- expand.grid(
+  X = seq_len(n_x),
+  sample = seq_len(n_sample)
+) %>%
+  mutate(
+    mu =  0.045 * X ^ 3 - X ^ 2 + 10,
+    Y = mu + rnorm(n(), sd = sd_noise),
+    X.copy = X
+  ) 
+```
+
+```{r discrete-dummy, echo = FALSE, fig.cap = "Dummy dataset with a discrete variable. The line represents the true model."}
+ggplot(dataset, aes(x = X, y = Y)) + 
+  geom_line(aes(y = mu)) +
+  geom_point()
+```
+
+Suppose we fit a simple linear model to the data. We know that this is not accurate because the real pattern is a third order polynomial. And let's add the variable also as a random effect.
+
+```{r}
+model.1 <- lmer(Y ~ X + (1|X), data = dataset)
+summary(model.1)
+model.2 <- inla(
+  Y ~ X + f(X.copy, model = "iid"), 
+  data = dataset, 
+  control.compute = list(waic = TRUE)
+)
+summary(model.2)
+```
+
+```{r discrete-fit, fig.cap = "Fitted values (line) and observed values (points) from the lme4 model. Results for the INLA model are identical.", echo = FALSE, warning = FALSE}
+dataset %>%
+  mutate(
+    random = fitted(model.1),
+    fixed = predict(model.1, re.form = NA)
+  ) %>%
+  gather("Type", "Fitted", random, fixed) %>%
+  ggplot(aes(x = X, y = Fitted)) +
+  geom_point(aes(y = Y)) +
+  geom_line(aes(colour = Type))
+```
+
