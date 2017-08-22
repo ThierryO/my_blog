@@ -14,7 +14,7 @@ output:
     toc: TRUE
 ---
 
-One of the questions to answer when using mixed models is wether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn't make sense. Much will depend on the nature of the variable. Therefore to post is split into three sections: categorical, discrete and continuous. I will only display to most relevant parts of the code. The full code is available on [GitHub](https:/github.com/thierryo/my_blog).
+One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn't make sense. Much will depend on the nature of the variable. Therefore to post is split into three sections: categorical, discrete and continuous. I will only display to most relevant parts of the code. The full code is available on [GitHub](https:/github.com/thierryo/my_blog).
 
 # Categorical variable
 
@@ -122,7 +122,7 @@ rf.1 %>%
   ylab("INLA")
 ```
 
-What if we want to add variable `B` as a nested random effect? We allready know that adding `A` to both the fixed and the random effects is nonsense. The correct way of doing this is to use `A` as a fixed effect and `B` as an [implicit nested](../../07/lme4-random-effects/index.html#implicit-nesting) random effect.
+What if we want to add variable `B` as a nested random effect? We already know that adding `A` to both the fixed and the random effects is nonsense. The correct way of doing this is to use `A` as a fixed effect and `B` as an [implicit nested](../../07/lme4-random-effects/index.html#implicit-nesting) random effect.
 
 ```{r}
 model.1 <- lmer(Y ~ 0 + A + (1|A/B), data = dataset)
@@ -188,7 +188,7 @@ dataset %>%
   geom_line(aes(colour = Type))
 ```
 
-The overall model fit improves when we add a second and third polynomial term. And the variance of the random effect descreases. It reduces even to zero once the third polynomial is in the model. Fig. \@ref(fig:discrete-fit2) illustrates how the fit of the fixed effect improves when adding the higher order terms. The effect on the fitted values with the random effect is marginal.
+The overall model fit improves when we add a second and third polynomial term. And the variance of the random effect decreases. It reduces even to zero once the third polynomial is in the model. Fig. \@ref(fig:discrete-fit2) illustrates how the fit of the fixed effect improves when adding the higher order terms. The effect on the fitted values with the random effect is marginal.
 
 ```{r}
 model.1b <- lmer(Y ~ X + I(X ^ 2) + (1|X), data = dataset)
@@ -219,7 +219,7 @@ dataset %>%
 
 ## Fit with `INLA`
 
-`INLA` requires that we alter the data to get the same output. First we copy `X` into `X.copy` because `inla` allows the variabele to be used only once in the formula. For some reason this wasn't needed with the categorical variables. The `lme4` syntax `X + (1|X)` translates into the following `INLA` syntax: `X + f(X.copy, model = "iid")`. Then next thing is that `INLA` does the model fitting and prediction in a single step. Getting predictions for new data requires to add the new data to the original data while setting the response to `NA`. If we want predictions for the fixed effect only, then we need to add rows were all random effect covariates are set to `NA`. Hence `X.copy` must be `NA` while `X` must be non `NA`. Note that this would be impossible without creating `X.copy`.
+`INLA` requires that we alter the data to get the same output. First we copy `X` into `X.copy` because `inla` allows the variable to be used only once in the formula. For some reason this wasn't needed with the categorical variables. The `lme4` syntax `X + (1|X)` translates into the following `INLA` syntax: `X + f(X.copy, model = "iid")`. Then next thing is that `INLA` does the model fitting and prediction in a single step. Getting predictions for new data requires to add the new data to the original data while setting the response to `NA`. If we want predictions for the fixed effect only, then we need to add rows were all random effect covariates are set to `NA`. Hence `X.copy` must be `NA` while `X` must be non `NA`. Note that this would be impossible without creating `X.copy`.
 
 Let's fit the three same models with `INLA`. The predictions are given in fig. \@ref(fig:discrete-fit3). The results are very similar to the `lme4` results.
 
