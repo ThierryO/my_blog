@@ -23,7 +23,12 @@ To make this clear, we start by creating a dummy dataset with 3 categorical cova
 ```{r include = FALSE}
 library(knitr)
 library(ggplot2)
-opts_chunk$set(echo = TRUE, dev = "svg")
+opts_chunk$set(
+  cache = TRUE,
+  autodep = TRUE,
+  echo = TRUE, 
+  dev = "svg"
+)
 ```
 
 ```{r message = FALSE}
@@ -265,3 +270,56 @@ dataset2 %>%
   geom_line(aes(colour = order)) +
   facet_wrap(~type)
 ```
+
+# Continuous variable
+
+A continuous variable is a numeric variable were there is not fixed step size between two values. In practice the step size will be several magnitudes smaller than the measured values. Again let's clarify this with an example dataset. For the sake of simplicity we'll reuse the true model from the example with the discrete variable. Compare fig. \@ref(fig:continuous-dummy) with fig. \@ref(fig:discrete-dummy) and you'll see that fig. \@ref(fig:continuous-dummy) has no step size while fig. \@ref(fig:discrete-dummy) does.
+
+```{r}
+n_x <- 25
+n_sample <- 10
+sd_noise <- 10
+dataset <- data.frame(
+  X = runif(n_x * n_sample, min = 1, max = n_x)
+) %>%
+  mutate(
+    mu =  0.045 * X ^ 3 - X ^ 2 + 10,
+    Y = mu + rnorm(n(), sd = sd_noise),
+    X = (X - ceiling(n_x / 2)) / floor(n_x / 2),
+    X.copy = X
+  )
+```
+
+```{r continuous-dummy, echo = FALSE, fig.cap = "Dummy dataset with a continuous variable. The line represents the true model."}
+ggplot(dataset, aes(x = X, y = Y)) + 
+  geom_line(aes(y = mu)) +
+  geom_point()
+```
+
+The `lmer` model fails because the random effect has as many unique values as observations.
+
+```{r}
+tryCatch(
+  lmer(Y ~ X + (1|X), data = dataset),
+  error = function(e){e}
+)
+```
+
+The `INLA` model yields output but the variance of the random effect is very high. A good indicator that there is something wrong.
+
+```{r}
+model.2 <- inla(
+  Y ~ X + f(X.copy, model = "iid"), 
+  data = dataset, 
+  control.compute = list(waic = TRUE)
+)
+inla.tmarginal(
+  function(x){x^-1}, 
+  model.2$marginals.hyperpar$`Precision for X.copy`
+) %>%
+  inla.zmarginal()
+```
+
+## Conclusion
+
+- Using a variable both in the fixed and random part of the model makes only sense in case of a discrete variable.
