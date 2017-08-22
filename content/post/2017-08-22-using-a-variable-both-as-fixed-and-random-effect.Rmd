@@ -1,7 +1,7 @@
 ---
 title: Using a variable both as fixed and random effect
 author: Thierry Onkelinx
-date: '2017-08-04'
+date: '2017-08-23'
 slug: fixed-and-random
 categories: ["statistics", "mixed-models"]
 tags: ["lme4", "INLA"]
