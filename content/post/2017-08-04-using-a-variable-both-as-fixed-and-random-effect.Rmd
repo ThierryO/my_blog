@@ -144,7 +144,7 @@ summary(model.2b)
 
 A discrete variable is a numerical variable but each interval between two values is an integer multiple of a fixed step size. Typical examples are related to time, e.g. the year in steps of 1 year, months expressed in terms of years (step size 1/12), ...
 
-We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable.
+We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable. The `X` variable is rescale to -1 and 1.
 
 ```{r}
 n_x <- 25
@@ -156,8 +156,9 @@ dataset <- expand.grid(
 ) %>%
   mutate(
     mu =  0.045 * X ^ 3 - X ^ 2 + 10,
-    Y = mu + rnorm(n(), sd = sd_noise)
-  ) 
+    Y = mu + rnorm(n(), sd = sd_noise),
+    X = (X - ceiling(n_x / 2)) / floor(n_x / 2)
+  )
 ```
 
 ```{r discrete-dummy, echo = FALSE, fig.cap = "Dummy dataset with a discrete variable. The line represents the true model."}
@@ -190,8 +191,8 @@ dataset %>%
 The overall model fit improves when we add a second and third polynomial term. And the variance of the random effect descreases. It reduces even to zero once the third polynomial is in the model. Fig. \@ref(fig:discrete-fit2) illustrates how the fit of the fixed effect improves when adding the higher order terms. The effect on the fitted values with the random effect is marginal.
 
 ```{r}
-model.1b <- lmer(Y ~ poly(X, 2) + (1|X), data = dataset)
-model.1c <- lmer(Y ~ poly(X, 3) + (1|X), data = dataset)
+model.1b <- lmer(Y ~ X + I(X ^ 2) + (1|X), data = dataset)
+model.1c <- lmer(Y ~ X + I(X ^ 2) + I(X ^ 3) + (1|X), data = dataset)
 anova(model.1, model.1b, model.1c)
 summary(model.1b)
 summary(model.1c)
