@@ -23,7 +23,7 @@ To make this clear, we start by creating a dummy dataset with 3 categorical cova
 ```{r include = FALSE}
 library(knitr)
 library(ggplot2)
-opts_chunk$set(echo = TRUE)
+opts_chunk$set(echo = TRUE, dev = "svg")
 ```
 
 ```{r message = FALSE}
@@ -140,6 +140,8 @@ summary(model.2b)
 
 # Discrete variable
 
+## Intro
+
 A discrete variable is a numerical variable but each interval between two values is an integer multiple of a fixed step size. Typical examples are related to time, e.g. the year in steps of 1 year, months expressed in terms of years (step size 1/12), ...
 
 We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable.
@@ -154,8 +156,7 @@ dataset <- expand.grid(
 ) %>%
   mutate(
     mu =  0.045 * X ^ 3 - X ^ 2 + 10,
-    Y = mu + rnorm(n(), sd = sd_noise),
-    X.copy = X
+    Y = mu + rnorm(n(), sd = sd_noise)
   ) 
 ```
 
@@ -165,20 +166,16 @@ ggplot(dataset, aes(x = X, y = Y)) +
   geom_point()
 ```
 
-Suppose we fit a simple linear model to the data. We know that this is not accurate because the real pattern is a third order polynomial. And let's add the variable also as a random effect.
+## Fit with `lme4`
+
+Suppose we fit a simple linear model to the data. We know that this is not accurate because the real pattern is a third order polynomial. And let's add the variable also as a random effect. We use first `lme4` to illustrate the principle. Fig. \@ref(fig:discrete-fit) illustrate how the fit of the fixed part is poor but the random effect of X compensates the fit.
 
 ```{r}
 model.1 <- lmer(Y ~ X + (1|X), data = dataset)
 summary(model.1)
-model.2 <- inla(
-  Y ~ X + f(X.copy, model = "iid"), 
-  data = dataset, 
-  control.compute = list(waic = TRUE)
-)
-summary(model.2)
 ```
 
-```{r discrete-fit, fig.cap = "Fitted values (line) and observed values (points) from the lme4 model. Results for the INLA model are identical.", echo = FALSE, warning = FALSE}
+```{r discrete-fit, fig.cap = "Fitted values (line) and observed values (points) from the lme4 model.", echo = FALSE, warning = FALSE}
 dataset %>%
   mutate(
     random = fitted(model.1),
@@ -189,4 +186,35 @@ dataset %>%
   geom_point(aes(y = Y)) +
   geom_line(aes(colour = Type))
 ```
+
+The overall model fit improves when we add a second and third polynomial term. And the variance of the random effect descreases. It reduces even to zero once the third polynomial is in the model. Fig. \@ref(fig:discrete-fit2) illustrates how the fit of the fixed effect improves when adding the higher order terms. The effect on the fitted values with the random effect is marginal.
+
+```{r}
+model.1b <- lmer(Y ~ poly(X, 2) + (1|X), data = dataset)
+model.1c <- lmer(Y ~ poly(X, 3) + (1|X), data = dataset)
+anova(model.1, model.1b, model.1c)
+summary(model.1b)
+summary(model.1c)
+```
+
+```{r discrete-fit2, fig.cap = "Fitted values from the fixed and random part of the `lme4` models. Points represent the true model.", echo = FALSE, warning = FALSE}
+dataset %>%
+  select(X, mu) %>%
+  mutate(
+    random.1 = fitted(model.1),
+    random.2 = fitted(model.1b),
+    random.3 = fitted(model.1c),
+    fixed.1 = predict(model.1, re.form = NA),
+    fixed.2 = predict(model.1b, re.form = NA),
+    fixed.3 = predict(model.1c, re.form = NA)
+  ) %>%
+  gather("Type", "Fitted", -X, -mu) %>%
+  extract(Type, c("Type", "Order"), "(.*)\\.(.*)") %>%
+  ggplot(aes(x = X, y = Fitted)) +
+  geom_point(aes(y = mu)) +
+  geom_line(aes(colour = Order)) +
+  facet_wrap(~Type)
+```
+
+
 
