@@ -1,0 +1,22 @@
+---
+title: A git workflow for ecologists
+author: Thierry Onkelinx
+date: '2017-08-23'
+slug: git_workflow_ecologists
+categories: ["reproducible-research", "version control"]
+tags: ["git"]
+banner: ''
+description: ''
+images: []
+menu: ''
+---
+
+# Git
+
+For those how don't know [git](https://git-scm.com/), it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this [blog](https://github.com/thierryo/my_blog). Have a look at [Wikipedia](https://en.wikipedia.org/wiki/Git) for more background.
+
+Although it requires some overhead, it save a lot of time once you get the hang of it. Why? Because you have the confidence that you can go back to any point in the history of a project. So you can explore new things without risking to ruin everything. The new things doesn't work out? Just go back to the last good point in the history and start over.
+
+Each point in the history is called a `commmit`. A `commit` contains all essential information on _what_ needs to change to recreate the current state starting from the previous `commit`. It also contains useful metadata: _who_ created the `commit`, _when_ and _why^[Assuming that the user entered a sensible commit message.]_.
+
+Git works great with plain text files like R scripts, RMarkdown files, data in txt or csv format, ... You can add binary files (Word, Excel, pdf, jpg, ...) to a git project, but not as efficient as plain text files and with less options. In case of a plain text file, git note which lines in the file are removed and where a given line was inserted. A change is a line is a combination of removing the old line and inserting the new line. Have a look a [this commit](https://github.com/ThierryO/my_blog/commit/fcab2804b75e7848283ef460f945f93aa3538bf5) if you want a real life example. Such granular approach is not available for binary files. Hence the old version is removed and the new version is added.
