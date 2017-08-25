@@ -20,3 +20,24 @@ Although it requires some overhead, it save a lot of time once you get the hang 
 Each point in the history is called a `commmit`. A `commit` contains all essential information on _what_ needs to change to recreate the current state starting from the previous `commit`. It also contains useful metadata: _who_ created the `commit`, _when_ and _why^[Assuming that the user entered a sensible commit message.]_.
 
 Git works great with plain text files like R scripts, RMarkdown files, data in txt or csv format, ... You can add binary files (Word, Excel, pdf, jpg, ...) to a git project, but not as efficient as plain text files and with less options. In case of a plain text file, git note which lines in the file are removed and where a given line was inserted. A change is a line is a combination of removing the old line and inserting the new line. Have a look a [this commit](https://github.com/ThierryO/my_blog/commit/fcab2804b75e7848283ef460f945f93aa3538bf5) if you want a real life example. Such granular approach is not available for binary files. Hence the old version is removed and the new version is added.
+
+# Target audience for this workflow
+
+The workflow is useful for anyone with basic computer skills. The workflow does not use all whisles and bells available in git. Only the minimal functionality which is all accessable via either a graphical user interface (GUI) or a website. We target ecologists who often write R scripts and have no prior knowledge on version control systems.
+
+This workflow seems to work for a team of scientists how work on the same project and have all write access to that project (`repository` in git terminology).
+
+# Basic workflow
+
+## Use case
+
+- First `repositories` of git novices.
+- Initial start of a `repository`.
+
+It is no longer valid as soon as more than one user `commits` to the `repository`.
+
+## Principle
+
+The basic workflow is just a simple linear history. The user makes a set of changes and commits those changes. This is repeated over and over until the project is finished.
+
+One extra step is at least a daily `push` to another machine. This creates (or updates) a copy of the entire project history to that other machine. And thus serves as a backup copy. Therefore this should be done at least daily. The easiest way is to use an online service like [GitHub](https://github.com), [Bitbucket](https://bitbucket.com), [GitLab](https://gitlab.com), ... GitHub is free for public repositories. Bitbucket is offers free private repositories but only for small teams (max 5 users). GitHub is popular with freeware open source projects. Having the repository on an only platform has another benefit: it is easy to share your work with others or to work together with others.
