@@ -179,7 +179,7 @@ _What if I choose the wrong version?_ Don't panic, both versions remain in the h
 
 # Flowcharts
 
-Here a a fex flowcharts that illustrate several components of the branching workflow with pull requests. Fig. \@ref(fig:prepare-repo) illustrates the steps you need when you want to start working on a project. Once you have a local `clone` of the repository you can `check out` the required feature branch (fig. \@ref(fig:create-branch)).
+Here a a fex flowcharts that illustrate several components of the branching workflow with pull requests. Fig. \@ref(fig:prepare-repo) illustrates the steps you need when you want to start working on a project. Once you have a local `clone` of the repository you can `check out` the required feature branch (fig. \@ref(fig:create-branch)). The last flowchart handles working in a feature branch and merge it when finished (fig. \@ref(fig:commit)).
 
 ```{r prepare-repo, fig.cap = "Flowchart for preparing a repository."}
 par(mar = rep(0, 4))
@@ -233,5 +233,36 @@ textrect(c(0.85, 0.5), radx = 0.1, lab = "Pull")
 textrect(c(0.85, 0.15), radx = 0.1, lab = "Create and\ncheck out\nfeature branch")
 textrect(c(0.5, 0.15), radx = 0.1, lab = "Push")
 textellipse(c(0.1, 0.15), radx = 0.1, lab = "Start\nworking")
+```
+
+```{r commit, fig.cap = "Flowchart for applying changes in a feature branch."}
+par(mar = rep(0, 4))
+openplotmat()
+
+straightarrow(c(0.1, 0.9), c(0.1, 0.5))
+straightarrow(c(0.1, 0.5), c(0.1, 0.15))
+straightarrow(c(0.1, 0.15), c(0.5, 0.5))
+straightarrow(c(0.5, 0.5), c(0.1, 0.5))
+straightarrow(c(0.5, 0.5), c(0.5, 0.9))
+straightarrow(c(0.5, 0.9), c(0.1, 0.5))
+straightarrow(c(0.1, 0.15), c(0.5, 0.15))
+straightarrow(c(0.5, 0.15), c(0.85, 0.15))
+straightarrow(c(0.85, 0.15), c(0.85, 0.5))
+straightarrow(c(0.85, 0.5), c(0.85, 0.9))
+
+text(0.3, 0.2, "yes")
+text(0.3, 0.35, "no")
+text(0.3, 0.55, "no")
+text(0.55, 0.7, "yes")
+
+textellipse(c(0.1, 0.9), radx = 0.1, lab = "Start\nworking")
+textrect(c(0.1, 0.5), radx = 0.1, lab = "Change and\ncommit")
+textdiamond(c(0.1, 0.15), radx = 0.1, rady = 0.1, lab = "Done with\nfeature?")
+textrect(c(0.5, 0.5), radx = 0.1, lab = "End of\nthe day?")
+textrect(c(0.5, 0.9), radx = 0.1, lab = "Push")
+textrect(c(0.5, 0.15), radx = 0.1, lab = "Push")
+textrect(c(0.85, 0.15), radx = 0.1, lab = "Create\npull request")
+textrect(c(0.85, 0.5), radx = 0.1, lab = "Delete\nfeature\nbranch")
+textellipse(c(0.85, 0.9), radx = 0.1, lab = "Check out\nfeature branch")
 ```
 
