@@ -9,6 +9,9 @@ banner: ''
 description: ''
 images: []
 menu: ''
+output:
+  blogdown::html_page:
+    toc: TRUE
 ---
 
 ```{r setup, include = FALSE}
@@ -47,7 +50,7 @@ This workflow seems to work for a team of scientists how work on the same projec
 - First `repositories` of git novices.
 - Initial start of a `repository`.
 
-It is no longer valid as soon as more than one user `commits` to the `repository`.
+It is no longer valid as soon as more than one user commits to the `repository`.
 
 ## Principle
 
@@ -76,3 +79,45 @@ data.frame(
   xlab("Time")
 ```
 
+# Branching workflow with pull requests
+
+## Use case
+
+- Working with several people on the same repository
+- More experienced git users
+
+## Principle
+
+1. Commits are only created in `feature branches`, not in the `master branch`.
+1. Finalised `branches` are `merged` into the `master branch` by `pull requests`.
+
+## Branch
+
+The basic workflow has a single `branch` which is called `master`. Git makes it easy to create new `branches`. A `branch` starts from a specific commit. Each user should create a new `branch` when he starts working on a new feature in the repository. Because each user works in his own branch, he is the only one writing to this part of the history. This avoids a lot of conflicts. Fig. \@ref(fig:branching) illustrates how the history looks like when a few branches are created.
+
+```{r branching, fig.cap = "An example of a history with a few feature branches", fig.height=3}
+dataset <- frame_data(
+  ~commit, ~parent, ~branch,
+  1, NA, "master",
+  2, 1, "master",
+  3, 2, "feature A",
+  4, 3, "feature A",
+  5, 2, "feature B",
+  6, 4, "feature A",
+  7, 5, "feature B"
+)
+dataset %>%
+  select(parent = commit, parent_branch = branch) %>%
+  right_join(dataset, by = "parent") %>%
+  ggplot(aes(x = commit, y = branch)) +
+  geom_segment(
+    aes(x = commit - 0.1, xend = parent, yend = parent_branch),
+    arrow = arrow(length = unit(2, "mm"), type = "closed", ends = "first")
+  ) +
+  geom_point(aes(colour = branch), size = 3, show.legend = FALSE) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  xlab("Time")
+```
