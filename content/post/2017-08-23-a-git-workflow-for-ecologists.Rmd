@@ -313,3 +313,29 @@ textellipse(
 )
 ```
 
+# Rules for collaboration
+
+1. Always commit into a feature branch, never in the master branch.
+1. Always start features branches for the master branch.
+1. Only work in your own branches.
+1. Never merge someone else's pull request without their consent.
+1. Don't wait too long for merging a branch. Keep the scope of a feature branch narrow.
+
+## Exceptions
+
+**Starting branches not from master**
+
+In case you want to apply a change to someone else's branch. Create a new branch starting from the other's branch, add commits and create a pull request. Basically you use someone else's branch as the master branch.
+
+**Working with multiple users in the same branch**
+
+This is OK as long as users don't work simultaneously in the branch. 
+
+- Person A create the branch
+- Person A adds commits
+- Person A pushes and notifies person B
+- Person B adds commits
+- Person B pushes and notifies the next person
+- ...
+- Person A creates a pull request
+
