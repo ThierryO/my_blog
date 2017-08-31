@@ -24,6 +24,7 @@ opts_chunk$set(
   fig.width = 6
 )
 library(dplyr)
+library(diagram)
 library(ggplot2)
 ```
 
@@ -174,4 +175,35 @@ Pull requests have several advantages over local merges
 
 Conflicts arise when a file is changed at the same location in two different branches and with different changes. Git cannot descide which version is correct and therefore blocks the merging of the pull request. It is up to the user to select the correct version and commit the required changes. See online [tutorials](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/) on how to do this. Once the conflicts are resolved, you can go ahead and merge the pull request. This is illustrated in fig. \@ref(fig:pull-request). First `master` is merged back into `feature B` to handle the merge conflict and then `feature B` is merged into `master`.
 
-_What if I choose the wrong version?_**_ Don't panic, both versions remain in the history so you don't loose any. So you can create a new branch starting for the latest commit with the correct version and merge that branch.
+_What if I choose the wrong version?_ Don't panic, both versions remain in the history so you don't loose any. So you can create a new branch starting for the latest commit with the correct version and merge that branch.
+
+# Flowcharts
+
+Here a a fex flowcharts that illustrate several components of the branching workflow with pull requests. Fig. \@ref(fig:prepare-repo) illustrates the steps you need when you want to start working on a project.
+
+```{r prepare-repo, fig.cap = "Flowchart for preparing a repository."}
+par(mar = rep(0, 4))
+openplotmat()
+
+straightarrow(c(0.1, 0.9), c(0.5, 0.9))
+straightarrow(c(0.5, 0.9), c(0.85, 0.9))
+straightarrow(c(0.5, 0.9), c(0.5, 0.5))
+straightarrow(c(0.5, 0.5), c(0.1, 0.5))
+straightarrow(c(0.5, 0.5), c(0.5, 0.15))
+
+bentarrow(c(0.9, 0.85), c(0.5, 0.5), path = "V")
+bentarrow(c(0.1, 0.5), c(0.5, 0.15), path = "V")
+
+text(0.70, 0.95, "no")
+text(0.55, 0.7, "yes")
+text(0.30, 0.55, "no")
+text(0.55, 0.3, "yes")
+
+textellipse(c(0.1, 0.9), radx = 0.1, lab = "Start")
+textdiamond(c(0.5, 0.9), radx = 0.1, rady = 0.1, lab = "Repository\nexists?")
+textrect(c(0.85, 0.9), radx = 0.1, lab = "Create\nrepository\nonline")
+textdiamond(c(0.5, 0.5), radx = 0.1, rady = 0.1, lab = "Local clone\nexists?")
+textrect(c(0.1, 0.5), radx = 0.1, lab = "Clone\nrepository")
+textellipse(c(0.5, 0.15), radx = 0.1, lab = "Start\nworking")
+```
+
