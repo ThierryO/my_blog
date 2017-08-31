@@ -3,7 +3,7 @@ title: A git workflow for ecologists
 author: Thierry Onkelinx
 date: '2017-08-23'
 slug: git_workflow_ecologists
-categories: ["reproducible-research", "version control"]
+categories: ["reproducible research", "version control"]
 tags: ["git"]
 banner: ''
 description: ''
