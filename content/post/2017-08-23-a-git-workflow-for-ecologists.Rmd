@@ -169,3 +169,9 @@ Pull requests have several advantages over local merges
 1. Since the pull request is a two step procedure, one user can create the pull request and another (e.g. the project leader) can do the actual merge.
 1. The pull request gives an overview of the aggregate changes of all the commits in the pull request. This makes it easier to get a feeling on what has been changed within the range of the pull request.
 1. Most online tools allow to add comments and reviews to a pull request. This is useful to discuss a feature prior to merging it. In case some changes are required, then the user should update his feature branch. The pull request get automatically updated.
+
+## Conflicts
+
+Conflicts arise when a file is changed at the same location in two different branches and with different changes. Git cannot descide which version is correct and therefore blocks the merging of the pull request. It is up to the user to select the correct version and commit the required changes. See online [tutorials](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/) on how to do this. Once the conflicts are resolved, you can go ahead and merge the pull request. This is illustrated in fig. \@ref(fig:pull-request). First `master` is merged back into `feature B` to handle the merge conflict and then `feature B` is merged into `master`.
+
+_What if I choose the wrong version?_**_ Don't panic, both versions remain in the history so you don't loose any. So you can create a new branch starting for the latest commit with the correct version and merge that branch.
