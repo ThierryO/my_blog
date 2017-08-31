@@ -121,3 +121,51 @@ dataset %>%
   ) +
   xlab("Time")
 ```
+
+## Pull request
+
+Creating branches is fine, but they diverge the history of the repository. So we need a mechanism to `merge` branches together. In this workflow we will work on a feature branch until it is finished. Then we merge it into the master branch. Fig. \@ref(fig:pull-request) illustrates the resulting history. This can be done locally using a `merge`, but it is safer to do it online via a `pull request`.
+
+```{r pull-request, fig.cap = "An example of a history after two pull requests", fig.height=3}
+dataset <- frame_data(
+  ~commit, ~parent, ~branch,
+  1, NA, "master",
+  2, 1, "master",
+  3, 2, "feature A",
+  4, 3, "feature A",
+  5, 2, "feature B",
+  6, 4, "feature A",
+  7, 5, "feature B",
+  8, 2, "master",
+  8, 6, "master",
+  9, 8, "feature B",
+  9, 7, "feature B",
+  10, 8, "master",
+  10, 9, "master",
+  11, 10, "feature C"
+)
+dataset %>%
+  select(parent = commit, parent_branch = branch) %>%
+  right_join(dataset, by = "parent") %>%
+  ggplot(aes(x = commit, y = branch)) +
+  geom_segment(
+    aes(x = commit - 0.1, xend = parent, yend = parent_branch),
+    arrow = arrow(length = unit(2, "mm"), type = "closed", ends = "first")
+  ) +
+  geom_point(aes(colour = branch), size = 3, show.legend = FALSE) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  xlab("Time")
+```
+
+A `pull request` is a two step procedure. First you create the `pull request` by indication online which branches you would like to `merge`. The second step is to `merge` the pull request. Documentation on how to handle `pull requests` can be found on the websites of [GitHub](https://help.github.com/articles/about-pull-requests/), [Bitbucket](https://www.atlassian.com/git/tutorials/making-a-pull-request) and [GitLab](https://docs.gitlab.com/ee/gitlab-basics/add-merge-request.html).
+
+Pull requests have several advantages over local merges
+
+1. It works only when the branches are pushed to the online copy of the repository. This ensures not only a backup but also gives access to the latest version to your colaborators.
+1. All pull requests are done against the common (online) master branch. Local merges would create diverging master branches which will create a lot of conflicts.
+1. Since the pull request is a two step procedure, one user can create the pull request and another (e.g. the project leader) can do the actual merge.
+1. The pull request gives an overview of the aggregate changes of all the commits in the pull request. This makes it easier to get a feeling on what has been changed within the range of the pull request.
+1. Most online tools allow to add comments and reviews to a pull request. This is useful to discuss a feature prior to merging it. In case some changes are required, then the user should update his feature branch. The pull request get automatically updated.
