@@ -11,6 +11,19 @@ images: []
 menu: ''
 ---
 
+```{r setup, include = FALSE}
+library(knitr)
+opts_chunk$set(
+  cache = TRUE,
+  autodep = TRUE,
+  echo = FALSE,
+  warning = FALSE,
+  fig.width = 6
+)
+library(dplyr)
+library(ggplot2)
+```
+
 # Git
 
 For those how don't know [git](https://git-scm.com/), it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this [blog](https://github.com/thierryo/my_blog). Have a look at [Wikipedia](https://en.wikipedia.org/wiki/Git) for more background.
@@ -38,6 +51,28 @@ It is no longer valid as soon as more than one user `commits` to the `repository
 
 ## Principle
 
-The basic workflow is just a simple linear history. The user makes a set of changes and commits those changes. This is repeated over and over until the project is finished.
+The basic workflow is just a simple linear history. The user makes a set of changes and commits those changes. This is repeated over and over until the project is finished. The resulting history will look like fig. \@ref(fig:basic).
 
 One extra step is at least a daily `push` to another machine. This creates (or updates) a copy of the entire project history to that other machine. And thus serves as a backup copy. Therefore this should be done at least daily. The easiest way is to use an online service like [GitHub](https://github.com), [Bitbucket](https://bitbucket.com), [GitLab](https://gitlab.com), ... GitHub is free for public repositories. Bitbucket is offers free private repositories but only for small teams (max 5 users). GitHub is popular with freeware open source projects. Having the repository on an only platform has another benefit: it is easy to share your work with others or to work together with others.
+
+```{r basic, fig.cap = "An example of the history of a basic workflow", fig.height = 1.5}
+data.frame(
+  x = 1:10,
+  y = "master"
+) %>%
+  mutate(
+    xend = lead(x) - 0.1,
+    yend = y
+  ) %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_segment(
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_point(aes(colour = y), size = 3, show.legend = FALSE) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  xlab("Time")
+```
+
