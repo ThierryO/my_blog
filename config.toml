@@ -12,6 +12,7 @@ theme = "hugo-icarus-theme"
 # Comment the themesDir option if you use this theme in production
 # themesDir = ""
 
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [permalinks]
     post = "/:year/:month/:slug"
