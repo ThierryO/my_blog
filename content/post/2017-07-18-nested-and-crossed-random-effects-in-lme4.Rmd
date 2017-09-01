@@ -17,6 +17,8 @@ Nested random effects assume that there is some kind of hierarchy in the groupin
 ```{r setup, include = FALSE}
 library(knitr)
 opts_chunk$set(
+  cache = TRUE,
+  autodep = TRUE,
   warning = FALSE,
   message = FALSE
 )

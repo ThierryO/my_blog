@@ -17,6 +17,8 @@ params:
 ```{r setup, include=FALSE}
 library(knitr)
 opts_chunk$set(
+  cache = TRUE,
+  autodep = TRUE,
   echo = FALSE,
   message = FALSE
 )
