@@ -112,6 +112,7 @@ Recently, Peersonic announced on their Facebook page that they made software ava
 
 > The biggest room in the world is the room for improvement.
 
+- Optional resting mode after a recording. As soon as the recording is stored on the SD card, the RPA is ready to create a new recording. When a bat hunts for some time around the microphone, it will lead to several recording. Placing the detector at a location with lost of activity/noise will fill the SD card on a single night. It would be useful to have a setting that disables the trigger for some time (5, 10, 30, ... seconds) after the last recording. 
 - GPS module. Such module would do ideally two things 1) add timestamps, location and estimate of location precision to each recording and 2) store the transect along which the detector moves. A GPS module is less relevant for the IP67 enclosure as that would be used stationary. 
 - The audio cable is mounted near the edge of the enclosure (fig. \@ref(fig:open)). Closing it requires some care as the connector sometimes hits the bottom halve of the enclosure. The trick is to push the connector slightly and gently inwards when closing. An L-shaped connector instead of a straight connector would probably solve this.
 - Try to move the SD card more to the side so that it is more accessible and easier to replace.
