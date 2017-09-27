@@ -1,11 +1,10 @@
 ---
 title: Review of the ReadRPA software
 author: Thierry Onkelinx
-date: '2017-09-16'
+date: '2017-09-26'
 slug: readrpa
 categories: ["bats", "tool review"]
 tags: ["peersonic", "bat detector", "review"]
-date: '2017-09-26'
 banner: ''
 description: ''
 images: []
