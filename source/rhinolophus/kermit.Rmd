@@ -1,6 +1,6 @@
 ---
 title: "Classification of bat calls"
-author: "Thierry Onkelinx"
+author: "ir. Thierry Onkelinx"
 output:
   revealjs::revealjs_presentation:
     center: yes
@@ -22,6 +22,34 @@ library(ggplot2)
 library(INBOtheme)
 library(plotly)
 ```
+
+# Introduction
+
+## Talk outline
+
+- intro
+- INBO
+- BMK
+- bats & classification problem
+
+## Goals of the talk
+
+- main goal: feedback on classification of bat calls
+- introducting INBO and BMK
+- looking for potential collaboration
+
+## Thierry Onkelinx
+
+- degrees [<img style="float: right;" src = "orcid.png" width = 30%, alt = "https://orcid.org/0000-0001-8804-4216">](https://orcid.org/0000-0001-8804-4216)
+    - MSc forestry
+    - MSc statistical data analysis
+- interests
+    - design and analysis of longterm monitoring
+    - mixed models
+    - reproducible and traceable research
+    - spatial data
+    - bats
+    - blog: https://www.muscardinus.be/
 
 # Bats
 
