@@ -51,6 +51,51 @@ library(plotly)
     - bats
     - blog: https://www.muscardinus.be/
 
+# INBO
+
+---
+
+<iframe src="https://player.vimeo.com/video/42329947" width="640" height="512" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+## Organigram
+
+<img width=500 height=500 src="KLEURORGANIGRAM_1.png">
+
+## Organigram
+
+<img width=500 height=500 src="KLEURORGANIGRAM_2.png">
+
+## Organigram
+
+<img width=500 height=500 src="KLEURORGANIGRAM_3.png">
+
+## Organigram
+
+<img width=500 height=500 src="KLEURORGANIGRAM_def.png">
+
+## Staff
+
+```{r staff}
+staff <- 265
+admin <- 6 + 13 + 2
+management <- 8
+wo <- c(BMK = 8, Data = 6, ICT = 5, Lifewatch = 6, Lab = 10, Bib = 8)
+science <- staff - admin - sum(wo) - management
+```
+
+- `r staff` staff
+    - `r science` scientific staff (scientists + technicians)
+    - `r sum(wo)` support for scientific staff
+    - `r admin` administrative staff
+    - `r management` management
+- 6 specialised teams dedicated to support the scientific staff
+    1. Biometry, Methodology & Quality assurance (`r wo["BMK"]`)
+    1. Datamanagement (`r wo["Data"]`)
+    1. Lifewatch (`r wo["Lifewatch"]`)
+    1. IT operations & development  (`r wo["ICT"]`)
+    1. Laboratory  (`r wo["Lab"]`)
+    1. Library  (`r wo["Bib"]`)
+
 # Bats
 
 ## Overview
