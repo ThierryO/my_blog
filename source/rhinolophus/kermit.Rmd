@@ -39,7 +39,7 @@ library(lme4)
 ## Goals of the talk
 
 - main goal: feedback on classification of bat calls
-- introducting INBO and BMK
+- introducing INBO and BMK
 - looking for potential collaboration
 
 ## Thierry Onkelinx
@@ -48,7 +48,7 @@ library(lme4)
     - MSc forestry
     - MSc statistical data analysis
 - interests
-    - design and analysis of longterm monitoring
+    - design and analysis of long-term monitoring
     - mixed models
     - reproducible and traceable research
     - spatial data
@@ -94,8 +94,8 @@ science <- staff - admin - sum(wo) - management
     - `r management` management
 - 6 specialised teams dedicated to support the scientific staff
     1. Biometry, Methodology & Quality assurance (`r wo["BMK"]`)
-    1. Datamanagement (`r wo["Data"]`)
-    1. Lifewatch (`r wo["Lifewatch"]`)
+    1. Data-management (`r wo["Data"]`)
+    1. Life-watch (`r wo["Lifewatch"]`)
     1. IT operations & development  (`r wo["ICT"]`)
     1. Laboratory  (`r wo["Lab"]`)
     1. Library  (`r wo["Bib"]`)
@@ -504,7 +504,7 @@ shapes %>%
 
 ### John Tukey
 
-The combination of some data and an aching desire fo  r an answer does not ensure that a reasonable answer can be extracted from a given body of data.
+The combination of some data and an aching desire for an answer does not ensure that a reasonable answer can be extracted from a given body of data.
 
 ## 5 stages of preparing LTM
 
@@ -694,9 +694,9 @@ shapes %>%
 - 1000+ species (21 in Belgium)
 - all species protected by EU and national legislation
     - need to report status and trend to EU
-- noctural lifestyle
+- nocturnal lifestyle
     - hides during the day
-    - visual assesment during night not feasible
+    - visual assessment during night not feasible
     - listen to echolocation
 
 ---
@@ -742,7 +742,7 @@ ggplot(data = night, aes(x = mtime)) +
 - $n_s \ge 6$ species
 - $n_y \ge 24$ years
 
-A minimal setup
+A minimal set-up
 
   - $n_d n_n n_r n_s \ge 300k$ recordings/year
   - $\frac{300k \times 0.1min}{60 min/h \times 8h/d \times 200d/y} = 0.31 FTE$
@@ -758,7 +758,7 @@ A minimal setup
 
 ## More realistic
 
-- good balance between precision and recall
+> - good balance between precision and recall
 > - hierarchical classification
 > - semi-supervised classification
 > - allow user to train model
@@ -778,10 +778,10 @@ A minimal setup
 @Russo2017
 
 - social communication
-    - reciever listens to direct sound
+    - receiver listens to direct sound
     - information = content of the sound
 - echolocation
-    - reciever listens to reflected sound
+    - receiver listens to reflected sound
     - information = deformation of emitted sound
 
 ## Habitat structure
