@@ -5,6 +5,7 @@ output:
   revealjs::revealjs_presentation:
     center: yes
     css: my_revealjs.css
+    fig_height: 5
 bibliography: references.bib
 ---
 
@@ -12,6 +13,7 @@ bibliography: references.bib
 library(knitr)
 opts_chunk$set(
   echo = FALSE,
+  warning = FALSE,
   cache = TRUE,
   autodep = TRUE
 )
@@ -21,6 +23,8 @@ library(dplyr)
 library(ggplot2)
 library(INBOtheme)
 library(plotly)
+library(wordcloud)
+library(lme4)
 ```
 
 # Introduction
@@ -95,6 +99,585 @@ science <- staff - admin - sum(wo) - management
     1. IT operations & development  (`r wo["ICT"]`)
     1. Laboratory  (`r wo["Lab"]`)
     1. Library  (`r wo["Bib"]`)
+
+# Biometry, Methodology & Quality assurance
+
+## Methodological support
+
+### Sir Ronald Aylmer Fisher
+
+To call in the statistician after the experiment is done may be no more than asking him to perform a post-mortem examination: he may be able to say what the experiment died of.
+
+## Partner during research
+
+```{r paper}
+dataset <- frame_data(
+  ~Title, ~X, ~Y, ~Hjust, ~Vjust, ~Step, ~Bullets,
+  "Knowledge", 0, 1.5, 0.5, 0.5, -1, "",
+  "Data", 0, -1.5, 0.5, 0.5, -1, "",
+  "Design", 1.5, 0, 0.5, 0.5, -1, "",
+  "Inference", -1.5, 0, 0.5, 0.5, -1, "",
+  "Discussion", -1.2, 1.2, 0, 1, 4,
+"- Interpretation of results
+- Scope of the model
+- Validity of research
+- Policy recommendations
+- Policy tools",
+  "Introduction", 0.2, 1.2,  0, 1, 1,
+"- Concept
+- Hypothesis
+- Motivation",
+  "Materials & Methods", 0.2, -0.1,  0, 1, 2,
+"- Design
+- Sampling
+- Sample size
+- Field protocol
+- Statistical analysis",
+  "Results", -1.2, -0.1,  0, 1, 3,
+"- Good statistical practices
+- Technical support
+- Statistical interpretation"
+) 
+dataset %>%
+  mutate(
+    Bullets = ifelse(Step <= -1, Bullets, ""),
+    Title = ifelse(Step == -1, NA, Title)
+  ) %>%
+  ggplot(aes(x = X, y = Y)) +
+  geom_text(
+    aes(label = Bullets, y = Y - 0.3), 
+    hjust = 0, vjust = 1, size = 4, colour = inbo.hoofd
+  ) +
+  geom_label(
+    aes(label = Title, hjust = Hjust, vjust = Vjust, colour = Step == -1), 
+    size = 5, 
+    show.legend = FALSE
+  ) +
+  theme_void() +
+  scale_x_continuous(expand = c(0.1, 0)) +
+  ylim(-1.5, 1.5)
+```
+
+## Partner during research
+
+```{r paper0}
+dataset %>%
+  mutate(Bullets = ifelse(Step <= 0, Bullets, "")) %>%
+  ggplot(aes(x = X, y = Y)) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_text(
+    aes(label = Bullets, y = Y - 0.3), 
+    hjust = 0, vjust = 1, size = 4, colour = inbo.hoofd
+  ) +
+  geom_label(
+    aes(label = Title, hjust = Hjust, vjust = Vjust, colour = Step == -1), 
+    size = 5, 
+    show.legend = FALSE
+  ) +
+  theme_void() +
+  scale_x_continuous(expand = c(0.1, 0)) +
+  ylim(-1.5, 1.5)
+```
+
+## Partner during research
+
+```{r paper1}
+dataset %>%
+  mutate(Bullets = ifelse(Step <= 1, Bullets, "")) %>%
+  ggplot(aes(x = X, y = Y)) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_text(
+    aes(label = Bullets, y = Y - 0.3), 
+    hjust = 0, vjust = 1, size = 4, colour = inbo.hoofd
+  ) +
+  geom_label(
+    aes(label = Title, hjust = Hjust, vjust = Vjust, colour = Step == -1), 
+    size = 5, 
+    show.legend = FALSE
+  ) +
+  theme_void() +
+  scale_x_continuous(expand = c(0.1, 0)) +
+  ylim(-1.5, 1.5)
+```
+
+## Partner during research
+
+```{r paper2}
+dataset %>%
+  mutate(Bullets = ifelse(Step <= 2, Bullets, "")) %>%
+  ggplot(aes(x = X, y = Y)) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_text(
+    aes(label = Bullets, y = Y - 0.3), 
+    hjust = 0, vjust = 1, size = 4, colour = inbo.hoofd
+  ) +
+  geom_label(
+    aes(label = Title, hjust = Hjust, vjust = Vjust, colour = Step == -1), 
+    size = 5, 
+    show.legend = FALSE
+  ) +
+  theme_void() +
+  scale_x_continuous(expand = c(0.1, 0)) +
+  ylim(-1.5, 1.5)
+```
+
+## Partner during research
+
+```{r paper3}
+dataset %>%
+  mutate(Bullets = ifelse(Step <= 3, Bullets, "")) %>%
+  ggplot(aes(x = X, y = Y)) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_text(
+    aes(label = Bullets, y = Y - 0.3), 
+    hjust = 0, vjust = 1, size = 4, colour = inbo.hoofd
+  ) +
+  geom_label(
+    aes(label = Title, hjust = Hjust, vjust = Vjust, colour = Step == -1), 
+    size = 5, 
+    show.legend = FALSE
+  ) +
+  theme_void() +
+  scale_x_continuous(expand = c(0.1, 0)) +
+  ylim(-1.5, 1.5)
+```
+
+## Partner during research
+
+```{r paper4}
+dataset %>%
+  ggplot(aes(x = X, y = Y)) +
+  geom_vline(xintercept = 0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = 2) +
+  geom_text(
+    aes(label = Bullets, y = Y - 0.3), 
+    hjust = 0, vjust = 1, size = 4, colour = inbo.hoofd
+  ) +
+  geom_label(
+    aes(label = Title, hjust = Hjust, vjust = Vjust, colour = Step == -1), 
+    size = 5, 
+    show.legend = FALSE
+  ) +
+  theme_void() +
+  scale_x_continuous(expand = c(0.1, 0)) +
+  ylim(-1.5, 1.5)
+```
+
+## Acquisition, development and maintainance of methodologies
+
+> - Concept for setting up long term ecological monitoring
+> - Field protocols
+> - Novel statistical techniques
+> - Automation of recurring analyses
+> - Traceability of analyses
+
+## Statistical support
+
+### Karl Pearson
+
+The unity of all science consists alone in its method, not in its material.
+
+## Tools open and reproducible analysis
+
+> - R
+> - Scripted analysis
+> - Version control
+> - Dynamic documents
+> - Corporate identity styles for graphics and dynamic documents
+
+## Freeware open source software
+
+```{r wordcloud}
+set.seed(123)
+cloud <- frame_data(
+  ~words, ~freq,
+  "R", 50,
+  "RStudio", 25,
+  "Markdown", 25,
+  "GitHub", 25,
+  "ggplot2", 10,
+  "dplyr", 10,
+  "tidyr", 10,
+  "DBI", 3,
+  "sp", 3,
+  "rgeos", 3,
+  "rgdal", 3,
+  "INBOmd", 5,
+  "INBOtheme", 5,
+  "multimput", 5,
+  "devtools", 5,
+  "INLA", 5,
+  "lme4", 5,
+  "vegan", 5,
+  "ggmap", 3,
+  "leaflet", 3,
+  "googlesheets", 3,
+  "gstat", 3,
+  "nlme", 5, 
+  "lintr", 3,
+  "covr", 3,
+  "lubridate", 3,
+  "mgcv", 5,
+  "multcomp", 3,
+  "knitr", 5,
+  "raster", 3,
+  "readr", 5,
+  "readxl", 5,
+  "testthat", 3
+)
+wordcloud(
+  words = cloud$words,
+  freq = cloud$freq,
+  random.color = TRUE,
+  colors = inbo.2015.colours(9)
+)
+```
+
+---
+
+![](20150628_0386.jpg)
+
+## Statistical expertise
+
+### George E. P. Box
+
+All models are wrong, but some are useful.
+
+## Data validation
+
+```{r tree}
+dataset <- read.csv("tree.csv") %>%
+  mutate(lc130 = log(c130 / 100))
+model <- lmer(
+  height ~ poly(lc130, 2) + (poly(lc130, 2) | location),
+  data = dataset
+)
+dataset <- dataset %>%
+  mutate(
+    fit = fitted(model),
+    residual = residuals(model),
+    rank = n() - min_rank(abs(residual))
+  )
+max_rank <- 27
+relevant <- dataset %>%
+  filter(rank <= max_rank) %>%
+  distinct(location) 
+dataset %>%
+  semi_join(relevant, by = "location") %>%
+  mutate(
+    anomaly = rank <= max_rank
+  ) %>%
+  arrange(desc(rank)) %>%
+  ggplot(aes(x = c130, y = height)) +
+  geom_jitter(
+    aes(colour = anomaly), 
+    position = position_jitter(width = 5, height = 0)
+  ) +
+  geom_line(aes(y = fit)) +
+  facet_wrap(~location) +
+  xlab("Circumference at 130 cm (cm)") +
+  ylab("Tree height (m)") +
+  scale_colour_manual(
+    "Anomaly", 
+    values = c("FALSE" = inbo.steun.geelgroen, "TRUE" = inbo.hoofd)
+  )
+```
+
+## Power calculation
+
+<img src="vanermen2015.png" height=500>
+
+
+# Towards supporting policy with open reproducible science
+
+## Rome wasn't built in a day
+
+- Gradual change is key for success
+- New procedures should lower the burden in the long run
+- Stimulation and support is vital
+- Focus on early adopters and early majority
+- Allow for a long transition period before enforcing change
+
+
+## The 'good' old days
+
+```{r oldschool, fig.height = 2}
+theme_set(theme_inbo(6, transparent = TRUE))
+z <- 0.6
+texts <- data.frame(
+  phase = 0:5,
+  label = c(
+"vague
+information
+requirements", 
+"Phase I
+supply and demand", 
+"Phase II
+design
+data collection", 
+"Phase III
+design
+data management
+data analysis", 
+"Phase IV
+design
+reporting
+communication", 
+"Phase V
+implementation"
+    ),
+  x = c(-1.5, -z, 0,  z,  0, 1.5),
+  y = c(   0,  0, z,  0, -z, 0)
+)
+shapes <- bind_rows(
+  expand.grid(
+    phase = 1:4,
+    x = 0,
+    y = 0
+  ),
+  expand.grid(
+    phase = 1:4,
+    angle = seq(-0.5, 0.5, length = 41) * pi / 3 + pi
+  ) %>%
+  mutate(
+    angle = angle - (phase - 1) * pi / 2,
+    x = cos(angle),
+    y = sin(angle)
+  ),
+  expand.grid(
+    phase = 1:4,
+    x = 0,
+    y = 0
+  ),
+  data.frame(
+    phase = 0,
+    x = c(-1.2, -1.2, -1.8, -1.8, -1.2),
+    y = c(-0.3, 0.3, 0.3, -0.3, -0.3)
+  ),
+  data.frame(
+    phase = 5,
+    x = c(1.2, 1.2, 1.8, 1.8, 1.2),
+    y = c(-0.3, 0.3, 0.3, -0.3, -0.3)
+  )
+)
+rad <- 0.8
+arrows <- data.frame(
+  phase = 1:4
+) %>%
+  mutate(
+    start = 0.5 * pi / 3 + (phase - 1) * pi / 2,
+    end = -0.5 * pi / 3 + phase * pi / 2,
+    x = cos(start) * rad,
+    y = sin(start) * rad,
+    xend = cos(end) * rad,
+    yend = sin(end) * rad
+  )
+triple_arrows <- expand.grid(
+  extra = c(-1, 0, 1)
+) %>%
+  mutate(
+    x = -1.2,
+    xend = 1.2,
+    y = extra * 0.1,
+    yend = extra * 0.1
+  )
+shapes %>%
+  filter(phase %in% c(0, 5)) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_path(aes(group = phase)) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_text(
+    data = filter(texts, phase %in% c(0, 5)), 
+    aes(label = gsub("Phase V\n", "", label))
+  ) +
+  coord_fixed() + 
+  theme_void()
+```
+
+### John Tukey
+
+The combination of some data and an aching desire for an answer does not ensure that a reasonable answer can be extracted from a given body of data.
+
+## 5 stages of preparing LTM
+
+```{r guidebook}
+triple_arrows <- expand.grid(
+  place = c(-1, 1),
+  extra = c(-1, 0, 1)
+) %>%
+  mutate(
+    x = pmin(place, place * 1.2),
+    xend = pmax(place, place * 1.2),
+    y = extra * 0.1,
+    yend = extra * 0.1
+  )
+ggplot(shapes, aes(x = x, y = y)) +
+  geom_path(aes(group = phase)) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label)) +
+  coord_fixed() + 
+  theme_void()
+```
+
+## Focus on the relevant questions
+
+```{r guidebook0}
+shapes %>%
+  mutate(background = phase == 0) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label)) +
+  coord_fixed() + 
+  scale_fill_manual(values = c("TRUE" = inbo.steun.geelgroen, "FALSE" = NA)) +
+  theme_void()
+```
+
+## Prioritise the questions
+
+```{r guidebook1}
+shapes %>%
+  mutate(background = phase == 1) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label, colour = phase == 1), show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = inbo.bruinrood, "FALSE" = inbo.steun.blauw)) +
+  coord_fixed() + 
+  scale_fill_manual(values = c("TRUE" = inbo.steun.geelgroen, "FALSE" = NA)) +
+  theme_void()
+```
+
+## Scenarios: power and cost 
+
+```{r guidebook2}
+shapes %>%
+  mutate(background = phase == 2) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label, colour = phase == 2), show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = inbo.bruinrood, "FALSE" = inbo.steun.blauw)) +
+  coord_fixed() + 
+  scale_fill_manual(values = c("TRUE" = inbo.steun.geelgroen, "FALSE" = NA)) +
+  theme_void()
+```
+
+## From raw data to final results
+
+```{r guidebook3}
+shapes %>%
+  mutate(background = phase == 3) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label, colour = phase == 3), show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = inbo.bruinrood, "FALSE" = inbo.steun.blauw)) +
+  coord_fixed() + 
+  scale_fill_manual(values = c("TRUE" = inbo.steun.geelgroen, "FALSE" = NA)) +
+  theme_void()
+```
+
+## What to communicate
+
+```{r guidebook4}
+shapes %>%
+  mutate(background = phase == 4) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label, colour = phase == 4), show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = inbo.bruinrood, "FALSE" = inbo.steun.blauw)) +
+  coord_fixed() + 
+  scale_fill_manual(values = c("TRUE" = inbo.steun.geelgroen, "FALSE" = NA)) +
+  theme_void()
+```
+
+## We're almost ready
+
+```{r guidebook6}
+shapes %>%
+  mutate(background = phase == 5) %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_segment(
+    data = triple_arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_segment(
+    data = arrows, 
+    aes(xend = xend, yend = yend), 
+    arrow = arrow(ends = "both", length = unit(2, "mm"))
+  ) +
+  geom_text(data = texts, aes(label = label, colour = phase == 5), show.legend = FALSE) +
+  scale_colour_manual(values = c("TRUE" = inbo.bruinrood, "FALSE" = inbo.steun.blauw)) +
+  coord_fixed() + 
+  scale_fill_manual(values = c("TRUE" = inbo.steun.geelgroen, "FALSE" = NA)) +
+  theme_void()
+```
 
 # Bats
 
