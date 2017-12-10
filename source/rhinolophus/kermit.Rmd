@@ -418,7 +418,7 @@ requirements",
 supply and demand", 
 "Phase II
 design
-data collection", 
+data collection",  
 "Phase III
 design
 data management
@@ -504,7 +504,7 @@ shapes %>%
 
 ### John Tukey
 
-The combination of some data and an aching desire for an answer does not ensure that a reasonable answer can be extracted from a given body of data.
+The combination of some data and an aching desire fo  r an answer does not ensure that a reasonable answer can be extracted from a given body of data.
 
 ## 5 stages of preparing LTM
 
@@ -542,7 +542,7 @@ ggplot(shapes, aes(x = x, y = y)) +
 shapes %>%
   mutate(background = phase == 0) %>%
   ggplot(aes(x = x, y = y)) +
-  geom_polygon(aes(group = phase, fill = background), show.legend = FALSE) +
+  geom_polygon(aes(group = phase, fill = background ), show.legend = FALSE) +
   geom_segment(
     data = triple_arrows, 
     aes(xend = xend, yend = yend), 
@@ -681,6 +681,14 @@ shapes %>%
 
 # Bats
 
+---
+
+![](sports-1452997_640.jpg)
+
+---
+
+![](bat-2612580_640.jpg)
+
 ## Overview
 
 - 1000+ species (21 in Belgium)
@@ -718,13 +726,12 @@ include_graphics("species_pulse.png")
 
 ```{r}
 night <- readRDS("night.rds")
-p <- ggplot(data = night, aes(x = mtime)) + 
+ggplot(data = night, aes(x = mtime)) + 
   geom_histogram(binwidth = 5 * 60) +
   geom_density(adjust = 0.5, aes(y = 5 * 60 * ..count..), colour = inbo.hoofd) +
   scale_x_datetime("Time of night") +
   scale_y_continuous("Number of recordings per 5 min") +
   ggtitle("One night at 'kasteel van Beersel'")
-ggplotly(p, dynamicTicks = TRUE)
 ```
 
 ## Monitoring bats
@@ -740,14 +747,21 @@ A minimal setup
   - $n_d n_n n_r n_s \ge 300k$ recordings/year
   - $\frac{300k \times 0.1min}{60 min/h \times 8h/d \times 200d/y} = 0.31 FTE$
 
-## Goals for automatic classification
+## Ideal scenario
 
-- ideally: number of individuals per species
-- more realistic
-    1. "bats" vs "no bats"
-    1. split in large groups
-    1. discrimitate most species
-    1. semi-supervised learning
+- fully automated classification
+> - 100% precision and 100% recall
+> - identify species
+> - identify behaviour(s)
+> - number of individuals per species
+> - handle "new" species
+
+## More realistic
+
+- good balance between precision and recall
+> - hierarchical classification
+> - semi-supervised classification
+> - allow user to train model
 
 # Things get complicated
 
