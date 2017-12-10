@@ -878,7 +878,31 @@ plot(
 )
 ```
 
+## Strong dependencies
+
+> - pulses close in time within a recording
+> - recordings close in time
+> - recordings close in space
+> - curse or blessing?
+
+
 # Things I've tried & idea's
+
+## Drawbacks existing software
+
+> - one size fits all
+> - output only at recording level
+> - little assistance for validation
+> - user can't update model
+
+## Potential workflow
+
+> 1. detect potential pulses
+> 1. convert into numbers
+> 1. unsupervised classification
+> 1. manually classify sample
+> 1. supervised classification
+> 1. validation + retrain model
 
 ## Extract pulses from sonogram
 
@@ -930,12 +954,45 @@ p <- ggplot(contour, aes(x = long, y = lat)) +
 ggplotly(p)
 ```
 
+## Elliptical Fourier
+
+```{r elliptical-fourier2, message = FALSE, warning = FALSE}
+dB2 <- extent(1620, 1650, 45, 90) %>%
+  crop(x = sonor)
+contour <- get_contours(dB2, cellStats(dB2, max) - 28)[2, ] %>%
+  fortify() %>%
+  mutate(theta = 2 * pi * order / (n() - 1))
+fourier <- lapply(
+  1:20,
+  function(n){
+    form <- sprintf("I(sin(%1$i * theta)) + I(cos(%1$i * theta))", seq_len(n)) %>%
+      paste(collapse = "+") %>%
+      sprintf(fmt = "cbind(long, lat) ~ %s") %>%
+      as.formula()
+    model <- lm(form, data = contour)
+    fitted(model) %>%
+      as.data.frame() %>%
+      mutate(component = n)
+  }
+) %>%
+  bind_rows()
+p <- ggplot(contour, aes(x = long, y = lat)) +
+  geom_polygon(fill = NA, colour = inbo.hoofd) +
+  geom_polygon(
+    data = fourier, 
+    aes(frame = component), 
+    fill = NA
+  ) +
+  coord_fixed() +
+  xlab("time (ms)") +
+  ylab("frequency (kHz)")
+ggplotly(p)
+```
+
 ## Unsupervised classification
 
-- self organizing maps
-
-$\left \lfloor{\log(n)}\right \rfloor$
-
+- self organizing maps (Kohonen)
+- adaptive resonance theory (ART)
 
 ## Manual interpretation of stratified sample
 
