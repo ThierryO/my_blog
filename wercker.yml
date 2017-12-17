@@ -4,6 +4,10 @@ build:
     - script:
         code: |
           Rscript -e "blogdown::build_site()"
+          cd source/rhinolophus
+          Rscript -e "bookdown::render_book(input = 'index.Rmd')"
+          mv kermit.html ../../public/post/kermit
+          Rscript -e "bookdown::render_book(input = 'index.Rmd', output_format = 'bookdown::gitbook')"
 
 deploy:
   steps:
