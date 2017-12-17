@@ -1,9 +1,9 @@
 :root {
-  --main-bg-color: #565a5f; /* #FFEB00 */
+  --main-bg-color: #C04384;
 }
 
 .reveal .slides > section{
-  background-color: #f5f8f9;
+  background-color: #FFFFFF;
   background-size: 10vw;
   border-left: 32px solid var(--main-bg-color);
   width: 100%;
