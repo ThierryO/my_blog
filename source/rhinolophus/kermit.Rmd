@@ -749,7 +749,7 @@ A minimal set-up
 
 ## Ideal scenario
 
-- fully automated classification
+> - fully automated classification
 > - 100% precision and 100% recall
 > - identify species
 > - identify behaviour(s)
@@ -777,12 +777,8 @@ A minimal set-up
 
 @Russo2017
 
-- social communication
-    - receiver listens to direct sound
-    - information = content of the sound
-- echolocation
-    - receiver listens to reflected sound
-    - information = deformation of emitted sound
+> - social communication
+> - echolocation
 
 ## Habitat structure
 
@@ -898,7 +894,7 @@ plot(
 ## Potential workflow
 
 > 1. detect potential pulses
-> 1. convert into numbers
+> 1. convert into features
 > 1. unsupervised classification
 > 1. manually classify sample
 > 1. supervised classification
@@ -989,17 +985,37 @@ p <- ggplot(contour, aes(x = long, y = lat)) +
 ggplotly(p)
 ```
 
+## Features
+
+- peak time, time shift Fourier ellipse
+- peak frequency, frequency shift Fourier ellipse
+- length semi-axes Fourier ellipses
+- rotation first semi-axes Fourier ellipses
+
+> - scale features?
+> - how many Fourier components?
+> - use multiple contours?
+
 ## Unsupervised classification
 
-- self organizing maps (Kohonen)
-- adaptive resonance theory (ART)
+> - self organizing maps (SOM) [@kohonen1982]
+> - adaptive resonance theory (ART) [@ART]
 
 ## Manual interpretation of stratified sample
 
 
 ## Semi-supervised classification
 
-- long short-term memory network within recording
-- long short-term memory network among recordings
+> - self organizing maps (SOM) [@kohonen1982]
+> - long short-term memory network (LSTM) [@LSTM]
+>     - within recording
+>     - among recordings
+> - combining models in a hierarchy?
+
+## Explaining the black box 
+
+@LIME
+
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/hUnRCxnydCc?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
 
 ## References
