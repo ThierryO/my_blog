@@ -58,6 +58,7 @@ library(lme4)
     - spatial data
     - bats
     - blog: https://www.muscardinus.be/
+    - https://github.com/ThierryO
 
 # INBO
 
