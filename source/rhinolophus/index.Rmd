@@ -1,11 +1,15 @@
 ---
 title: "Classification of bat calls"
 author: "ir. Thierry Onkelinx"
+site: bookdown::bookdown_site
 output:
   revealjs::revealjs_presentation:
     center: yes
     css: my_revealjs.css
     fig_height: 5
+  bookdown::gitbook:
+    split_by: "chapter+number"
+    css: "inbo_rapport.css"
 bibliography: references.bib
 ---
 
@@ -44,7 +48,7 @@ library(lme4)
 
 ## Thierry Onkelinx
 
-- degrees [<img style="float: right;" src = "orcid.png" width = 30%, alt = "https://orcid.org/0000-0001-8804-4216">](https://orcid.org/0000-0001-8804-4216)
+- degrees [<img style="float: right;" src="orcid.png" width=30%, alt="https://orcid.org/0000-0001-8804-4216">](https://orcid.org/0000-0001-8804-4216)
     - MSc forestry
     - MSc statistical data analysis
 - interests
@@ -59,7 +63,9 @@ library(lme4)
 
 ---
 
-<iframe src="https://player.vimeo.com/video/42329947" width="640" height="512" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+```{r}
+include_url("https://player.vimeo.com/video/42329947")
+```
 
 ## Organigram
 
@@ -707,7 +713,9 @@ include_graphics("echoa.gif")
 
 ---
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/MgRh_Q_xwys" frameborder="0" allowfullscreen></iframe>
+```{r}
+include_url("https://www.youtube-nocookie.com/embed/MgRh_Q_xwys")
+```
 
 ## Echolocation analysis
 
@@ -1016,6 +1024,9 @@ ggplotly(p)
 
 @LIME
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/hUnRCxnydCc?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+
+```{r}
+include_url("https://www.youtube-nocookie.com/embed/hUnRCxnydCc?rel=0&amp;showinfo=0")
+```
 
 ## References
