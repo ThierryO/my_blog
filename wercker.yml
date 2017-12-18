@@ -4,8 +4,9 @@ build:
     - script:
         code: |
           Rscript -e "blogdown::build_site()"
-          Rscript -e "devtools::install_github('thierryo/rhinolophus')"
+          Rscript -e "devtools::install_github('thierryo/rhinolophus@multi_contour')"
           Rscript -e "devtools::install_github('inbo/inbotheme')"
+          Rscript -e "devtools::install_github('tidyverse/ggplot2')"
           Rscript -e "install.packages(c('plotly', 'wordcloud'))"
           cd source/rhinolophus
           Rscript -e "bookdown::render_book(input = 'index.Rmd')"
