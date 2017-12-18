@@ -4,6 +4,7 @@ build:
     - script:
         code: |
           Rscript -e "blogdown::build_site()"
+          Rscript -e "devtools::install_github('thierryo/rhinolophus')"
           cd source/rhinolophus
           Rscript -e "bookdown::render_book(input = 'index.Rmd')"
           mv kermit.html ../../public/post/kermit
