@@ -70,22 +70,6 @@ library(lme4)
 include_url("https://player.vimeo.com/video/42329947")
 ```
 
-## Organigram
-
-<img width=500 height=500 src="KLEURORGANIGRAM_1.png">
-
-## Organigram
-
-<img width=500 height=500 src="KLEURORGANIGRAM_2.png">
-
-## Organigram
-
-<img width=500 height=500 src="KLEURORGANIGRAM_3.png">
-
-## Organigram
-
-<img width=500 height=500 src="KLEURORGANIGRAM_def.png">
-
 ## Staff
 
 ```{r staff}
@@ -401,16 +385,7 @@ dataset %>%
 <img src="vanermen2015.png" height=500>
 
 
-# Towards supporting policy with open reproducible science
-
-## Rome wasn't built in a day
-
-- Gradual change is key for success
-- New procedures should lower the burden in the long run
-- Stimulation and support is vital
-- Focus on early adopters and early majority
-- Allow for a long transition period before enforcing change
-
+# Designing long-term ecological monitoring
 
 ## The 'good' old days
 
@@ -515,7 +490,7 @@ shapes %>%
 
 The combination of some data and an aching desire for an answer does not ensure that a reasonable answer can be extracted from a given body of data.
 
-## 5 stages of preparing LTM
+## 5 stages of preparing LTEM
 
 ```{r guidebook}
 triple_arrows <- expand.grid(
@@ -761,7 +736,6 @@ A minimal set-up
 ## Ideal scenario
 
 > - fully automated classification
-> - 100% precision and 100% recall
 > - identify species
 > - identify behaviour(s)
 > - number of individuals per species
@@ -996,23 +970,11 @@ p <- ggplot(contour, aes(x = long, y = lat)) +
 ggplotly(p)
 ```
 
-## Features
-
-- peak time, time shift Fourier ellipse
-- peak frequency, frequency shift Fourier ellipse
-- length semi-axes Fourier ellipses
-- rotation first semi-axes Fourier ellipses
-
-> - scale features?
-> - how many Fourier components?
-> - use multiple contours?
-
 ## Unsupervised classification
 
 > - self organizing maps (SOM) [@kohonen1982]
 > - adaptive resonance theory (ART) [@ART]
 
-## Manual interpretation of stratified sample
 
 
 ## Semi-supervised classification
@@ -1022,14 +984,5 @@ ggplotly(p)
 >     - within recording
 >     - among recordings
 > - combining models in a hierarchy?
-
-## Explaining the black box 
-
-@LIME
-
-
-```{r}
-include_url("https://www.youtube-nocookie.com/embed/hUnRCxnydCc?rel=0&amp;showinfo=0")
-```
 
 ## References
