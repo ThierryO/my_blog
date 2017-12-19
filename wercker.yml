@@ -9,9 +9,10 @@ build:
           Rscript -e "devtools::install_github('tidyverse/ggplot2')"
           Rscript -e "install.packages(c('plotly', 'wordcloud'))"
           cd source/rhinolophus
-          Rscript -e "bookdown::render_book(input = 'index.Rmd', output_format = 'bookdown::gitbook')"
           Rscript -e "bookdown::render_book(input = 'index.Rmd')"
-          mv kermit.html ../../public/post/kermit
+          mkdir ../../public/post/kermit
+          cp kermit.html ../../public/post/kermit/index.html
+          cp my_revealjs.css ../../public/post/kermit/my_revealjs.css
 
 deploy:
   steps:

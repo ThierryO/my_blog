@@ -9,9 +9,6 @@ output:
     fig_height: 5
     reveal_options:
       slideNumber: 'c/t'
-  bookdown::gitbook:
-    split_by: "chapter+number"
-    css: "inbo_rapport.css"
 bibliography: references.bib
 ---
 
