@@ -149,7 +149,7 @@ summary(model.2b)
 
 A discrete variable is a numerical variable but each interval between two values is an integer multiple of a fixed step size. Typical examples are related to time, e.g. the year in steps of 1 year, months expressed in terms of years (step size 1/12), ...
 
-We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable. The `X` variable is rescale to -1 and 1.
+We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable. The `X` variable is rescaled to -1 and 1.
 
 ```{r}
 n_x <- 25
