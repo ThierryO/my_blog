@@ -51,7 +51,31 @@ First we have to download the surveys. We need some ugly code to get everything 
 ```{r}
 id <- c(35745, 36309, 37444, 38379)
 source("../../source/waarnemingen_be.R")
-observation <- read_observation(id)
+if (file.exists("../../static/post/2017-06-15-transect/observation.txt")) {
+  read.delim(
+    "../../static/post/2017-06-15-transect/observation.txt",
+    stringsAsFactors = FALSE
+  ) %>%
+    mutate(
+      time = as.POSIXct(time),
+      starttime = as.POSIXct(starttime),
+      endtime = as.POSIXct(endtime)
+    ) -> observation
+} else {
+  observation <- read_observation(id) %>%
+    arrange(route_id, observation_id)
+  if (!dir.exists("../../static/post/2017-06-15-transect")) {
+    dir.create("../../static/post/2017-06-15-transect", recursive = TRUE)
+  }
+  write.table(
+    observation, 
+    file = "../../static/post/2017-06-15-transect/observation.txt",
+    quote = FALSE,
+    sep = "\t",
+    row.names = FALSE,
+    fileEncoding = "UTF-8"
+  )
+}
 kml <- read_kml(observation = observation)
 route <- kml$route
 point <- kml$point
