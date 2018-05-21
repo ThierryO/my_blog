@@ -51,7 +51,7 @@ First we have to download the surveys. We need some ugly code to get everything 
 ```{r}
 id <- c(35745, 36309, 37444, 38379)
 source("../../source/waarnemingen_be.R")
-if (file.exists("../../static/post/2017-06-16-transect/observation.txt")) {
+if (file.exists("../../static/post/2017-06-15-transect/observation.txt")) {
   read.delim(
     "../../static/post/2017-06-15-transect/observation.txt",
     stringsAsFactors = FALSE
