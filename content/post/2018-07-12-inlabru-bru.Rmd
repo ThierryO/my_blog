@@ -21,6 +21,8 @@ The test data is derived from the "Wintering waterbirds in Flanders, Belgium", f
 ```{r setup, include = FALSE}
 library(knitr)
 opts_chunk$set(
+  cache = TRUE,
+  autodep = TRUE,
   echo = TRUE,
   message = FALSE
 )
@@ -34,7 +36,7 @@ setWidgetIdSeed(20180712)
 include_graphics("http://www.artsobservasjoner.no/MediaLibrary/2017/5/25dfef70-0a56-4f12-ad2e-77cbd4888615_image.jpg")
 ```
 
-```{r}
+```{r load-packages}
 library(scales)
 library(tidyverse)
 library(leaflet)
@@ -69,13 +71,102 @@ goose %>%
   addCircleMarkers(radius = ~mean)
 ```
 
+# `INLA` vs `inlabru`
 
-```{r}
+## Fixed effects only
+
+Let's start with a very simple model with contains only the year centered to the last year. The syntax of both models is very similar. `bru()` is a bit shorted because it returns both $WAIC$ and $DIC$ by default. The models are identical because `bru()` is just a wrapper for `inla()`. Their summary output is somewhat different in terms of lay-out and which information is given.
+
+```{r load-inla}
 library(INLA)
 library(inlabru)
 ```
 
-```{r}
-
+```{r fixed-continous}
+goose %>%
+  mutate(cyear = year - max(year)) -> goose
+m0_inla <- inla(
+  count ~ cyear, 
+  data = goose, 
+  family = "nbinomial", 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+m0_inlabru <- bru(count ~ cyear, data = goose, family = "nbinomial")
+summary(m0_inla)
+summary(m0_inlabru)
 ```
 
+A drawback is that `bru()` doesn't handle factor fixed effects as expected. Luckily it yields a warning about invalid factor levels. Unfortunaltly you don't get the warning when getting the summary. You need to be critical and notice that the parameters of the model are not what you would expect. The workaround is to convert the factor variable into a set of dummy variables and use those. Creating the dummy variable is straight forward with `model.matrix`. But adding them to the model is not very efficient when you have factor variables with more than a just few levels.
+
+```{r fixed-factor}
+m1_inla <- inla(
+  count ~ cyear + month, 
+  data = goose, 
+  family = "nbinomial", 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+m1_inlabru <- bru(count ~ cyear + month, data = goose, family = "nbinomial")
+summary(m1_inla)
+summary(m1_inlabru)
+goose %>% 
+  model.matrix(object = ~month) %>%
+  as.data.frame() %>%
+  select(-1) %>%
+  bind_cols(goose) -> goose
+m1_inlabru <- bru(
+  count ~ cyear + monthdec + monthjan + monthfeb, 
+  data = goose, 
+  family = "nbinomial"
+)
+summary(m1_inlabru)
+```
+
+## 'Simple' random effects
+
+`inla()` use the `f()` function to specify the random effects. `bru()` is very liberal and allows the user to choose any name, as long as it is a valid function name. In the example below we use `site`. For more detail see `help("bru.components")`. The downside is that `bru()` requires integer coded levels which go from 1 to the number of levels. We use the `as.integer(factor())` trick to get these indices. Furthermore you need to supply the number of levels in the random effect for some random effects models.
+
+```{r random-iid}
+comp_inla <- count ~ cyear + month + f(location_id, model = "iid")
+m2_inla <- inla(
+  comp_inla, data = goose, family = "nbinomial", 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+goose %>%
+  mutate(
+    loc_id = factor(location_id) %>%
+      as.integer()
+  ) -> goose
+n_loc <- max(goose$loc_id)
+comp_inlabru <- count ~ cyear + monthdec + monthjan + monthfeb + 
+  site(map = loc_id, model = "iid", n = n_loc)
+m2_inlabru <- bru(comp_inlabru, data = goose, family = "nbinomial")
+summary(m2_inla)
+summary(m2_inlabru)
+```
+
+The use of user defined names for random effect functions has the benefit that you can use the same variable multiple times in the model. `inla()` requires unique names and hence copies of the variable. The `map` argument also allows to use a function of a variable, thus removing the need of creating a new variable. The `model = "linear"` is another way of specifying a continuous fixed effect. See http://www.r-inla.org/models/latent-models for an overview of all available latent models in INLA.
+
+```{r random-alternatives}
+goose %>%
+  mutate(
+    cyear = cyear - min(cyear) + 1,
+    cyear2 = cyear
+  ) -> goose2
+n_year <- max(goose2$cyear)
+comp_inla <- count ~ cyear + f(cyear2, model = "iid") + 
+  month + f(location_id, model = "iid")
+m3_inla <- inla(
+  comp_inla, data = goose2, family = "nbinomial", 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+comp_inlabru <- count ~ cyear + rtrend(map = cyear, model = "iid", n = n_year) +
+  monthdec + monthjan + monthfeb + site(map = loc_id, model = "iid", n = n_loc)
+m3_inlabru <- bru(comp_inlabru, data = goose2, family = "nbinomial")
+comp_inlabru <- count ~ 
+  lintrend(map = cyear, model = "linear") + 
+  quadtrend(map = cyear ^ 2, model = "linear") +
+  rtrend(map = cyear, model = "iid", n = n_year) +
+  monthdec + monthjan + monthfeb + site(map = loc_id, model = "iid", n = n_loc)
+m3_inlabru2 <- bru(comp_inlabru, data = goose2, family = "nbinomial")
+summary(m3_inlabru2)
+```
