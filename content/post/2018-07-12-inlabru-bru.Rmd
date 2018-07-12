@@ -1,0 +1,81 @@
+---
+title: Comparing inlabru with INLA
+author: ~
+date: '2018-07-12'
+slug: inlabru-bru
+categories: ["statistics", "mixed-models"]
+tags: ["inla", "inlabru"]
+banner: ''
+images: []
+menu: ''
+---
+
+[`inlabru`](https://www.inlabru.org) is an R package which builds on top of the [`INLA`](https://www.r-inla.org) package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop [ISEC2018](https://www.isec2018.org) in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of `inlabru` but no time to try it on our own data.
+
+`inlabru` has two main functions: `bru` and `lgcp`. `bru` is a wrapper for `INLA::inla`. `lgcp` is intended to fit log Gaussian Cox processes. I will focus on `bru` and compare it with `INLA::inla` as I find that `bru` makes things a lot easier.
+
+# Tundra bean goose
+
+The test data is derived from the "Wintering waterbirds in Flanders, Belgium", freely available at GBIF (https://doi.org/10.15468/lj0udq). I've extracted the observations from the [tundra bean goose](https://www.gbif.org/species/6178319) (_Anser fabalis rossicus_, fig. \@ref(fig:tundra-bean-goose)). The dataset was limited to those locations with at leat 6 occurences during at least 3 years. Months with lower number of count were removed. Fig. \@ref(fig:observed-total) indicates the sum of all observed geese in the data. Note that these totals are somewhat misleading since there are a fair amount of missing observations (fig. \@ref(fig:missing)). The geographic distribution of the data is given in fig. \@ref(fig:map-goose).
+
+```{r setup, include = FALSE}
+library(knitr)
+opts_chunk$set(
+  echo = TRUE,
+  message = FALSE
+)
+library(htmlwidgets)
+setWidgetIdSeed(20180712)
+```
+
+(ref:tundra-bean-goose) Tundra bean goose _Anser fabalis rossicus_ by [Roar Ottesen](https://www.gbif.org/occurrence/1798469433) CC BY 4.0
+
+```{r tundra-bean-goose, fig.cap = "(ref:tundra-bean-goose)", echo = FALSE}
+include_graphics("http://www.artsobservasjoner.no/MediaLibrary/2017/5/25dfef70-0a56-4f12-ad2e-77cbd4888615_image.jpg")
+```
+
+```{r}
+library(scales)
+library(tidyverse)
+library(leaflet)
+goose <- readRDS("../../data/20180712/anser_fabalis_rossicus.Rds")
+```
+
+```{r observed-total, fig.cap = "Time series of observed total counts for tundra bean goose", echo = FALSE}
+goose %>%
+  group_by(year, month) %>%
+  summarise(observed = sum(count)) %>%
+  ggplot(aes(x = year, y = observed, colour = month)) +
+  geom_line()
+```
+
+```{r missing, fig.cap = "Time series of missingness in the data", echo = FALSE}
+goose %>%
+  complete(location_id, year, month) %>%
+  group_by(year, month) %>%
+  summarise(missing = mean(is.na(count))) %>%
+  ggplot(aes(x = year, colour = month, y = missing)) +
+  geom_line() +
+  scale_y_continuous("proportion of missing counts", labels = percent)
+```
+
+```{r map-goose, fig.cap = "Map with the locations for tundra bean goose. The circle markers represent the centroid of the site. The area of the circle is proportional to the mean of the observed counts.", echo = FALSE}
+goose %>%
+  group_by(location_id, lat, long) %>%
+  summarise(mean = mean(count)) %>%
+  mutate(mean = 2 * sqrt(mean / pi)) %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(radius = ~mean)
+```
+
+
+```{r}
+library(INLA)
+library(inlabru)
+```
+
+```{r}
+
+```
+
