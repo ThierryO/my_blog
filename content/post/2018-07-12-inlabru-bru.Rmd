@@ -121,7 +121,7 @@ m1_inlabru <- bru(
 summary(m1_inlabru)
 ```
 
-## 'Simple' random effects
+## Random effects
 
 `inla()` use the `f()` function to specify the random effects. `bru()` is very liberal and allows the user to choose any name, as long as it is a valid function name. In the example below we use `site`. For more detail see `help("bru.components")`. The downside is that `bru()` requires integer coded levels which go from 1 to the number of levels. We use the `as.integer(factor())` trick to get these indices. Furthermore you need to supply the number of levels in the random effect for some random effects models.
 
@@ -170,3 +170,54 @@ comp_inlabru <- count ~
 m3_inlabru2 <- bru(comp_inlabru, data = goose2, family = "nbinomial")
 summary(m3_inlabru2)
 ```
+
+## Plotting the model
+
+`plot.inla()` is an easy way to generate most of the relevant plots with a single command. It will open several plot windows to keep the plots readable. However this doesn't work well in combination with Rmarkdown. `plot.bru()` has the opposite phylosophy: you get the plot of only one component. Getting a plot for all components is a bit more tedious, but the advantage is that you can use it in combination with Rmarkdown. Another nice feature is that `plot.bru()` returns `ggplot2` object. So they are easy to adapt, see e.g. fig. \@ref(fig:plot-fixed). `inlabru` also provides a `multiplot()` function whcih can be used to combine several plots.
+
+```{r rw1-models}
+pc_prior <- list(theta = list(prior = "pc.prec", param = c(1, 0.01)))
+goose %>%
+  mutate(iyear = cyear - min(cyear) + 1) -> goose
+n_year <- max(goose$iyear)
+comp_inla <- count ~ month + 
+  f(cyear, model = "rw1", hyper = pc_prior) + 
+  f(location_id, model = "iid", hyper = pc_prior)
+m4_inla <- inla(
+  comp_inla, data = goose, family = "nbinomial", 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+comp_inlabru <- count ~ monthdec + monthjan + monthfeb + 
+  trend(map = iyear, model = "rw1", n = n_year, hyper = pc_prior) +
+  site(map = loc_id, model = "iid", n = n_loc, hyper = pc_prior)
+m4_inlabru <- bru(comp_inlabru, data = goose, family = "nbinomial")
+```
+
+```{r eval = FALSE}
+plot(m4_inla)
+```
+
+```{r plot-fixed, fig.cap = "Posterior density plots of the fixed effects"}
+p_intercept <- plot(m4_inlabru) + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(0, 4)
+p_monthdec <- plot(m4_inlabru, "monthdec") + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(0, 4)
+p_monthjan <- plot(m4_inlabru, "monthjan") + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(0, 4)
+p_monthfeb <- plot(m4_inlabru, "monthfeb") + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(0, 4)
+multiplot(p_intercept, p_monthdec, p_monthjan, p_monthfeb)
+```
+
+```{r, fig.cap = "Posterior density of the trend random intercepts"}
+plot(m4_inlabru, "trend")
+```
+
+```{r fig.cap = "Posterior density of the site random intercepts."}
+plot(m4_inlabru, "site")
+```
+
