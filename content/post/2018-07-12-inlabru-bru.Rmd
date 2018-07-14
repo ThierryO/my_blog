@@ -171,6 +171,90 @@ m3_inlabru2 <- bru(comp_inlabru, data = goose2, family = "nbinomial")
 summary(m3_inlabru2)
 ```
 
+## Meshed random effects
+
+One of the great benefits of `inlabru` is that it makes it much easier to work with random effects on a mesh. The current data are geographic coordinates in "WGS84". For this analysis we want them in a projected coordinate system. "Belgian Lambert 72" [EPSG:31370](https://epsg.io/31370) is a relevant choice. Therefore we convert the data into a `SpatialPointsDataFrame` and transform it to EPSG:31370.
+
+Instead of using a convex hull of the locations, we will use the administrative borders of [Flanders](https://en.wikipedia.org/wiki/Flanders) as a boundary for the mesh. The simplified version of this border is the blue line in fig. \@ref(fig:flanders-mesh)). Note that the mesh extents this border because that reduces potential edge effects. The detail of the mesh is defined by `cutoff` and `max.edge`, the former defines the minimal length of each edge and the latter the maximal length. These lengths have the same units as the coordinate system, in this case meters. We pass two numbers for both arguments. The first refers to the edges inside the boundary, the second to edges outside the boundary. This creates larger triangles outside the boundary, which will speed up the computation.
+
+```{r flanders-mesh, fig.cap = "Mesh for Flanders. Red circles indicate the sites.", message = FALSE}
+SpatialPointsDataFrame(
+  coords = goose %>%
+    select(long, lat),
+  data = goose %>%
+    select(loc_id, year, month, count, monthdec, monthjan, monthfeb),
+  proj4string = CRS("+proj=longlat +datum=WGS84")
+) %>%
+  spTransform(CRS("+init=epsg:31370")) -> goose_lambert
+library(rgdal)
+readOGR("../../data/20180712/vlaanderen.shp") %>%
+  as.inla.mesh.segment() -> flanders_segment
+inla.mesh.2d(
+  boundary = flanders_segment, 
+  max.edge = c(10e3, 20e3), 
+  cutoff = c(5e3, 10e3)
+) -> flanders_mesh
+plot(flanders_mesh)
+points(goose_lambert, col = "red")
+```
+
+Once the mesh is defined, we can create the [stochastic partial differential equation](https://en.wikipedia.org/wiki/Stochastic_partial_differential_equation) SPDE model. In this case we define it using a [Matérn covariance function](https://en.wikipedia.org/wiki/Mat%C3%A9rn_covariance_function).
+
+```{r}
+flanders_spde <- inla.spde2.pcmatern(
+  flanders_mesh,
+  prior.range = c(1, 0.01),
+  prior.sigma = c(4, 0.01)
+)
+```
+
+All steps upto this point are needed for both `INLA::inla()` and `inlabr::bru()`. In case of `INLA::inla()` you need use `inla.spde.make.A()` to define a project matrix. This matrix maps the coordinates of the observation to the three nodes of the triangle in which it is located. In the special case that the observation is on a edge it will map to the two nodes defining the edge, or the node itself in case the observation coincides with a node. Then you need to define a `inla.stack()`, which is passed to the `data` argument after transforming it with `inla.stack.data()`. The SPDE object is used as `model` in the random effect 'site'.
+
+The same model is much easier with `inlabr::bru()`. In this case you need to pass a `SpatialPointsDataFrame` to the `data` argument. The random effect 'site' has the SPDE object as `model` and uses "coordinates" as `map`. In this case there is no object "coordinates" in the data, hence `inlabr::bru()` will look in the environment and finds the `sp::coordinates()` function. This functions returns the coordinates of a `SpatialPointsDataFrame`, so `inlabr::bru()` has all the information it needs to map the observations to the SPDE object.
+
+```{r eval = FALSE}
+## INLA
+A <- inla.spde.make.A(mesh = flanders_mesh, loc = goose_lambert)
+goose_stack <- inla.stack(
+  tag = 'estimation', ## tag
+  data = list(count = goose$count), ## response
+  A = list(A, 1), ## two projector matrices (SPDE and fixed effects)
+  effects = list(## two elements:
+    site = seq_len(flanders_spde$n.spde), ## RF index
+    goose %>%
+      select(cyear, month)
+  )
+)
+comp_inla <- count ~ 0 + month + cyear +
+  f(site, model = flanders_spde)
+m4_inla <- inla(
+  comp_inla, 
+  data = inla.stack.data(goose_stack), family = "nbinomial", 
+  control.compute = list(waic = TRUE, dic = TRUE),
+  control.predictor = list(A = inla.stack.A(goose_stack))
+)
+
+# inlabru
+comp_inlabru <- count ~ monthdec + monthjan + monthfeb + cyear +
+  site(map = coordinates, model = flanders_spde)
+m4_inlabru <- bru(comp_inlabru, data = goose_lambert, family = "nbinomial")
+```
+
+We can also create 1 dimensional meshes. This is useful for line transects or (irregural) time series.
+
+```{r}
+trend_mesh <- inla.mesh.1d(min(goose$year):max(goose$year), boundary = "free")
+trend_spde <- inla.spde2.pcmatern(
+  trend_mesh,
+  prior.range = c(1, 0.5),
+  prior.sigma = c(4, 0.01)
+)
+comp_inlabru <- count ~ monthdec + monthjan + monthfeb +
+  trend(map = year, model = trend_spde) +
+  site(map = coordinates, model = flanders_spde)
+m4b_inlabru <- bru(comp_inlabru, data = goose_lambert, family = "nbinomial")
+```
+
 ## Plotting the model
 
 `plot.inla()` is an easy way to generate most of the relevant plots with a single command. It will open several plot windows to keep the plots readable. However this doesn't work well in combination with Rmarkdown. `plot.bru()` has the opposite phylosophy: you get the plot of only one component. Getting a plot for all components is a bit more tedious, but the advantage is that you can use it in combination with Rmarkdown. Another nice feature is that `plot.bru()` returns `ggplot2` object. So they are easy to adapt, see e.g. fig. \@ref(fig:plot-fixed). `inlabru` also provides a `multiplot()` function whcih can be used to combine several plots.
@@ -183,41 +267,71 @@ n_year <- max(goose$iyear)
 comp_inla <- count ~ month + 
   f(cyear, model = "rw1", hyper = pc_prior) + 
   f(location_id, model = "iid", hyper = pc_prior)
-m4_inla <- inla(
+m5_inla <- inla(
   comp_inla, data = goose, family = "nbinomial", 
   control.compute = list(waic = TRUE, dic = TRUE)
 )
 comp_inlabru <- count ~ monthdec + monthjan + monthfeb + 
   trend(map = iyear, model = "rw1", n = n_year, hyper = pc_prior) +
   site(map = loc_id, model = "iid", n = n_loc, hyper = pc_prior)
-m4_inlabru <- bru(comp_inlabru, data = goose, family = "nbinomial")
+m5_inlabru <- bru(comp_inlabru, data = goose, family = "nbinomial")
 ```
 
 ```{r eval = FALSE}
-plot(m4_inla)
+plot(m5_inla)
 ```
 
 ```{r plot-fixed, fig.cap = "Posterior density plots of the fixed effects"}
-p_intercept <- plot(m4_inlabru) + 
+p_intercept <- plot(m5_inlabru) + 
   geom_vline(xintercept = 0, linetype = 2) +
-  xlim(0, 4)
-p_monthdec <- plot(m4_inlabru, "monthdec") + 
+  xlim(-1, 4)
+p_monthdec <- plot(m5_inlabru, "monthdec") + 
   geom_vline(xintercept = 0, linetype = 2) +
-  xlim(0, 4)
-p_monthjan <- plot(m4_inlabru, "monthjan") + 
+  xlim(-1, 4)
+p_monthjan <- plot(m5_inlabru, "monthjan") + 
   geom_vline(xintercept = 0, linetype = 2) +
-  xlim(0, 4)
-p_monthfeb <- plot(m4_inlabru, "monthfeb") + 
+  xlim(-1, 4)
+p_monthfeb <- plot(m5_inlabru, "monthfeb") + 
   geom_vline(xintercept = 0, linetype = 2) +
-  xlim(0, 4)
+  xlim(-1, 4)
 multiplot(p_intercept, p_monthdec, p_monthjan, p_monthfeb)
 ```
 
-```{r, fig.cap = "Posterior density of the trend random intercepts"}
-plot(m4_inlabru, "trend")
+```{r, fig.cap = "Posterior density of the trend random intercepts."}
+plot(m5_inlabru, "trend")
 ```
 
 ```{r fig.cap = "Posterior density of the site random intercepts."}
-plot(m4_inlabru, "site")
+plot(m5_inlabru, "site")
+```
+
+### Plotting meshes
+
+The mesh effects can be plot in a similar way. The default plot will display the estimate effect at each node. While this can be useful for 1D plot with a small number of nodes (top of fig. \@ref(fig:mesh-plot)), this is not useful for 2D meshes or meshed with a large number of nodes (bottom of fig. \@ref(fig:mesh-plot)). Looking at the posterior distributions for the range and the variance of the Matérn covariance structure of SPDE model makes more sense (fig. \@ref(fig:mesh-range-var)). Or plot the actual Matérn functions (fig. \@ref(fig:matern-function)).
+
+```{r mesh-plot, fig.cap = "Posterior density of the random intercepts at the nodes of the mesh."}
+p_trend <- plot(m4b_inlabru, "trend")
+p_site <- plot(m4b_inlabru, "site")
+multiplot(p_trend, p_site)
+```
+
+```{r mesh-range-var, fig.cap = "Posterior distributions of the range and log variance of the Matérn covariace for the sites."}
+spde.range <- spde.posterior(m4b_inlabru, "site", what = "range")
+spde.logvar <- spde.posterior(m4b_inlabru, "site", what = "log.variance")
+range.plot <- plot(spde.range)
+var.plot <- plot(spde.logvar)
+multiplot(range.plot, var.plot)
+```
+
+```{r matern-function, fig.cap = "Fitted Matérn covariance and correlation functions."}
+spde.posterior(m4b_inlabru, "site", what = "matern.covariance") %>%
+  plot() +
+  xlab("distance") +
+  ylab("covariance") -> covplot
+spde.posterior(m4b_inlabru, "site", what = "matern.correlation") %>%
+  plot()  +
+  xlab("distance") +
+  ylab("correlation") -> corplot
+multiplot(covplot, corplot)
 ```
 
