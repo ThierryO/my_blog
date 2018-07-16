@@ -16,7 +16,7 @@ menu: ''
 
 # Tundra bean goose
 
-The test data is derived from the "Wintering waterbirds in Flanders, Belgium", freely available at GBIF (https://doi.org/10.15468/lj0udq). I've extracted the observations from the [tundra bean goose](https://www.gbif.org/species/6178319) (_Anser fabalis rossicus_, fig. \@ref(fig:tundra-bean-goose)). The dataset was limited to those locations with at leat 6 occurences during at least 3 years. Months with lower number of count were removed. Fig. \@ref(fig:observed-total) indicates the sum of all observed geese in the data. Note that these totals are somewhat misleading since there are a fair amount of missing observations (fig. \@ref(fig:missing)). The geographic distribution of the data is given in fig. \@ref(fig:map-goose).
+The test data is derived from the "Wintering waterbirds in Flanders, Belgium", freely available at GBIF (https://doi.org/10.15468/lj0udq). I've extracted the observations from the [tundra bean goose](https://www.gbif.org/species/6178319) (_Anser fabalis rossicus_, fig. \@ref(fig:tundra-bean-goose)). The dataset was limited to those locations with at least 6 occurences during at least 3 years. Months with lower number of count were removed. Fig. \@ref(fig:observed-total) indicates the sum of all observed geese in the data. Note that these totals are somewhat misleading since there are a fair amount of missing observations (fig. \@ref(fig:missing)). The geographic distribution of the data is given in fig. \@ref(fig:map-goose).
 
 ```{r setup, include = FALSE}
 library(knitr)
@@ -76,7 +76,7 @@ goose %>%
 
 ## Fixed effects only
 
-Let's start with a very simple model with contains only the year centered to the last year. The syntax of both models is very similar. `bru()` is a bit shorted because it returns both $WAIC$ and $DIC$ by default. The models are identical because `bru()` is just a wrapper for `inla()`. Their summary output is somewhat different in terms of lay-out and which information is given.
+Let's start with a very simple model with contains only the year centred to the last year. The syntax of both models is very similar. `bru()` is a bit shorted because it returns both $WAIC$ and $DIC$ by default. The models are identical because `bru()` is just a wrapper for `inla()`. Their summary output is somewhat different in terms of lay-out and which information is given.
 
 ```{r load-inla}
 library(INLA)
@@ -97,7 +97,7 @@ summary(m0_inla)
 summary(m0_inlabru)
 ```
 
-A drawback is that `bru()` doesn't handle factor fixed effects as expected. Luckily it yields a warning about invalid factor levels. Unfortunaltly you don't get the warning when getting the summary. You need to be critical and notice that the parameters of the model are not what you would expect. The workaround is to convert the factor variable into a set of dummy variables and use those. Creating the dummy variable is straight forward with `model.matrix`. But adding them to the model is not very efficient when you have factor variables with more than a just few levels.
+A drawback is that `bru()` doesn't handle factor fixed effects as expected. Luckily it yields a warning about invalid factor levels. Unfortunately you don't get the warning when getting the summary. You need to be critical and notice that the parameters of the model are not what you would expect. The workaround is to convert the factor variable into a set of dummy variables and use those. Creating the dummy variable is straight forward with `model.matrix`. But adding them to the model is not very efficient when you have factor variables with more than a just few levels.
 
 ```{r fixed-factor}
 m1_inla <- inla(
@@ -211,7 +211,7 @@ flanders_spde <- inla.spde2.pcmatern(
 )
 ```
 
-All steps upto this point are needed for both `INLA::inla()` and `inlabr::bru()`. In case of `INLA::inla()` you need use `inla.spde.make.A()` to define a project matrix. This matrix maps the coordinates of the observation to the three nodes of the triangle in which it is located. In the special case that the observation is on a edge it will map to the two nodes defining the edge, or the node itself in case the observation coincides with a node. Then you need to define a `inla.stack()`, which is passed to the `data` argument after transforming it with `inla.stack.data()`. The SPDE object is used as `model` in the random effect 'site'.
+All steps up to this point are needed for both `INLA::inla()` and `inlabr::bru()`. In case of `INLA::inla()` you need use `inla.spde.make.A()` to define a project matrix. This matrix maps the coordinates of the observation to the three nodes of the triangle in which it is located. In the special case that the observation is on a edge it will map to the two nodes defining the edge, or the node itself in case the observation coincides with a node. Then you need to define a `inla.stack()`, which is passed to the `data` argument after transforming it with `inla.stack.data()`. The SPDE object is used as `model` in the random effect 'site'.
 
 The same model is much easier with `inlabr::bru()`. In this case you need to pass a `SpatialPointsDataFrame` to the `data` argument. The random effect 'site' has the SPDE object as `model` and uses "coordinates" as `map`. In this case there is no object "coordinates" in the data, hence `inlabr::bru()` will look in the environment and finds the `sp::coordinates()` function. This functions returns the coordinates of a `SpatialPointsDataFrame`, so `inlabr::bru()` has all the information it needs to map the observations to the SPDE object.
 
@@ -243,7 +243,7 @@ comp_inlabru <- count ~ monthdec + monthjan + monthfeb + cyear +
 m4_inlabru <- bru(comp_inlabru, data = goose_lambert, family = "nbinomial")
 ```
 
-We can also create 1 dimensional meshes. This is useful for line transects or (irregural) time series.
+We can also create 1 dimensional meshes. This is useful for line transects or (irregular) time series.
 
 ```{r}
 trend_mesh <- inla.mesh.1d(min(goose$year):max(goose$year), boundary = "free")
@@ -260,7 +260,7 @@ m4b_inlabru <- bru(comp_inlabru, data = goose_lambert, family = "nbinomial")
 
 ## Plotting the model
 
-`plot.inla()` is an easy way to generate most of the relevant plots with a single command. It will open several plot windows to keep the plots readable. However this doesn't work well in combination with Rmarkdown. `plot.bru()` has the opposite phylosophy: you get the plot of only one component. Getting a plot for all components is a bit more tedious, but the advantage is that you can use it in combination with Rmarkdown. Another nice feature is that `plot.bru()` returns `ggplot2` object. So they are easy to adapt, see e.g. fig. \@ref(fig:plot-fixed). `inlabru` also provides a `multiplot()` function whcih can be used to combine several plots.
+`plot.inla()` is an easy way to generate most of the relevant plots with a single command. It will open several plot windows to keep the plots readable. However this doesn't work well in combination with Rmarkdown. `plot.bru()` has the opposite philosophy: you get the plot of only one component. Getting a plot for all components is a bit more tedious, but the advantage is that you can use it in combination with Rmarkdown. Another nice feature is that `plot.bru()` returns `ggplot2` object. So they are easy to adapt, see e.g. fig. \@ref(fig:plot-fixed). `inlabru` also provides a `multiplot()` function which can be used to combine several plots.
 
 ```{r rw1-models}
 pc_prior <- list(theta = list(prior = "pc.prec", param = c(1, 0.01)))
@@ -340,11 +340,11 @@ multiplot(covplot, corplot)
 
 # Predictions
 
-`INLA` has, unlike most R packages, no `predict()` function. So `INLA` can't do predictions? No, it can do prediction but it does that simultaneously with fitting the model. This implies that you need to add the observations for which you want prediction to the data prior to the model fitting. Setting the response variable to `NA` avoid that these observation influcence the model parameters. A huge downside of this is, that you need to plan ahead and carefully prepare your data. If you forget some prediction, you will have to fit the model again. 
+`INLA` has, unlike most R packages, no `predict()` function. So `INLA` can't do predictions? No, it can do prediction but it does that simultaneously with fitting the model. This implies that you need to add the observations for which you want prediction to the data prior to the model fitting. Setting the response variable to `NA` avoid that these observation influence the model parameters. A huge downside of this is, that you need to plan ahead and carefully prepare your data. If you forget some prediction, you will have to fit the model again. 
 
-The `predict()` function in most R packages split the model fitting and the prediction in two separate steps. Getting prediction for another data set does not require to refit the model. `inlabru` provided a `predict()` function for `bru`, `lgcp` and `inla` models. The fitting works slightly different in `INLA` and `inlabru`. When the observations for the prediction are available at the time of the model fitting, then the full posterior of those observations becomes available. `inlabru::predict.inla()` works by repeatetly sampling the posterior distributions of the parameters and use each sample to calculate a predicted values. This yields a sampled posterior distribution for the fitted value of the observations.
+The `predict()` function in most R packages split the model fitting and the prediction in two separate steps. Getting prediction for another data set does not require to refit the model. `inlabru` provided a `predict()` function for `bru`, `lgcp` and `inla` models. The fitting works slightly different in `INLA` and `inlabru`. When the observations for the prediction are available at the time of the model fitting, then the full posterior of those observations becomes available. `inlabru::predict.inla()` works by repeatedly sampling the posterior distributions of the parameters and use each sample to calculate a predicted values. This yields a sampled posterior distribution for the fitted value of the observations.
 
-`predict.bru()` requires at leat three arguments: `object` the fitted model; `data` the new observations for which you want a prediction and `formula` the components of the model you want to use in the predictions. The example below calculates the predictions for only the trend component. Note that the predict function returns the `data` and adds several columns with relevant information on the prediction. The names of these columns are more efficient than those returned by `INLA`: `q0.025` is a valid name for an R object, wereas `0.025quant` isn't. Another nice feather is that you can incorporate the prediction directly into a ggplot2 plot.
+`predict.bru()` requires at least three arguments: `object` the fitted model; `data` the new observations for which you want a prediction and `formula` the components of the model you want to use in the predictions. The example below calculates the predictions for only the trend component. Note that the predict function returns the `data` and adds several columns with relevant information on the prediction. The names of these columns are more efficient than those returned by `INLA`: `q0.025` is a valid name for an R object, whereas `0.025quant` isn't. Another nice feather is that you can incorporate the prediction directly into a ggplot2 plot.
 
 ```{r}
 goose %>%
@@ -362,7 +362,7 @@ ggplot() +
   geom_hline(yintercept = 0, linetype = 2)
 ```
 
-The default prediction are on the link scale, which is the log link in this case. Backtransformation is straightforward, just add the backtransformation function to the formula.
+The default prediction are on the link scale, which is the log link in this case. Back-transformation is straightforward, just add the back transformation function to the formula.
 
 ```{r fig.cap = "Predicted effect of 'trend' on the natural scale"}
 goose %>%
