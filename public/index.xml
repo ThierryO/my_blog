@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stats &amp; bats</title>
+    <link>/</link>
+    <description>Recent content on Stats &amp; bats</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
+    <lastBuildDate>Thu, 12 Jul 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Comparing inlabru with INLA</title>
+      <link>/2018/07/inlabru-bru/</link>
+      <pubDate>Thu, 12 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/07/inlabru-bru/</guid>
+      <description>inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data.</description>
+    </item>
+    
+    <item>
+      <title>Bat silhouettes at 1:1 scale</title>
+      <link>/2018/05/silhouette/</link>
+      <pubDate>Sat, 19 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/05/silhouette/</guid>
+      <description>Hillie Waning Vos posted a message in the Facebook group &amp;ldquo;vleermuizen&amp;rdquo; showing how she created some bat silhouettes at 1:1 scale. This is useful to illustrate the true size of bats to the public. She took a simple template and re-sized it to match the wingspan of the different species. Several people liked the idea. Some asked for the template or suggested to use a more anatomically correct template. E.</description>
+    </item>
+    
+    <item>
+      <title>Temporal autocorrelation in INLA</title>
+      <link>/2018/03/inla-temporal/</link>
+      <pubDate>Mon, 05 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/03/inla-temporal/</guid>
+      <description>One of the reason why I often use INLA is because it allows for correlated random effects. In this blog post, I will handle random effect with temporal autocorrelation. INLA has several options for this. There are two major types of model, the first handles discrete time step, the latter continuous time steps.
+Dummy data set This blog post was inspired by a post on the R-Sig-Mixed models mailing list.</description>
+    </item>
+    
+    <item>
+      <title>Highly correlated random effects</title>
+      <link>/2018/02/highly-correlated-random-effects/</link>
+      <pubDate>Fri, 16 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/02/highly-correlated-random-effects/</guid>
+      <description>Recently, I got a question on a mixed model with highly correlated random slopes. I requested a copy of the data because it is much easier to diagnose the problem when you have the actual data. The data owner gave permission to use an anonymised version of the data for this blog post. In this blog post, I will discuss how I’d tackle this problem.
+Data exploration Every data analysis should start with some data exploration.</description>
+    </item>
+    
+    <item>
+      <title>Review of the ReadRPA software</title>
+      <link>/2017/09/readrpa/</link>
+      <pubDate>Tue, 26 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/09/readrpa/</guid>
+      <description>Introduction The default way to download recordings from a Peersonic bat detector is to connect the detector via a USB cable to the computer and copy them to the computer. The file transfer rate is quite low. In case you have to copy 100 to 200 files, this is OKish. But copying a full SD card takes half a day. In case you have a set-up with multiple detectors, this becomes a nightmare.</description>
+    </item>
+    
+    <item>
+      <title>A git workflow for ecologists</title>
+      <link>/2017/08/git_workflow_ecologists/</link>
+      <pubDate>Wed, 23 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/08/git_workflow_ecologists/</guid>
+      <description>Git Target audience for this workflow Basic workflow Use case Principle  Branching workflow with pull requests Use case Principle Branch Pull request Conflicts  Flowcharts Rules for collaboration Exceptions    Git For those how don’t know git, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this blog.</description>
+    </item>
+    
+    <item>
+      <title>Using a variable both as fixed and random effect</title>
+      <link>/2017/08/fixed-and-random/</link>
+      <pubDate>Wed, 23 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/08/fixed-and-random/</guid>
+      <description>Categorical variable Discrete variable Intro Fit with lme4 Fit with INLA  Continuous variable Conclusion    One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so.</description>
+    </item>
+    
+    <item>
+      <title>Peersonic bat-detector in waterproof IP67 enclosure</title>
+      <link>/2017/07/peersonic-ip67/</link>
+      <pubDate>Sat, 29 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/peersonic-ip67/</guid>
+      <description>I’ve reviewed the standard version the Peersonic RPA2 bat-detector in an earlier blog post. Today I will take about the RPA2 in a waterproof IP67 enclosure and my experiences on using it as on autonomous bat-detector.
+The differences The most obvious difference between both versions is their enclosure. IP 67 stands for dust tight and water tight under immersion up to 1 m depth. As you can see on fig. 1, the display and all controls are inside the enclosure.</description>
+    </item>
+    
+    <item>
+      <title>Nested and crossed random effects in &#34;lme4&#34;</title>
+      <link>/2017/07/lme4-random-effects/</link>
+      <pubDate>Tue, 18 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/lme4-random-effects/</guid>
+      <description>People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
+Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes.</description>
+    </item>
+    
+    <item>
+      <title>Creating continuous coloured maps with osmplotr</title>
+      <link>/2017/07/creating-maps-with-osmplotr/</link>
+      <pubDate>Mon, 17 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/creating-maps-with-osmplotr/</guid>
+      <description>During useR!2017 I attended a talk by Mark Padgham titled Maps are data, so why no plot data on a map. In this blog post I will recreate the map from an earlier blogpost on estimating densities from a point pattern.
+Let’s start by loading all required packages.
+library(sp) library(MASS) library(dplyr) library(ggmap) library(osmplotr) I rearranged the code from the previous blog post in two chunks. The first chunk calculate the density and is required for both the ggmap and the osmplotr solution.</description>
+    </item>
+    
+    <item>
+      <title>Peersonic RPA2 bat detector and low frequencies</title>
+      <link>/2017/07/peersonic-and-low-frequencies/</link>
+      <pubDate>Fri, 14 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/peersonic-and-low-frequencies/</guid>
+      <description>Recently René Janssen from Bionet Natuuronderzoek was looking for an automatic bat-detector which could record sounds starting from 4 kHz. That was an incentive to put the Peersonic RPA2 to the test.
+Generating a test sound For this test I needed a file with known frequencies over a given range. It turns out that creating such a test file is relatively easy with R.
+library(tuneR) # sample rate of the sound in Hz # must be at least twice the highest frequency sample.</description>
+    </item>
+    
+    <item>
+      <title>Estimating densities from a point pattern</title>
+      <link>/2017/06/estimating-densities-from-a-point-pattern/</link>
+      <pubDate>Wed, 28 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/estimating-densities-from-a-point-pattern/</guid>
+      <description>In this example we focus on a set of 10450 coordinates in a small area. The goal is to estimate the local density of points, expressed as the number of point per unit area. The raw coordinates are given in WGS84 (EPSG:4326), which is a geodetic coordinate system. That is not suited for calculating distances, so we need to re-project the points into a local projected coordinate system.</description>
+    </item>
+    
+    <item>
+      <title>Some things I learned about bookdown::gitbook</title>
+      <link>/2017/06/bookdown-gitbook/</link>
+      <pubDate>Mon, 26 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/bookdown-gitbook/</guid>
+      <description>Bookdown is an R package that makes writing technical documents based on R much easier. One of the nice things is that you can create a corporate identity using LaTex styles for pdf output and Cascading Style Sheets for HTML output. I’m in the process of preparing such styles for the Research Institute for Nature and Forest.
+Here are a few things that I figured out while testing a complex bookdown report.</description>
+    </item>
+    
+    <item>
+      <title>Analysing data from bat observations along transects</title>
+      <link>/2017/06/analysing-data-from-bat-observations-along-transects/</link>
+      <pubDate>Thu, 15 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/analysing-data-from-bat-observations-along-transects/</guid>
+      <description>This post will handle observations of bats along a set of transects. It is a work in progress simply because I’m still collecting more data. So come back once and awhile to see potential updates.
+The survey The principle of the survey is quite simple: walk around with a bat detector and note the route you took and were you encounter bats. Repeat this several times.</description>
+    </item>
+    
+    <item>
+      <title>Review of the Peersonic RPA2 bat detector in the field</title>
+      <link>/2017/06/peersonic/</link>
+      <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/peersonic/</guid>
+      <description>Introduction I will compare the Peersonic RPA2 with the combination of a Petterson D240x and a Roland Edirol R-05 recorder. Mainly because I have a lot of experience with the D240x-Edirol combo. Both set-ups are useful when a researcher wants to detect and record the echolocation of bats in the field.
+ Look and feel The RPA2 is housed in a plastic box and feels solid. It came with a lanyard attached to the lower right corner.</description>
+    </item>
+    
+    <item>
+      <title>Introduction</title>
+      <link>/2017/06/introduction/</link>
+      <pubDate>Sat, 10 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/introduction/</guid>
+      <description>I have no idea where this blog will lead. Current plans are a review of the PeerSonic BatDetector, some examples of how bat detector observations can be analysed and some questions that I get repeatedly while giving statistical consultancy to ecologists and other scientists.
+Another goal is more technical: learn to create a website with blogdown. The easy road would be to render the sources files locally in to a complete website and upload that.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/kermit/kermit/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/kermit/kermit/</guid>
+      <description>Classification of bat calls            code{white-space: pre;} pre:not([class]) { background-color: white; }  if (window.hljs) { hljs.configure({languages: []}); hljs.initHighlightingOnLoad(); if (document.readyState &amp;&amp; document.readyState === &#34;complete&#34;) { window.setTimeout(function() { hljs.initHighlighting(); }, 0); } }  h1 { font-size: 34px; } h1.title { font-size: 38px; } h2 { font-size: 30px; } h3 { font-size: 24px; } h4 { font-size: 18px; } h5 { font-size: 16px; } h6 { font-size: 12px; } .</description>
+    </item>
+    
+  </channel>
+</rss>

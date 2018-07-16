@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Nested and crossed random effects in &#34;lme4&#34; &middot; Stats &amp; bats</title>
+    <meta name="generator" content="Hugo 0.30" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="/2017/07/lme4-random-effects/"/>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/monokai.css">
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Nested and crossed random effects in &#34;lme4&#34;" />
+<meta property="og:description" content="People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
+Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/2017/07/lme4-random-effects/" />
+
+
+
+<meta property="article:published_time" content="2017-07-18T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-07-18T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Nested and crossed random effects in &#34;lme4&#34;">
+<meta itemprop="description" content="People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
+Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes.">
+
+
+<meta itemprop="datePublished" content="2017-07-18T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-07-18T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1429">
+
+
+
+<meta itemprop="keywords" content="lme4,random effect," />
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Nested and crossed random effects in &#34;lme4&#34;"/>
+<meta name="twitter:description" content="People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
+Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes."/>
+
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo">
+          
+          <i class="logo" style="background-image: url('/images/full_moon.jpg')"></i>
+          
+          <span class="site-title">Stats &amp; bats</span>
+      </a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/androidify.png"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="sitesearch" value="/" />
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="sitesearch" value="/" />
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+   	
+    	<aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      
+      <img id="avatar" src="/images/androidify.png">
+      
+      
+      <h3 id="title">Statistician in daylight, chiropterologist after sunset. But often things get mixed up.</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Belgium</span>
+      
+          <a id="follow" href="https://github.com/thierryo">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        16
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          23
+        
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="profile-block social-links">
+      <table>
+        <tr>
+          
+<td><a href="//github.com/thierryo" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/thierryonkelinx" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+<td><a href="//stackoverflow.com/users/142651/thierry" target="_blank" title="Stack Overflow"><i class="fa fa-stack-overflow"></i></a></td>
+
+
+
+
+
+
+
+<td><a href="//plus.google.com/+ThierryOnkelinx" target="_blank" title="Google+"><i class="fa fa-google-plus"></i></a></td>
+
+
+
+
+
+
+          <td><a href="/index.xml" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+    
+
+    <section id="main">
+    
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+    <div class="article-inner">
+        
+            <img src="/post/2017-07-18-nested-and-crossed-random-effects-in-lme4_files/figure-html/school-design-1.png" class="article-banner">
+        
+
+        <header class="article-header">
+    <a href="/2017/07/lme4-random-effects/">
+    <h1 class="article-title" itemprop="name">
+        Nested and crossed random effects in &#34;lme4&#34;
+    </h1>
+    </a>
+    <div class="article-meta">
+
+        
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2017-07-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">18 July 2017</time>
+            &middot;
+            1429
+            words
+            &middot;
+            7
+            minute read
+        </div>
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                
+                <a class="article-category-link" href="/categories/statistics">statistics</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/categories/mixed-models">mixed models</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                
+                <a class="article-category-link" href="/tags/lme4">lme4</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/tags/random-effect">random effect</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+        <div class="article-entry" itemprop="articleBody">
+            <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/datatables-binding/datatables.js"></script>
+<link href="/rmarkdown-libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="/rmarkdown-libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/dt-core/js/jquery.dataTables.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+
+
+<p>People often get confused on how to code nested and crossed random effects in the <a href="https://cran.rstudio.com/web/packages/lme4/"><code>lme4</code></a> package. I will try to make this more clear using some artificial data sets.</p>
+<div id="nested-random-effects" class="section level2">
+<h2>Nested random effects</h2>
+<p>Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes. There is a one-to-many relationship between the random effects. E.g. a school can contain multiple classes but a class can only be part of one school. Lets start by creating a simple example with fake data to explain the design. Figure <a href="#fig:school-design">1</a> shows the contigency matrix for the dataset.</p>
+<pre class="r"><code>library(DT)
+library(lme4)
+library(tidyverse)</code></pre>
+<pre class="r"><code>set.seed(123)
+n_school &lt;- 10
+mean_n_class &lt;- 7
+mean_n_student &lt;- 5
+
+n_class &lt;- rpois(n_school, mean_n_class)
+schools &lt;- map2_df(
+  seq_len(n_school), 
+  n_class, 
+  ~data_frame(
+    school = .x, 
+    class = seq_len(.y),
+    students = rpois(.y, mean_n_student)
+  )
+) %&gt;%
+  group_by(school, class) %&gt;%
+  do(
+    student = data_frame(student = seq_len(.$students))
+  ) %&gt;%
+  unnest(student) %&gt;%
+  mutate(
+    class2 = interaction(class, school, drop = TRUE),
+    student2 = interaction(class2, student, drop = TRUE)
+  )</code></pre>
+<p><code>schools</code> contains 3 design variables: <code>school</code>, <code>class</code> and <code>student</code>. Each numbering restarts at 1 when the higher level number changes. Hence the id of class and student are not unique. Therefore I added two new variables <code>class2</code> and <code>student2</code> which are unique id’s for each class and student. The next step is adding the expected and observed values.</p>
+<div id="htmlwidget-1" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"filter":"none","caption":"<caption>Design of the `schools` data set<\/caption>","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","268","269","270","271","272","273","274","275","276","277","278","279","280","281","282","283","284","285","286","287","288","289","290","291","292","293","294","295","296","297","298","299","300","301","302","303","304","305","306","307","308","309","310","311","312","313","314","315","316","317","318","319","320","321","322","323","324","325","326","327","328","329","330","331","332","333","334","335","336","337","338","339","340","341","342","343","344","345","346","347","348","349","350","351","352","353","354","355","356","357","358","359","360","361","362","363","364","365","366"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],[1,1,1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,5,5,1,1,1,1,1,1,1,1,2,2,2,3,3,4,4,4,4,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,1,1,1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,5,6,6,6,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,5,6,6,6,6,6,7,7,7,7,7,7,8,8,8,9,9,9,9,10,10,10,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,6,6,6,7,7,7,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10,10,11,11,1,1,1,1,1,2,2,2,2,2,2,2,3,3,1,1,1,1,1,2,2,2,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,6,6,6,6,7,7,7,7,7,7,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,7,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,10,10,1,1,1,1,1,1,2,2,2,2,2,2,4,4,4,4,4,5,5,5,6,6,6,6,7,7,7,7,7,1,1,1,1,2,2,3,3,3,4,4,4,4,4,4,5,5,5,5,6,6,6,6,6,6,6,7,7],[1,2,3,4,5,6,7,8,9,1,2,3,4,5,1,2,3,4,5,6,1,2,3,4,5,1,2,1,2,3,4,5,6,7,8,1,2,3,1,2,1,2,3,4,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,7,8,9,10,11,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,1,2,3,4,5,1,2,3,4,1,2,3,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,1,2,3,4,5,6,1,2,3,4,5,6,7,1,1,2,3,4,5,1,2,3,4,5,6,1,2,3,1,2,3,4,1,2,3,1,2,3,1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,1,2,3,1,2,3,1,2,3,4,5,1,2,3,4,1,2,3,4,5,6,7,1,2,1,2,3,4,5,1,2,3,4,5,6,7,1,2,1,2,3,4,5,1,2,3,1,2,3,1,2,3,4,5,6,1,2,3,4,5,6,7,8,1,2,3,4,1,2,3,4,5,6,1,2,1,2,3,4,1,2,3,4,1,2,3,4,5,6,7,1,2,3,4,5,1,2,3,4,5,6,7,1,2,3,4,5,6,7,1,2,3,4,5,6,7,1,2,3,4,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,1,2,3,1,2,3,4,1,2,3,4,5,1,2,3,4,1,2,1,2,3,1,2,3,4,5,6,1,2,3,4,1,2,3,4,5,6,7,1,2],["1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","1.1","2.1","2.1","2.1","2.1","2.1","3.1","3.1","3.1","3.1","3.1","3.1","4.1","4.1","4.1","4.1","4.1","5.1","5.1","1.2","1.2","1.2","1.2","1.2","1.2","1.2","1.2","2.2","2.2","2.2","3.2","3.2","4.2","4.2","4.2","4.2","5.2","5.2","5.2","5.2","5.2","5.2","5.2","5.2","5.2","6.2","6.2","6.2","6.2","6.2","6.2","6.2","6.2","7.2","7.2","7.2","7.2","7.2","7.2","8.2","8.2","8.2","8.2","8.2","8.2","9.2","9.2","9.2","9.2","9.2","9.2","9.2","9.2","9.2","9.2","9.2","1.3","1.3","1.3","1.3","1.3","1.3","2.3","2.3","2.3","2.3","2.3","2.3","3.3","3.3","3.3","3.3","3.3","4.3","4.3","4.3","4.3","4.3","5.3","5.3","5.3","5.3","6.3","6.3","6.3","1.4","1.4","1.4","1.4","1.4","1.4","1.4","1.4","1.4","2.4","2.4","2.4","2.4","2.4","2.4","2.4","2.4","3.4","3.4","3.4","3.4","3.4","3.4","4.4","4.4","4.4","4.4","4.4","4.4","4.4","5.4","6.4","6.4","6.4","6.4","6.4","7.4","7.4","7.4","7.4","7.4","7.4","8.4","8.4","8.4","9.4","9.4","9.4","9.4","10.4","10.4","10.4","1.5","1.5","1.5","2.5","2.5","2.5","2.5","3.5","3.5","3.5","3.5","4.5","4.5","4.5","4.5","5.5","5.5","5.5","6.5","6.5","6.5","7.5","7.5","7.5","8.5","8.5","8.5","8.5","8.5","9.5","9.5","9.5","9.5","10.5","10.5","10.5","10.5","10.5","10.5","10.5","11.5","11.5","1.6","1.6","1.6","1.6","1.6","2.6","2.6","2.6","2.6","2.6","2.6","2.6","3.6","3.6","1.7","1.7","1.7","1.7","1.7","2.7","2.7","2.7","3.7","3.7","3.7","4.7","4.7","4.7","4.7","4.7","4.7","5.7","5.7","5.7","5.7","5.7","5.7","5.7","5.7","6.7","6.7","6.7","6.7","7.7","7.7","7.7","7.7","7.7","7.7","1.8","1.8","2.8","2.8","2.8","2.8","3.8","3.8","3.8","3.8","4.8","4.8","4.8","4.8","4.8","4.8","4.8","5.8","5.8","5.8","5.8","5.8","6.8","6.8","6.8","6.8","6.8","6.8","6.8","7.8","7.8","7.8","7.8","7.8","7.8","7.8","8.8","8.8","8.8","8.8","8.8","8.8","8.8","9.8","9.8","9.8","9.8","10.8","10.8","10.8","10.8","10.8","10.8","1.9","1.9","1.9","1.9","1.9","1.9","2.9","2.9","2.9","2.9","2.9","2.9","4.9","4.9","4.9","4.9","4.9","5.9","5.9","5.9","6.9","6.9","6.9","6.9","7.9","7.9","7.9","7.9","7.9","1.10","1.10","1.10","1.10","2.10","2.10","3.10","3.10","3.10","4.10","4.10","4.10","4.10","4.10","4.10","5.10","5.10","5.10","5.10","6.10","6.10","6.10","6.10","6.10","6.10","6.10","7.10","7.10"],["1.1.1","1.1.2","1.1.3","1.1.4","1.1.5","1.1.6","1.1.7","1.1.8","1.1.9","2.1.1","2.1.2","2.1.3","2.1.4","2.1.5","3.1.1","3.1.2","3.1.3","3.1.4","3.1.5","3.1.6","4.1.1","4.1.2","4.1.3","4.1.4","4.1.5","5.1.1","5.1.2","1.2.1","1.2.2","1.2.3","1.2.4","1.2.5","1.2.6","1.2.7","1.2.8","2.2.1","2.2.2","2.2.3","3.2.1","3.2.2","4.2.1","4.2.2","4.2.3","4.2.4","5.2.1","5.2.2","5.2.3","5.2.4","5.2.5","5.2.6","5.2.7","5.2.8","5.2.9","6.2.1","6.2.2","6.2.3","6.2.4","6.2.5","6.2.6","6.2.7","6.2.8","7.2.1","7.2.2","7.2.3","7.2.4","7.2.5","7.2.6","8.2.1","8.2.2","8.2.3","8.2.4","8.2.5","8.2.6","9.2.1","9.2.2","9.2.3","9.2.4","9.2.5","9.2.6","9.2.7","9.2.8","9.2.9","9.2.10","9.2.11","1.3.1","1.3.2","1.3.3","1.3.4","1.3.5","1.3.6","2.3.1","2.3.2","2.3.3","2.3.4","2.3.5","2.3.6","3.3.1","3.3.2","3.3.3","3.3.4","3.3.5","4.3.1","4.3.2","4.3.3","4.3.4","4.3.5","5.3.1","5.3.2","5.3.3","5.3.4","6.3.1","6.3.2","6.3.3","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6","1.4.7","1.4.8","1.4.9","2.4.1","2.4.2","2.4.3","2.4.4","2.4.5","2.4.6","2.4.7","2.4.8","3.4.1","3.4.2","3.4.3","3.4.4","3.4.5","3.4.6","4.4.1","4.4.2","4.4.3","4.4.4","4.4.5","4.4.6","4.4.7","5.4.1","6.4.1","6.4.2","6.4.3","6.4.4","6.4.5","7.4.1","7.4.2","7.4.3","7.4.4","7.4.5","7.4.6","8.4.1","8.4.2","8.4.3","9.4.1","9.4.2","9.4.3","9.4.4","10.4.1","10.4.2","10.4.3","1.5.1","1.5.2","1.5.3","2.5.1","2.5.2","2.5.3","2.5.4","3.5.1","3.5.2","3.5.3","3.5.4","4.5.1","4.5.2","4.5.3","4.5.4","5.5.1","5.5.2","5.5.3","6.5.1","6.5.2","6.5.3","7.5.1","7.5.2","7.5.3","8.5.1","8.5.2","8.5.3","8.5.4","8.5.5","9.5.1","9.5.2","9.5.3","9.5.4","10.5.1","10.5.2","10.5.3","10.5.4","10.5.5","10.5.6","10.5.7","11.5.1","11.5.2","1.6.1","1.6.2","1.6.3","1.6.4","1.6.5","2.6.1","2.6.2","2.6.3","2.6.4","2.6.5","2.6.6","2.6.7","3.6.1","3.6.2","1.7.1","1.7.2","1.7.3","1.7.4","1.7.5","2.7.1","2.7.2","2.7.3","3.7.1","3.7.2","3.7.3","4.7.1","4.7.2","4.7.3","4.7.4","4.7.5","4.7.6","5.7.1","5.7.2","5.7.3","5.7.4","5.7.5","5.7.6","5.7.7","5.7.8","6.7.1","6.7.2","6.7.3","6.7.4","7.7.1","7.7.2","7.7.3","7.7.4","7.7.5","7.7.6","1.8.1","1.8.2","2.8.1","2.8.2","2.8.3","2.8.4","3.8.1","3.8.2","3.8.3","3.8.4","4.8.1","4.8.2","4.8.3","4.8.4","4.8.5","4.8.6","4.8.7","5.8.1","5.8.2","5.8.3","5.8.4","5.8.5","6.8.1","6.8.2","6.8.3","6.8.4","6.8.5","6.8.6","6.8.7","7.8.1","7.8.2","7.8.3","7.8.4","7.8.5","7.8.6","7.8.7","8.8.1","8.8.2","8.8.3","8.8.4","8.8.5","8.8.6","8.8.7","9.8.1","9.8.2","9.8.3","9.8.4","10.8.1","10.8.2","10.8.3","10.8.4","10.8.5","10.8.6","1.9.1","1.9.2","1.9.3","1.9.4","1.9.5","1.9.6","2.9.1","2.9.2","2.9.3","2.9.4","2.9.5","2.9.6","4.9.1","4.9.2","4.9.3","4.9.4","4.9.5","5.9.1","5.9.2","5.9.3","6.9.1","6.9.2","6.9.3","6.9.4","7.9.1","7.9.2","7.9.3","7.9.4","7.9.5","1.10.1","1.10.2","1.10.3","1.10.4","2.10.1","2.10.2","3.10.1","3.10.2","3.10.3","4.10.1","4.10.2","4.10.3","4.10.4","4.10.5","4.10.6","5.10.1","5.10.2","5.10.3","5.10.4","6.10.1","6.10.2","6.10.3","6.10.4","6.10.5","6.10.6","6.10.7","7.10.1","7.10.2"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>school<\/th>\n      <th>class<\/th>\n      <th>student<\/th>\n      <th>class2<\/th>\n      <th>student2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>with(schools, table(class2, school)) %&gt;%
+  image(
+    col = grey.colors(10, start = 1, end = 0), 
+    axes = FALSE, 
+    xlab = &quot;Class&quot;, 
+    ylab = &quot;School&quot;
+  )</code></pre>
+<div class="figure"><span id="fig:school-design"></span>
+<img src="/post/2017-07-18-nested-and-crossed-random-effects-in-lme4_files/figure-html/school-design-1.png" alt="Contingency matrix for the `schools`data set" width="672" />
+<p class="caption">
+Figure 1: Contingency matrix for the <code>schools</code>data set
+</p>
+</div>
+<pre class="r"><code>school_sd &lt;- 2
+class_sd &lt;- 2
+noise_sd &lt;- 1
+intercept &lt;- 50
+
+school_effect &lt;- rnorm(n_school, mean = 0, sd = school_sd)
+class_effect &lt;- rnorm(length(levels(schools$class2)), mean = 0, sd = class_sd)
+schools &lt;- schools %&gt;%
+  mutate(
+    mu = intercept + school_effect[school] + class_effect[class2],
+    y = mu + rnorm(n(), mean = 0, sd = noise_sd)
+  )</code></pre>
+<div id="explicit-nesting" class="section level3">
+<h3>Explicit nesting</h3>
+<p>The first option is to use explicit nesting. Here we add a random effect for each hierarchical level and use the <code>:</code> notation to add all higher levels. This can be expanded to more than two levels. E.g. <code>(1|A) + (1|A:B) + (1|A:B:C) + (1|A:B:C:D)</code>. The nice thing about this notation is twofold: a) the nesting is explicit and clear for all readers; b) it is insensitive for the order: e.g. <code>(1|A) + (1|A:B)</code> is identical to <code>(1|B:A) + (1|A)</code>.</p>
+<pre class="r"><code>lmer(y ~ (1|school) + (1|school:class), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | school) + (1 | school:class)
+##    Data: schools
+## REML criterion at convergence: 1290.668
+## Random effects:
+##  Groups       Name        Std.Dev.
+##  school:class (Intercept) 1.631   
+##  school       (Intercept) 1.806   
+##  Residual                 1.073   
+## Number of obs: 366, groups:  school:class, 74; school, 10
+## Fixed Effects:
+## (Intercept)  
+##       50.27</code></pre>
+<pre class="r"><code>lmer(y ~ (1|class:school) + (1|school), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | class:school) + (1 | school)
+##    Data: schools
+## REML criterion at convergence: 1290.668
+## Random effects:
+##  Groups       Name        Std.Dev.
+##  class:school (Intercept) 1.631   
+##  school       (Intercept) 1.806   
+##  Residual                 1.073   
+## Number of obs: 366, groups:  class:school, 74; school, 10
+## Fixed Effects:
+## (Intercept)  
+##       50.27</code></pre>
+</div>
+<div id="shorthand-nesting" class="section level3">
+<h3>Shorthand nesting</h3>
+<p><code>(1|A) + (1|A:B)</code> can be abbreviated into <code>(1|A/B)</code>. However, I recommend against it because here the order is important as seen in the example below. <code>(1|B/A)</code> expands to <code>(1|B) + (1|B:A)</code>, which is clearly a different model than <code>(1|A) + (1|A:B)</code>. I’ve seen many people being confused about the order, therefore I recommend to be explicit instead of using shorthand.</p>
+<pre class="r"><code>lmer(y ~ (1|school/class), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | school/class)
+##    Data: schools
+## REML criterion at convergence: 1290.668
+## Random effects:
+##  Groups       Name        Std.Dev.
+##  class:school (Intercept) 1.631   
+##  school       (Intercept) 1.806   
+##  Residual                 1.073   
+## Number of obs: 366, groups:  class:school, 74; school, 10
+## Fixed Effects:
+## (Intercept)  
+##       50.27</code></pre>
+<pre class="r"><code>lmer(y ~ (1|class/school), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | class/school)
+##    Data: schools
+## REML criterion at convergence: 1320.039
+## Random effects:
+##  Groups       Name        Std.Dev.
+##  school:class (Intercept) 2.330   
+##  class        (Intercept) 0.000   
+##  Residual                 1.073   
+## Number of obs: 366, groups:  school:class, 74; class, 11
+## Fixed Effects:
+## (Intercept)  
+##       50.42</code></pre>
+</div>
+<div id="implicit-nesting" class="section level3">
+<h3>Implicit nesting</h3>
+<p>With implicit nesting, the nesting is ‘defined’ in the data. That is each level of a random effect has a one-to-many relation with the levels of the lower random effect. E.g. each class id is unique for a given class in a given school and cannot refer to a class in any other school. This is how we constructed the <code>class2</code> variable in our data. With implicit nesting the code can be abbreviated to <code>(1|A) + (1|B)</code>. Note that the <code>(1|A) + (1|A:B)</code> and <code>(1|A/B)</code> notations remain valid.</p>
+<pre class="r"><code>lmer(y ~ (1|school) + (1|class2), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | school) + (1 | class2)
+##    Data: schools
+## REML criterion at convergence: 1290.668
+## Random effects:
+##  Groups   Name        Std.Dev.
+##  class2   (Intercept) 1.631   
+##  school   (Intercept) 1.806   
+##  Residual             1.073   
+## Number of obs: 366, groups:  class2, 74; school, 10
+## Fixed Effects:
+## (Intercept)  
+##       50.27</code></pre>
+<pre class="r"><code>lmer(y ~ (1|school) + (1|school:class2), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | school) + (1 | school:class2)
+##    Data: schools
+## REML criterion at convergence: 1290.668
+## Random effects:
+##  Groups        Name        Std.Dev.
+##  school:class2 (Intercept) 1.631   
+##  school        (Intercept) 1.806   
+##  Residual                  1.073   
+## Number of obs: 366, groups:  school:class2, 74; school, 10
+## Fixed Effects:
+## (Intercept)  
+##       50.27</code></pre>
+<pre class="r"><code>lmer(y ~ (1|school/class2), data = schools)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | school/class2)
+##    Data: schools
+## REML criterion at convergence: 1290.668
+## Random effects:
+##  Groups        Name        Std.Dev.
+##  class2:school (Intercept) 1.631   
+##  school        (Intercept) 1.806   
+##  Residual                  1.073   
+## Number of obs: 366, groups:  class2:school, 74; school, 10
+## Fixed Effects:
+## (Intercept)  
+##       50.27</code></pre>
+</div>
+</div>
+<div id="crossed-random-effects" class="section level2">
+<h2>Crossed random effects</h2>
+<p>Crossed random effects appear when two (or more) variables can be used to create distinct groupings. Think about factories and products where a factory can produce a range of products, and a product can be manufactured in different factories. The contigency matrix of such a design is shown in figure <a href="#fig:factory-design">2</a>.</p>
+<pre class="r"><code>n_factory &lt;- 10
+n_product &lt;- 10
+mean_n_sample &lt;- 5
+
+factories &lt;- expand.grid(
+  factory = seq_len(n_factory),
+  product = seq_len(n_product)
+) %&gt;%
+  mutate(
+    samples = rpois(n(), mean_n_sample)
+  ) %&gt;%
+  group_by(factory, product) %&gt;%
+  do(
+    sample = data_frame(sample = seq_len(.$samples))
+  ) %&gt;%
+  unnest(sample) %&gt;%
+  mutate(
+    sample2 = interaction(factory, product, sample, drop = TRUE)
+  )</code></pre>
+<p><code>factories</code> contains 3 design variables: <code>factory</code>, <code>product</code> and <code>sample</code>. Most of the <code>factory</code> and <code>product</code> combinations are present in the data and they are meaningfull. Product 1 in factory 1 is the same product as product 1 in factory 2.</p>
+<div id="htmlwidget-2" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2">{"x":{"filter":"none","caption":"<caption>Design of the `factories` data set<\/caption>","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120","121","122","123","124","125","126","127","128","129","130","131","132","133","134","135","136","137","138","139","140","141","142","143","144","145","146","147","148","149","150","151","152","153","154","155","156","157","158","159","160","161","162","163","164","165","166","167","168","169","170","171","172","173","174","175","176","177","178","179","180","181","182","183","184","185","186","187","188","189","190","191","192","193","194","195","196","197","198","199","200","201","202","203","204","205","206","207","208","209","210","211","212","213","214","215","216","217","218","219","220","221","222","223","224","225","226","227","228","229","230","231","232","233","234","235","236","237","238","239","240","241","242","243","244","245","246","247","248","249","250","251","252","253","254","255","256","257","258","259","260","261","262","263","264","265","266","267","268","269","270","271","272","273","274","275","276","277","278","279","280","281","282","283","284","285","286","287","288","289","290","291","292","293","294","295","296","297","298","299","300","301","302","303","304","305","306","307","308","309","310","311","312","313","314","315","316","317","318","319","320","321","322","323","324","325","326","327","328","329","330","331","332","333","334","335","336","337","338","339","340","341","342","343","344","345","346","347","348","349","350","351","352","353","354","355","356","357","358","359","360","361","362","363","364","365","366","367","368","369","370","371","372","373","374","375","376","377","378","379","380","381","382","383","384","385","386","387","388","389","390","391","392","393","394","395","396","397","398","399","400","401","402","403","404","405","406","407","408","409","410","411","412","413","414","415","416","417","418","419","420","421","422","423","424","425","426","427","428","429","430","431","432","433","434","435","436","437","438","439","440","441","442","443","444","445","446","447","448","449","450","451","452","453","454","455","456","457","458","459","460","461","462","463","464","465","466","467","468","469","470","471","472","473","474","475","476","477","478","479","480","481"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10],[1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,4,4,4,5,5,5,5,6,6,6,6,6,7,7,8,8,8,8,9,9,9,9,9,9,10,10,10,10,10,10,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,10,10,10,10,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,8,8,8,9,9,9,10,1,1,1,2,2,2,2,2,2,3,3,4,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,9,9,9,9,9,9,9,9,9,9,10,10,10,10,1,1,1,1,2,2,3,3,3,3,3,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,10,10,10,10,1,1,2,2,2,2,3,3,3,3,3,4,4,4,4,4,5,5,5,6,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,9,9,9,9,9,9,9,10,10,10,10,1,1,1,2,2,2,2,2,3,3,3,3,4,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,7,8,8,8,9,9,9,9,9,9,9,10,10,10,1,1,1,1,1,2,2,2,3,3,3,4,4,4,4,4,5,5,5,5,5,6,6,6,6,6,7,7,7,7,7,7,7,7,8,8,8,8,9,9,9,9,9,9,9,9,10,10,10,10,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,6,6,6,6,6,7,7,7,7,7,8,8,8,8,9,9,9,9,9,9,9,10,10,10,10,1,1,1,1,1,2,2,2,2,2,2,2,3,4,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,7,7,7,7,7,8,8,9,9,9,9,9,9,10,10,10,10,10,10],[1,2,3,4,5,6,1,2,3,4,5,6,7,1,2,3,4,5,1,2,3,4,5,6,7,1,2,3,4,1,2,3,4,5,1,2,1,2,3,4,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,1,2,3,4,5,6,1,2,3,4,5,6,7,1,2,3,4,5,1,2,3,4,5,1,2,3,1,2,3,4,1,2,3,4,5,6,1,2,3,4,5,1,2,3,4,1,2,3,1,2,3,4,1,2,3,4,1,2,3,4,5,6,1,2,3,4,5,1,2,3,4,5,1,1,2,3,1,2,3,1,1,2,3,1,2,3,4,5,6,1,2,1,2,3,4,5,1,2,3,4,1,2,3,4,1,2,3,4,5,6,7,8,1,2,3,4,1,2,3,4,5,6,7,8,9,10,1,2,3,4,1,2,3,4,1,2,1,2,3,4,5,1,2,3,4,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,6,7,8,9,10,11,1,2,3,4,5,6,1,2,3,4,5,1,2,3,4,1,2,1,2,3,4,1,2,3,4,5,1,2,3,4,5,1,2,3,1,2,3,4,5,6,7,1,2,3,4,5,6,1,2,3,4,5,6,1,2,3,4,5,6,7,1,2,3,4,1,2,3,1,2,3,4,5,1,2,3,4,1,2,3,4,5,6,7,1,2,3,4,5,1,2,3,4,5,6,1,2,3,4,5,6,7,1,2,3,1,2,3,4,5,6,7,1,2,3,1,2,3,4,5,1,2,3,1,2,3,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,6,7,8,1,2,3,4,1,2,3,4,5,6,7,8,1,2,3,4,1,2,3,4,1,2,3,4,5,6,7,1,2,3,4,5,1,2,3,4,1,2,3,1,2,3,4,5,1,2,3,4,5,1,2,3,4,1,2,3,4,5,6,7,1,2,3,4,1,2,3,4,5,1,2,3,4,5,6,7,1,1,2,3,4,5,6,7,1,2,3,4,5,6,1,2,3,1,2,3,4,5,1,2,1,2,3,4,5,6,1,2,3,4,5,6],["1.1.1","1.1.2","1.1.3","1.1.4","1.1.5","1.1.6","1.2.1","1.2.2","1.2.3","1.2.4","1.2.5","1.2.6","1.2.7","1.3.1","1.3.2","1.3.3","1.3.4","1.3.5","1.4.1","1.4.2","1.4.3","1.4.4","1.4.5","1.4.6","1.4.7","1.5.1","1.5.2","1.5.3","1.5.4","1.6.1","1.6.2","1.6.3","1.6.4","1.6.5","1.7.1","1.7.2","1.8.1","1.8.2","1.8.3","1.8.4","1.9.1","1.9.2","1.9.3","1.9.4","1.9.5","1.9.6","1.10.1","1.10.2","1.10.3","1.10.4","1.10.5","1.10.6","2.1.1","2.1.2","2.1.3","2.2.1","2.2.2","2.2.3","2.2.4","2.2.5","2.2.6","2.3.1","2.3.2","2.3.3","2.3.4","2.3.5","2.3.6","2.3.7","2.4.1","2.4.2","2.4.3","2.4.4","2.4.5","2.5.1","2.5.2","2.5.3","2.5.4","2.5.5","2.6.1","2.6.2","2.6.3","2.7.1","2.7.2","2.7.3","2.7.4","2.8.1","2.8.2","2.8.3","2.8.4","2.8.5","2.8.6","2.9.1","2.9.2","2.9.3","2.9.4","2.9.5","2.10.1","2.10.2","2.10.3","2.10.4","3.1.1","3.1.2","3.1.3","3.2.1","3.2.2","3.2.3","3.2.4","3.3.1","3.3.2","3.3.3","3.3.4","3.4.1","3.4.2","3.4.3","3.4.4","3.4.5","3.4.6","3.5.1","3.5.2","3.5.3","3.5.4","3.5.5","3.6.1","3.6.2","3.6.3","3.6.4","3.6.5","3.7.1","3.8.1","3.8.2","3.8.3","3.9.1","3.9.2","3.9.3","3.10.1","4.1.1","4.1.2","4.1.3","4.2.1","4.2.2","4.2.3","4.2.4","4.2.5","4.2.6","4.3.1","4.3.2","4.4.1","4.4.2","4.4.3","4.4.4","4.4.5","4.5.1","4.5.2","4.5.3","4.5.4","4.6.1","4.6.2","4.6.3","4.6.4","4.7.1","4.7.2","4.7.3","4.7.4","4.7.5","4.7.6","4.7.7","4.7.8","4.8.1","4.8.2","4.8.3","4.8.4","4.9.1","4.9.2","4.9.3","4.9.4","4.9.5","4.9.6","4.9.7","4.9.8","4.9.9","4.9.10","4.10.1","4.10.2","4.10.3","4.10.4","5.1.1","5.1.2","5.1.3","5.1.4","5.2.1","5.2.2","5.3.1","5.3.2","5.3.3","5.3.4","5.3.5","5.4.1","5.4.2","5.4.3","5.4.4","5.5.1","5.5.2","5.5.3","5.5.4","5.5.5","5.6.1","5.6.2","5.6.3","5.6.4","5.6.5","5.7.1","5.7.2","5.7.3","5.7.4","5.7.5","5.7.6","5.7.7","5.7.8","5.7.9","5.7.10","5.7.11","5.8.1","5.8.2","5.8.3","5.8.4","5.8.5","5.8.6","5.9.1","5.9.2","5.9.3","5.9.4","5.9.5","5.10.1","5.10.2","5.10.3","5.10.4","6.1.1","6.1.2","6.2.1","6.2.2","6.2.3","6.2.4","6.3.1","6.3.2","6.3.3","6.3.4","6.3.5","6.4.1","6.4.2","6.4.3","6.4.4","6.4.5","6.5.1","6.5.2","6.5.3","6.6.1","6.6.2","6.6.3","6.6.4","6.6.5","6.6.6","6.6.7","6.7.1","6.7.2","6.7.3","6.7.4","6.7.5","6.7.6","6.8.1","6.8.2","6.8.3","6.8.4","6.8.5","6.8.6","6.9.1","6.9.2","6.9.3","6.9.4","6.9.5","6.9.6","6.9.7","6.10.1","6.10.2","6.10.3","6.10.4","7.1.1","7.1.2","7.1.3","7.2.1","7.2.2","7.2.3","7.2.4","7.2.5","7.3.1","7.3.2","7.3.3","7.3.4","7.4.1","7.4.2","7.4.3","7.4.4","7.4.5","7.4.6","7.4.7","7.5.1","7.5.2","7.5.3","7.5.4","7.5.5","7.6.1","7.6.2","7.6.3","7.6.4","7.6.5","7.6.6","7.7.1","7.7.2","7.7.3","7.7.4","7.7.5","7.7.6","7.7.7","7.8.1","7.8.2","7.8.3","7.9.1","7.9.2","7.9.3","7.9.4","7.9.5","7.9.6","7.9.7","7.10.1","7.10.2","7.10.3","8.1.1","8.1.2","8.1.3","8.1.4","8.1.5","8.2.1","8.2.2","8.2.3","8.3.1","8.3.2","8.3.3","8.4.1","8.4.2","8.4.3","8.4.4","8.4.5","8.5.1","8.5.2","8.5.3","8.5.4","8.5.5","8.6.1","8.6.2","8.6.3","8.6.4","8.6.5","8.7.1","8.7.2","8.7.3","8.7.4","8.7.5","8.7.6","8.7.7","8.7.8","8.8.1","8.8.2","8.8.3","8.8.4","8.9.1","8.9.2","8.9.3","8.9.4","8.9.5","8.9.6","8.9.7","8.9.8","8.10.1","8.10.2","8.10.3","8.10.4","9.1.1","9.1.2","9.1.3","9.1.4","9.2.1","9.2.2","9.2.3","9.2.4","9.2.5","9.2.6","9.2.7","9.3.1","9.3.2","9.3.3","9.3.4","9.3.5","9.4.1","9.4.2","9.4.3","9.4.4","9.5.1","9.5.2","9.5.3","9.6.1","9.6.2","9.6.3","9.6.4","9.6.5","9.7.1","9.7.2","9.7.3","9.7.4","9.7.5","9.8.1","9.8.2","9.8.3","9.8.4","9.9.1","9.9.2","9.9.3","9.9.4","9.9.5","9.9.6","9.9.7","9.10.1","9.10.2","9.10.3","9.10.4","10.1.1","10.1.2","10.1.3","10.1.4","10.1.5","10.2.1","10.2.2","10.2.3","10.2.4","10.2.5","10.2.6","10.2.7","10.3.1","10.4.1","10.4.2","10.4.3","10.4.4","10.4.5","10.4.6","10.4.7","10.5.1","10.5.2","10.5.3","10.5.4","10.5.5","10.5.6","10.6.1","10.6.2","10.6.3","10.7.1","10.7.2","10.7.3","10.7.4","10.7.5","10.8.1","10.8.2","10.9.1","10.9.2","10.9.3","10.9.4","10.9.5","10.9.6","10.10.1","10.10.2","10.10.3","10.10.4","10.10.5","10.10.6"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>factory<\/th>\n      <th>product<\/th>\n      <th>sample<\/th>\n      <th>sample2<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[1,2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>with(factories, table(product, factory)) %&gt;%
+  image(
+    col = grey.colors(10, start = 1, end = 0), 
+    axes = FALSE, 
+    xlab = &quot;Product&quot;, 
+    ylab = &quot;Factory&quot;
+  )</code></pre>
+<div class="figure"><span id="fig:factory-design"></span>
+<img src="/post/2017-07-18-nested-and-crossed-random-effects-in-lme4_files/figure-html/factory-design-1.png" alt="Contingency matrix for the `factories`data set" width="672" />
+<p class="caption">
+Figure 2: Contingency matrix for the <code>factories</code>data set
+</p>
+</div>
+<pre class="r"><code>factory_sd &lt;- 3
+product_sd &lt;- 2
+noise_sd &lt;- 1
+intercept &lt;- 50
+
+factory_effect &lt;- rnorm(n_factory, mean = 0, sd = factory_sd)
+product_effect &lt;- rnorm(n_product, mean = 0, sd = product_sd)
+factories &lt;- factories %&gt;%
+  mutate(
+    mu = intercept + factory_effect[factory] + product_effect[product],
+    y = mu + rnorm(n(), mean = 0, sd = noise_sd)
+  )</code></pre>
+<div id="coding" class="section level3">
+<h3>Coding</h3>
+<p>The coding for crossed random effects is easy: <code>(1|A) + (1|B) + (1|C)</code>.</p>
+<pre class="r"><code>lmer(y ~ (1|factory) + (1|product), data = factories)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: y ~ (1 | factory) + (1 | product)
+##    Data: factories
+## REML criterion at convergence: 1461.96
+## Random effects:
+##  Groups   Name        Std.Dev.
+##  factory  (Intercept) 2.8210  
+##  product  (Intercept) 1.6837  
+##  Residual             0.9957  
+## Number of obs: 481, groups:  factory, 10; product, 10
+## Fixed Effects:
+## (Intercept)  
+##       49.36</code></pre>
+</div>
+</div>
+<div id="recommendations" class="section level2">
+<h2>Recommendations</h2>
+<ul>
+<li>each level of a random effect should be defined by a single variable: e.g. <code>class2</code> and <code>student2</code> in <code>schools</code>; <code>factory</code>, <code>product</code> and <code>sample2</code> in <code>factories</code></li>
+<li>use explict nesting even when the data set would allow implicit nesting</li>
+<li>don’t use the shorthand nesting</li>
+</ul>
+</div>
+
+        </div>
+        <footer class="article-footer">
+    <a data-url="/2017/07/lme4-random-effects/" data-id="ad7bbd68ad8f0cdb59290077b7e301f5" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="/2017/07/lme4-random-effects/#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+    </div>
+
+    
+<nav id="article-nav">
+    
+    <a href="/2017/07/creating-maps-with-osmplotr/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Creating continuous coloured maps with osmplotr</div>
+    </a>
+    
+
+    
+    <a href="/2017/07/peersonic-ip67/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Newer
+      </strong>
+      <div class="article-nav-title">Peersonic bat-detector in waterproof IP67 enclosure</div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+
+<section id="comments">
+    <div id="disqus_thread">
+        <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "stats-bats" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+</section>
+
+
+    </section>
+
+   	
+    	<aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/07/inlabru-bru/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/07/inlabru-bru/" class="title">Comparing inlabru with INLA</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-07-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">12 July 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/05/silhouette/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/bats">
+                        bats
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/05/silhouette/" class="title">Bat silhouettes at 1:1 scale</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-05-19 00:00:00 &#43;0000 UTC" itemprop="datePublished">19 May 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/03/inla-temporal/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/03/inla-temporal/" class="title">Temporal autocorrelation in INLA</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-03-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">5 March 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/02/highly-correlated-random-effects/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/02/highly-correlated-random-effects/" class="title">Highly correlated random effects</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-02-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">16 February 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2017/09/readrpa/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/bats">
+                        bats
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2017/09/readrpa/" class="title">Review of the ReadRPA software</a></p>
+                    <p class="item-date">
+                        <time datetime="2017-09-26 00:00:00 &#43;0000 UTC" itemprop="datePublished">26 September 2017</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/about">
+                    about
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/analysis">
+                    analysis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/bats">
+                    bats
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/maps">
+                    maps
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/mixed-models">
+                    mixed-models
+                </a>
+                <span class="category-list-count">5</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/point-pattern">
+                    point-pattern
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/reproducible-research">
+                    reproducible-research
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/statistics">
+                    statistics
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/text">
+                    text
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/tool-review">
+                    tool-review
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/version-control">
+                    version-control
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/bat-detector">
+                    bat-detector
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/bookdown">
+                    bookdown
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/density">
+                    density
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/ggmap">
+                    ggmap
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/git">
+                    git
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/gitbook">
+                    gitbook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/inla">
+                    inla
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/inlabru">
+                    inlabru
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/introduction">
+                    introduction
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/kml">
+                    kml
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/leaflet">
+                    leaflet
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/lme4">
+                    lme4
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/maps">
+                    maps
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/openstreetmap">
+                    openstreetmap
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/osm">
+                    osm
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/peersonic">
+                    peersonic
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/point-pattern">
+                    point-pattern
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/projection">
+                    projection
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/random-effect">
+                    random-effect
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/review">
+                    review
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/rmarkdown">
+                    rmarkdown
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/silhouette">
+                    silhouette
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/spatial-point-process">
+                    spatial-point-process
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        
+        <a href="/tags/bat-detector" style="font-size: 12px;">bat-detector</a>
+        
+        
+        <a href="/tags/bookdown" style="font-size: 12px;">bookdown</a>
+        
+        
+        <a href="/tags/density" style="font-size: 12px;">density</a>
+        
+        
+        <a href="/tags/ggmap" style="font-size: 12px;">ggmap</a>
+        
+        
+        <a href="/tags/git" style="font-size: 12px;">git</a>
+        
+        
+        <a href="/tags/gitbook" style="font-size: 12px;">gitbook</a>
+        
+        
+        <a href="/tags/inla" style="font-size: 12px;">inla</a>
+        
+        
+        <a href="/tags/inlabru" style="font-size: 12px;">inlabru</a>
+        
+        
+        <a href="/tags/introduction" style="font-size: 12px;">introduction</a>
+        
+        
+        <a href="/tags/kml" style="font-size: 12px;">kml</a>
+        
+        
+        <a href="/tags/leaflet" style="font-size: 12px;">leaflet</a>
+        
+        
+        <a href="/tags/lme4" style="font-size: 12px;">lme4</a>
+        
+        
+        <a href="/tags/maps" style="font-size: 12px;">maps</a>
+        
+        
+        <a href="/tags/openstreetmap" style="font-size: 12px;">openstreetmap</a>
+        
+        
+        <a href="/tags/osm" style="font-size: 12px;">osm</a>
+        
+        
+        <a href="/tags/peersonic" style="font-size: 12px;">peersonic</a>
+        
+        
+        <a href="/tags/point-pattern" style="font-size: 12px;">point-pattern</a>
+        
+        
+        <a href="/tags/projection" style="font-size: 12px;">projection</a>
+        
+        
+        <a href="/tags/random-effect" style="font-size: 12px;">random-effect</a>
+        
+        
+        <a href="/tags/review" style="font-size: 12px;">review</a>
+        
+        
+        <a href="/tags/rmarkdown" style="font-size: 12px;">rmarkdown</a>
+        
+        
+        <a href="/tags/silhouette" style="font-size: 12px;">silhouette</a>
+        
+        
+        <a href="/tags/spatial-point-process" style="font-size: 12px;">spatial-point-process</a>
+        
+    </div>
+</div>
+
+
+
+
+
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+
+    
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018
+      Thierry Onkelinx. <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0+</a>. Source code available at <a href="http://github.com/thierryo/my_blog">GitHub</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66337116-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+</body>
+</html>

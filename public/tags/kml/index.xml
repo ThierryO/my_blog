@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kml on Stats &amp; bats</title>
+    <link>/tags/kml/</link>
+    <description>Recent content in Kml on Stats &amp; bats</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
+    <lastBuildDate>Thu, 15 Jun 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/kml/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Analysing data from bat observations along transects</title>
+      <link>/2017/06/analysing-data-from-bat-observations-along-transects/</link>
+      <pubDate>Thu, 15 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/analysing-data-from-bat-observations-along-transects/</guid>
+      <description>This post will handle observations of bats along a set of transects. It is a work in progress simply because I’m still collecting more data. So come back once and awhile to see potential updates.
+The survey The principle of the survey is quite simple: walk around with a bat detector and note the route you took and were you encounter bats. Repeat this several times.</description>
+    </item>
+    
+  </channel>
+</rss>

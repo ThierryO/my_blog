@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lme4 on Stats &amp; bats</title>
+    <link>/tags/lme4/</link>
+    <description>Recent content in Lme4 on Stats &amp; bats</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
+    <lastBuildDate>Fri, 16 Feb 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/lme4/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Highly correlated random effects</title>
+      <link>/2018/02/highly-correlated-random-effects/</link>
+      <pubDate>Fri, 16 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/02/highly-correlated-random-effects/</guid>
+      <description>Recently, I got a question on a mixed model with highly correlated random slopes. I requested a copy of the data because it is much easier to diagnose the problem when you have the actual data. The data owner gave permission to use an anonymised version of the data for this blog post. In this blog post, I will discuss how I’d tackle this problem.
+Data exploration Every data analysis should start with some data exploration.</description>
+    </item>
+    
+    <item>
+      <title>Using a variable both as fixed and random effect</title>
+      <link>/2017/08/fixed-and-random/</link>
+      <pubDate>Wed, 23 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/08/fixed-and-random/</guid>
+      <description>Categorical variable Discrete variable Intro Fit with lme4 Fit with INLA  Continuous variable Conclusion    One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so.</description>
+    </item>
+    
+    <item>
+      <title>Nested and crossed random effects in &#34;lme4&#34;</title>
+      <link>/2017/07/lme4-random-effects/</link>
+      <pubDate>Tue, 18 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/lme4-random-effects/</guid>
+      <description>People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
+Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes.</description>
+    </item>
+    
+  </channel>
+</rss>
