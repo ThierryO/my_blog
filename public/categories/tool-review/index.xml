@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tool Review on Stats &amp; bats</title>
+    <link>/categories/tool-review/</link>
+    <description>Recent content in Tool Review on Stats &amp; bats</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
+    <lastBuildDate>Tue, 26 Sep 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/tool-review/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Review of the ReadRPA software</title>
+      <link>/2017/09/readrpa/</link>
+      <pubDate>Tue, 26 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/09/readrpa/</guid>
+      <description>Introduction The default way to download recordings from a Peersonic bat detector is to connect the detector via a USB cable to the computer and copy them to the computer. The file transfer rate is quite low. In case you have to copy 100 to 200 files, this is OKish. But copying a full SD card takes half a day. In case you have a set-up with multiple detectors, this becomes a nightmare.</description>
+    </item>
+    
+    <item>
+      <title>Peersonic bat-detector in waterproof IP67 enclosure</title>
+      <link>/2017/07/peersonic-ip67/</link>
+      <pubDate>Sat, 29 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/peersonic-ip67/</guid>
+      <description>I’ve reviewed the standard version the Peersonic RPA2 bat-detector in an earlier blog post. Today I will take about the RPA2 in a waterproof IP67 enclosure and my experiences on using it as on autonomous bat-detector.
+The differences The most obvious difference between both versions is their enclosure. IP 67 stands for dust tight and water tight under immersion up to 1 m depth. As you can see on fig. 1, the display and all controls are inside the enclosure.</description>
+    </item>
+    
+    <item>
+      <title>Peersonic RPA2 bat detector and low frequencies</title>
+      <link>/2017/07/peersonic-and-low-frequencies/</link>
+      <pubDate>Fri, 14 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/peersonic-and-low-frequencies/</guid>
+      <description>Recently René Janssen from Bionet Natuuronderzoek was looking for an automatic bat-detector which could record sounds starting from 4 kHz. That was an incentive to put the Peersonic RPA2 to the test.
+Generating a test sound For this test I needed a file with known frequencies over a given range. It turns out that creating such a test file is relatively easy with R.
+library(tuneR) # sample rate of the sound in Hz # must be at least twice the highest frequency sample.</description>
+    </item>
+    
+    <item>
+      <title>Review of the Peersonic RPA2 bat detector in the field</title>
+      <link>/2017/06/peersonic/</link>
+      <pubDate>Sun, 11 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/06/peersonic/</guid>
+      <description>Introduction I will compare the Peersonic RPA2 with the combination of a Petterson D240x and a Roland Edirol R-05 recorder. Mainly because I have a lot of experience with the D240x-Edirol combo. Both set-ups are useful when a researcher wants to detect and record the echolocation of bats in the field.
+ Look and feel The RPA2 is housed in a plastic box and feels solid. It came with a lanyard attached to the lower right corner.</description>
+    </item>
+    
+  </channel>
+</rss>

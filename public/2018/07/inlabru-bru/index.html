@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Comparing inlabru with INLA &middot; Stats &amp; bats</title>
+    <meta name="generator" content="Hugo 0.30" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="/2018/07/inlabru-bru/"/>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/monokai.css">
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Comparing inlabru with INLA" />
+<meta property="og:description" content="inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/2018/07/inlabru-bru/" />
+
+
+
+<meta property="article:published_time" content="2018-07-12T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2018-07-12T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Comparing inlabru with INLA">
+<meta itemprop="description" content="inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data.">
+
+
+<meta itemprop="datePublished" content="2018-07-12T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2018-07-12T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="5268">
+
+
+
+<meta itemprop="keywords" content="inla,inlabru," />
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Comparing inlabru with INLA"/>
+<meta name="twitter:description" content="inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data."/>
+
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo">
+          
+          <i class="logo" style="background-image: url('/images/full_moon.jpg')"></i>
+          
+          <span class="site-title">Stats &amp; bats</span>
+      </a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/androidify.png"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="sitesearch" value="/" />
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="sitesearch" value="/" />
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+   	
+    	<aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      
+      <img id="avatar" src="/images/androidify.png">
+      
+      
+      <h3 id="title">Statistician in daylight, chiropterologist after sunset. But often things get mixed up.</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Belgium</span>
+      
+          <a id="follow" href="https://github.com/thierryo">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        16
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          23
+        
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="profile-block social-links">
+      <table>
+        <tr>
+          
+<td><a href="//github.com/thierryo" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/thierryonkelinx" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+<td><a href="//stackoverflow.com/users/142651/thierry" target="_blank" title="Stack Overflow"><i class="fa fa-stack-overflow"></i></a></td>
+
+
+
+
+
+
+
+<td><a href="//plus.google.com/+ThierryOnkelinx" target="_blank" title="Google+"><i class="fa fa-google-plus"></i></a></td>
+
+
+
+
+
+
+          <td><a href="/index.xml" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+    
+
+    <section id="main">
+    
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+    <div class="article-inner">
+        
+
+        <header class="article-header">
+    <a href="/2018/07/inlabru-bru/">
+    <h1 class="article-title" itemprop="name">
+        Comparing inlabru with INLA
+    </h1>
+    </a>
+    <div class="article-meta">
+
+        
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2018-07-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">12 July 2018</time>
+            &middot;
+            5268
+            words
+            &middot;
+            25
+            minute read
+        </div>
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                
+                <a class="article-category-link" href="/categories/statistics">statistics</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/categories/mixed-models">mixed-models</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                
+                <a class="article-category-link" href="/tags/inla">inla</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/tags/inlabru">inlabru</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+        <div class="article-entry" itemprop="articleBody">
+            <script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/leaflet/leaflet.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/leaflet/leaflet.js"></script>
+<link href="/rmarkdown-libs/leafletfix/leafletfix.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/Proj4Leaflet/proj4-compressed.js"></script>
+<script src="/rmarkdown-libs/Proj4Leaflet/proj4leaflet.js"></script>
+<link href="/rmarkdown-libs/rstudio_leaflet/rstudio_leaflet.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/leaflet-binding/leaflet.js"></script>
+
+
+<p><a href="https://www.inlabru.org"><code>inlabru</code></a> is an R package which builds on top of the <a href="https://www.r-inla.org"><code>INLA</code></a> package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop <a href="https://www.isec2018.org">ISEC2018</a> in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of <code>inlabru</code> but no time to try it on our own data.</p>
+<p><code>inlabru</code> has two main functions: <code>bru</code> and <code>lgcp</code>. <code>bru</code> is a wrapper for <code>INLA::inla</code>. <code>lgcp</code> is intended to fit log Gaussian Cox processes. I will focus on <code>bru</code> and compare it with <code>INLA::inla</code> as I find that <code>bru</code> makes things a lot easier.</p>
+<div id="tundra-bean-goose" class="section level1">
+<h1>Tundra bean goose</h1>
+<p>The test data is derived from the “Wintering waterbirds in Flanders, Belgium”, freely available at GBIF (<a href="https://doi.org/10.15468/lj0udq" class="uri">https://doi.org/10.15468/lj0udq</a>). I’ve extracted the observations from the <a href="https://www.gbif.org/species/6178319">tundra bean goose</a> (<em>Anser fabalis rossicus</em>, fig. <a href="#fig:tundra-bean-goose">1</a>). The dataset was limited to those locations with at least 6 occurences during at least 3 years. Months with lower number of count were removed. Fig. <a href="#fig:observed-total">2</a> indicates the sum of all observed geese in the data. Note that these totals are somewhat misleading since there are a fair amount of missing observations (fig. <a href="#fig:missing">3</a>). The geographic distribution of the data is given in fig. <a href="#fig:map-goose">4</a>.</p>
+
+<div class="figure"><span id="fig:tundra-bean-goose"></span>
+<img src="http://www.artsobservasjoner.no/MediaLibrary/2017/5/25dfef70-0a56-4f12-ad2e-77cbd4888615_image.jpg" alt="Tundra bean goose Anser fabalis rossicus by Roar Ottesen CC BY 4.0"  />
+<p class="caption">
+Figure 1: Tundra bean goose <em>Anser fabalis rossicus</em> by <a href="https://www.gbif.org/occurrence/1798469433">Roar Ottesen</a> CC BY 4.0
+</p>
+</div>
+<pre class="r"><code>library(scales)
+library(tidyverse)
+library(leaflet)
+goose &lt;- readRDS(&quot;../../data/20180712/anser_fabalis_rossicus.Rds&quot;)
+set.seed(20180712)</code></pre>
+<div class="figure"><span id="fig:observed-total"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/observed-total-1.png" alt="Time series of observed total counts for tundra bean goose" width="672" />
+<p class="caption">
+Figure 2: Time series of observed total counts for tundra bean goose
+</p>
+</div>
+<div class="figure"><span id="fig:missing"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/missing-1.png" alt="Time series of missingness in the data" width="672" />
+<p class="caption">
+Figure 3: Time series of missingness in the data
+</p>
+</div>
+<div class="figure"><span id="fig:map-goose"></span>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[50.9788835,50.9958564,50.9732169,50.9647426,50.9477202,50.937619,51.0732877,51.2685615,51.2479447,51.2491686,51.2748924,51.025417,51.0956499,51.3138271,51.3367043,51.3028393,51.3633619,51.2283106,50.9587652,51.1388332,51.1006388,50.9482982,50.980579,51.0518778,51.0718632,50.9027638,51.180548,51.1167112],[2.8243952,2.8418923,2.8580705,2.8075327,2.8256848,2.8073042,2.8586397,3.6692457,3.7177159,3.7598638,3.5680443,3.9236479,4.508256,4.6454059,4.7177102,4.2072618,4.9349367,5.1535041,5.1517106,5.8282973,5.8200067,5.720435,5.7319947,5.7607448,5.7865559,5.6932838,5.6626904,5.6645078],[5.80599162644496,0.73667649953632,2.34890854664864,5.49131646794687,4.31553309373942,5.519958283345,0.927058084855655,10.4760801667378,6.26862564825057,11.8439293136783,7.79539934825174,1.08578335978427,1.25688510846263,1.99573406877622,21.2234872457357,0.94617469575756,4.11241323902979,9.28607424982556,0.785318664289277,2.92482105284911,7.37739371319928,10.8641293161003,3.73085964182787,7.10856486442072,8.63313936535085,2.29734265492637,10.1397284597451,9.71032758668136],null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[50.9027638,51.3633619],"lng":[2.8073042,5.8282973]}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+Figure 4: Map with the locations for tundra bean goose. The circle markers represent the centroid of the site. The area of the circle is proportional to the mean of the observed counts.
+</p>
+</div>
+</div>
+<div id="inla-vs-inlabru" class="section level1">
+<h1><code>INLA</code> vs <code>inlabru</code></h1>
+<div id="fixed-effects-only" class="section level2">
+<h2>Fixed effects only</h2>
+<p>Let’s start with a very simple model with contains only the year centred to the last year. The syntax of both models is very similar. <code>bru()</code> is a bit shorted because it returns both <span class="math inline">\(WAIC\)</span> and <span class="math inline">\(DIC\)</span> by default. The models are identical because <code>bru()</code> is just a wrapper for <code>inla()</code>. Their summary output is somewhat different in terms of lay-out and which information is given.</p>
+<pre class="r"><code>library(INLA)
+library(inlabru)</code></pre>
+<pre class="r"><code>goose %&gt;%
+  mutate(cyear = year - max(year)) -&gt; goose
+m0_inla &lt;- inla(
+  count ~ cyear, 
+  data = goose, 
+  family = &quot;nbinomial&quot;, 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+m0_inlabru &lt;- bru(count ~ cyear, data = goose, family = &quot;nbinomial&quot;)</code></pre>
+<pre class="r"><code>summary(m0_inla)</code></pre>
+<pre><code>## 
+## Call:
+## c(&quot;inla(formula = count ~ cyear, family = \&quot;nbinomial\&quot;, data = goose, &quot;,  &quot;    control.compute = list(waic = TRUE, dic = TRUE))&quot;)
+## 
+## Time used:
+##  Pre-processing    Running inla Post-processing           Total 
+##          1.3473          1.1578          0.4575          2.9625 
+## 
+## Fixed effects:
+##               mean     sd 0.025quant 0.5quant 0.975quant   mode kld
+## (Intercept) 4.5432 0.2175     4.1342   4.5366     4.9896 4.5236   0
+## cyear       0.1342 0.0260     0.0832   0.1341     0.1853 0.1341   0
+## 
+## The model has no random effects
+## 
+## Model hyperparameters:
+##                                                          mean     sd
+## size for the nbinomial observations (1/overdispersion) 0.0474 0.0025
+##                                                        0.025quant 0.5quant
+## size for the nbinomial observations (1/overdispersion)     0.0426   0.0474
+##                                                        0.975quant   mode
+## size for the nbinomial observations (1/overdispersion)     0.0525 0.0473
+## 
+## Expected number of effective parameters(std dev): 2.00(0.00)
+## Number of equivalent replicates : 750.84 
+## 
+## Deviance Information Criterion (DIC) ...............: 5913.69
+## Deviance Information Criterion (DIC, saturated) ....: 824.06
+## Effective number of parameters .....................: 2.948
+## 
+## Watanabe-Akaike information criterion (WAIC) ...: 5914.08
+## Effective number of parameters .................: 3.202
+## 
+## Marginal log-Likelihood:  -3003.70 
+## Posterior marginals for linear predictor and fitted values computed</code></pre>
+<pre class="r"><code>summary(m0_inlabru)</code></pre>
+<pre><code>## 
+## --- Likelihoods ----------------------------------------------------------------------------------
+## 
+## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
+## 
+## --- Criteria -------------------------------------------------------------------------------------
+## 
+## Watanabe-Akaike information criterion (WAIC):    5.914e+03
+## Deviance Information Criterion (DIC):        5.914e+03
+## 
+## --- Fixed effects -------------------------------------------------------------------------------- 
+## 
+##                mean        sd 0.025quant  0.5quant 0.975quant      mode
+## cyear     0.1341397 0.0259944  0.0831819 0.1341067  0.1852332 0.1340431
+## Intercept 4.5429912 0.2175314  4.1340235 4.5364258  4.9893505 4.5233810
+##           signif
+## cyear       TRUE
+## Intercept   TRUE
+## 
+## --- Random effects ------------------------------------------------------------------------------- 
+## 
+## None.
+## 
+## --- All hyper parameters (internal representation) ----------------------------------------------- 
+## 
+##                                                              mean
+## size for the nbinomial observations (1/overdispersion) 0.04741518
+##                                                                 sd
+## size for the nbinomial observations (1/overdispersion) 0.002516661
+##                                                        0.025quant
+## size for the nbinomial observations (1/overdispersion) 0.04262193
+##                                                          0.5quant
+## size for the nbinomial observations (1/overdispersion) 0.04736222
+##                                                        0.975quant
+## size for the nbinomial observations (1/overdispersion)  0.0525083
+##                                                              mode
+## size for the nbinomial observations (1/overdispersion) 0.04725765</code></pre>
+<p>A drawback is that <code>bru()</code> doesn’t handle factor fixed effects as expected. Luckily it yields a warning about invalid factor levels. Unfortunately you don’t get the warning when getting the summary. You need to be critical and notice that the parameters of the model are not what you would expect. The workaround is to convert the factor variable into a set of dummy variables and use those. Creating the dummy variable is straight forward with <code>model.matrix</code>. But adding them to the model is not very efficient when you have factor variables with more than a just few levels.</p>
+<pre class="r"><code>m1_inla &lt;- inla(
+  count ~ cyear + month, 
+  data = goose, 
+  family = &quot;nbinomial&quot;, 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+m1_inlabru &lt;- bru(count ~ cyear + month, data = goose, family = &quot;nbinomial&quot;)</code></pre>
+<pre><code>## Warning in `[&lt;-.factor`(`*tmp*`, is.na(xx), value = 0): invalid factor
+## level, NA generated</code></pre>
+<pre class="r"><code>summary(m1_inla)</code></pre>
+<pre><code>## 
+## Call:
+## c(&quot;inla(formula = count ~ cyear + month, family = \&quot;nbinomial\&quot;, data = goose, &quot;,  &quot;    control.compute = list(waic = TRUE, dic = TRUE))&quot;)
+## 
+## Time used:
+##  Pre-processing    Running inla Post-processing           Total 
+##          0.2309          1.2890          0.1244          1.6444 
+## 
+## Fixed effects:
+##               mean     sd 0.025quant 0.5quant 0.975quant   mode kld
+## (Intercept) 2.6789 0.2592     2.1961   2.6693     3.2156 2.6503   0
+## cyear       0.1773 0.0256     0.1270   0.1773     0.2275 0.1773   0
+## monthdec    2.1161 0.3366     1.4551   2.1161     2.7768 2.1160   0
+## monthjan    2.7616 0.3436     2.0859   2.7619     3.4349 2.7626   0
+## monthfeb    2.3541 0.3316     1.7018   2.3544     3.0039 2.3551   0
+## 
+## The model has no random effects
+## 
+## Model hyperparameters:
+##                                                          mean     sd
+## size for the nbinomial observations (1/overdispersion) 0.0509 0.0027
+##                                                        0.025quant 0.5quant
+## size for the nbinomial observations (1/overdispersion)     0.0457   0.0509
+##                                                        0.975quant   mode
+## size for the nbinomial observations (1/overdispersion)     0.0565 0.0508
+## 
+## Expected number of effective parameters(std dev): 5.00(0.00)
+## Number of equivalent replicates : 300.39 
+## 
+## Deviance Information Criterion (DIC) ...............: 5870.20
+## Deviance Information Criterion (DIC, saturated) ....: 828.46
+## Effective number of parameters .....................: 5.90
+## 
+## Watanabe-Akaike information criterion (WAIC) ...: 5871.50
+## Effective number of parameters .................: 6.628
+## 
+## Marginal log-Likelihood:  -2991.54 
+## Posterior marginals for linear predictor and fitted values computed</code></pre>
+<pre class="r"><code>summary(m1_inlabru)</code></pre>
+<pre><code>## 
+## --- Likelihoods ----------------------------------------------------------------------------------
+## 
+## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
+## 
+## --- Criteria -------------------------------------------------------------------------------------
+## 
+## Watanabe-Akaike information criterion (WAIC):    5.914e+03
+## Deviance Information Criterion (DIC):        5.914e+03
+## 
+## --- Fixed effects -------------------------------------------------------------------------------- 
+## 
+##                    mean           sd    0.025quant      0.5quant
+## cyear      1.341631e-01 2.599659e-02  8.320148e-02  1.341299e-01
+## month     -7.062579e-10 4.917277e-09 -1.036055e-08 -7.064048e-10
+## Intercept  9.013846e-03 3.167856e+01 -6.218687e+01  8.066951e-03
+##             0.975quant          mode signif
+## cyear     1.852612e-01  1.340659e-01   TRUE
+## month     8.939993e-09 -7.062830e-10  FALSE
+## Intercept 6.215315e+01  8.848958e-03  FALSE
+## 
+## --- Random effects ------------------------------------------------------------------------------- 
+## 
+## None.
+## 
+## --- All hyper parameters (internal representation) ----------------------------------------------- 
+## 
+##                                                            mean
+## size for the nbinomial observations (1/overdispersion) 0.047412
+##                                                                 sd
+## size for the nbinomial observations (1/overdispersion) 0.002514906
+##                                                        0.025quant
+## size for the nbinomial observations (1/overdispersion)  0.0426193
+##                                                          0.5quant
+## size for the nbinomial observations (1/overdispersion) 0.04735661
+##                                                        0.975quant
+## size for the nbinomial observations (1/overdispersion) 0.05250639
+##                                                              mode
+## size for the nbinomial observations (1/overdispersion) 0.04724122</code></pre>
+<pre class="r"><code>goose %&gt;% 
+  model.matrix(object = ~month) %&gt;%
+  as.data.frame() %&gt;%
+  select(-1) %&gt;%
+  bind_cols(goose) -&gt; goose
+m1_inlabru &lt;- bru(
+  count ~ cyear + monthdec + monthjan + monthfeb, 
+  data = goose, 
+  family = &quot;nbinomial&quot;
+)</code></pre>
+<pre class="r"><code>summary(m1_inlabru)</code></pre>
+<pre><code>## 
+## --- Likelihoods ----------------------------------------------------------------------------------
+## 
+## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
+## 
+## --- Criteria -------------------------------------------------------------------------------------
+## 
+## Watanabe-Akaike information criterion (WAIC):    5.871e+03
+## Deviance Information Criterion (DIC):        5.870e+03
+## 
+## --- Fixed effects -------------------------------------------------------------------------------- 
+## 
+##                mean        sd 0.025quant  0.5quant 0.975quant      mode
+## cyear     0.1772642 0.0256012  0.1269679 0.1772695  0.2274817 0.1772822
+## monthdec  2.1162171 0.3366472  1.4551835 2.1161638  2.7769379 2.1160844
+## monthjan  2.7617469 0.3435883  2.0860347 2.7620561  3.4350695 2.7626995
+## monthfeb  2.3542381 0.3316482  1.7019398 2.3545597  3.0041010 2.3552274
+## Intercept 2.6787414 0.2592559  2.1959161 2.6691879  3.2154645 2.6501179
+##           signif
+## cyear       TRUE
+## monthdec    TRUE
+## monthjan    TRUE
+## monthfeb    TRUE
+## Intercept   TRUE
+## 
+## --- Random effects ------------------------------------------------------------------------------- 
+## 
+## None.
+## 
+## --- All hyper parameters (internal representation) ----------------------------------------------- 
+## 
+##                                                              mean
+## size for the nbinomial observations (1/overdispersion) 0.05094422
+##                                                                 sd
+## size for the nbinomial observations (1/overdispersion) 0.002734078
+##                                                        0.025quant
+## size for the nbinomial observations (1/overdispersion) 0.04573965
+##                                                          0.5quant
+## size for the nbinomial observations (1/overdispersion) 0.05088606
+##                                                        0.975quant
+## size for the nbinomial observations (1/overdispersion) 0.05647991
+##                                                              mode
+## size for the nbinomial observations (1/overdispersion) 0.05077265</code></pre>
+</div>
+<div id="random-effects" class="section level2">
+<h2>Random effects</h2>
+<p><code>inla()</code> use the <code>f()</code> function to specify the random effects. <code>bru()</code> is very liberal and allows the user to choose any name, as long as it is a valid function name. In the example below we use <code>site</code>. For more detail see <code>help(&quot;bru.components&quot;)</code>. The downside is that <code>bru()</code> requires integer coded levels which go from 1 to the number of levels. We use the <code>as.integer(factor())</code> trick to get these indices. Furthermore you need to supply the number of levels in the random effect for some random effects models.</p>
+<pre class="r"><code>comp_inla &lt;- count ~ cyear + month + f(location_id, model = &quot;iid&quot;)
+m2_inla &lt;- inla(
+  comp_inla, data = goose, family = &quot;nbinomial&quot;, 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+goose %&gt;%
+  mutate(
+    loc_id = factor(location_id) %&gt;%
+      as.integer()
+  ) -&gt; goose
+n_loc &lt;- max(goose$loc_id)
+comp_inlabru &lt;- count ~ cyear + monthdec + monthjan + monthfeb + 
+  site(map = loc_id, model = &quot;iid&quot;, n = n_loc)
+m2_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)</code></pre>
+<pre class="r"><code>summary(m2_inla)</code></pre>
+<pre><code>## 
+## Call:
+## c(&quot;inla(formula = comp_inla, family = \&quot;nbinomial\&quot;, data = goose, &quot;,  &quot;    control.compute = list(waic = TRUE, dic = TRUE))&quot;)
+## 
+## Time used:
+##  Pre-processing    Running inla Post-processing           Total 
+##          0.2093          7.3347          0.1338          7.6777 
+## 
+## Fixed effects:
+##               mean     sd 0.025quant 0.5quant 0.975quant   mode kld
+## (Intercept) 1.8759 0.4144     1.0703   1.8723     2.7011 1.8651   0
+## cyear       0.1778 0.0289     0.1213   0.1777     0.2348 0.1774   0
+## monthdec    1.6878 0.3535     0.9945   1.6874     2.3825 1.6867   0
+## monthjan    2.5849 0.3448     1.9096   2.5843     3.2631 2.5831   0
+## monthfeb    2.4972 0.3352     1.8383   2.4974     3.1544 2.4977   0
+## 
+## Random effects:
+## Name   Model
+##  location_id   IID model 
+## 
+## Model hyperparameters:
+##                                                          mean     sd
+## size for the nbinomial observations (1/overdispersion) 0.0619 0.0040
+## Precision for location_id                              0.4930 0.2784
+##                                                        0.025quant 0.5quant
+## size for the nbinomial observations (1/overdispersion)     0.0554   0.0614
+## Precision for location_id                                  0.2185   0.4117
+##                                                        0.975quant   mode
+## size for the nbinomial observations (1/overdispersion)      0.071 0.0597
+## Precision for location_id                                   1.236 0.2973
+## 
+## Expected number of effective parameters(std dev): 28.40(1.095)
+## Number of equivalent replicates : 52.88 
+## 
+## Deviance Information Criterion (DIC) ...............: 5748.39
+## Deviance Information Criterion (DIC, saturated) ....: 812.46
+## Effective number of parameters .....................: 28.07
+## 
+## Watanabe-Akaike information criterion (WAIC) ...: 5752.38
+## Effective number of parameters .................: 26.70
+## 
+## Marginal log-Likelihood:  -2956.15 
+## Posterior marginals for linear predictor and fitted values computed</code></pre>
+<pre class="r"><code>summary(m2_inlabru)</code></pre>
+<pre><code>## 
+## --- Likelihoods ----------------------------------------------------------------------------------
+## 
+## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
+## 
+## --- Criteria -------------------------------------------------------------------------------------
+## 
+## Watanabe-Akaike information criterion (WAIC):    5.752e+03
+## Deviance Information Criterion (DIC):        5.749e+03
+## 
+## --- Fixed effects -------------------------------------------------------------------------------- 
+## 
+##                mean         sd 0.025quant  0.5quant 0.975quant      mode
+## cyear     0.1777796 0.02895694  0.1212401 0.1776657  0.2348994 0.1774421
+## monthdec  1.6876418 0.35388295  0.9936412 1.6872820  2.3830234 1.6865978
+## monthjan  2.5849939 0.34512605  1.9089496 2.5843746  3.2638607 2.5831711
+## monthfeb  2.4973263 0.33554493  1.8377961 2.4975026  3.1552316 2.4978801
+## Intercept 1.8757879 0.41521641  1.0684759 1.8721790  2.7027628 1.8648557
+##           signif
+## cyear       TRUE
+## monthdec    TRUE
+## monthjan    TRUE
+## monthfeb    TRUE
+## Intercept   TRUE
+## 
+## --- Random effects ------------------------------------------------------------------------------- 
+## 
+## site ranges: mean = [-3.41182, 2.5789], sd = [0.538816, 1.00714], quantiles = [-4.7595 : 3.71755]
+## 
+## --- All hyper parameters (internal representation) ----------------------------------------------- 
+## 
+##                                                              mean
+## size for the nbinomial observations (1/overdispersion) 0.06408489
+## Precision for site                                     0.42646142
+##                                                                 sd
+## size for the nbinomial observations (1/overdispersion) 0.003675987
+## Precision for site                                     0.137120348
+##                                                        0.025quant
+## size for the nbinomial observations (1/overdispersion)  0.0571127
+## Precision for site                                      0.2164184
+##                                                          0.5quant
+## size for the nbinomial observations (1/overdispersion) 0.06399655
+## Precision for site                                     0.40708915
+##                                                        0.975quant
+## size for the nbinomial observations (1/overdispersion) 0.07158492
+## Precision for site                                     0.75031938
+##                                                              mode
+## size for the nbinomial observations (1/overdispersion) 0.06384507
+## Precision for site                                     0.37076077</code></pre>
+<p>The use of user defined names for random effect functions has the benefit that you can use the same variable multiple times in the model. <code>inla()</code> requires unique names and hence copies of the variable. The <code>map</code> argument also allows to use a function of a variable, thus removing the need of creating a new variable. The <code>model = &quot;linear&quot;</code> is another way of specifying a continuous fixed effect. See <a href="http://www.r-inla.org/models/latent-models" class="uri">http://www.r-inla.org/models/latent-models</a> for an overview of all available latent models in INLA.</p>
+<pre class="r"><code>goose %&gt;%
+  mutate(
+    cyear = cyear - min(cyear) + 1,
+    cyear2 = cyear
+  ) -&gt; goose2
+n_year &lt;- max(goose2$cyear)
+comp_inla &lt;- count ~ cyear + f(cyear2, model = &quot;iid&quot;) + 
+  month + f(location_id, model = &quot;iid&quot;)
+m3_inla &lt;- inla(
+  comp_inla, data = goose2, family = &quot;nbinomial&quot;, 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+comp_inlabru &lt;- count ~ cyear + rtrend(map = cyear, model = &quot;iid&quot;, n = n_year) +
+  monthdec + monthjan + monthfeb + site(map = loc_id, model = &quot;iid&quot;, n = n_loc)
+m3_inlabru &lt;- bru(comp_inlabru, data = goose2, family = &quot;nbinomial&quot;)</code></pre>
+<pre class="r"><code>comp_inlabru &lt;- count ~ 
+  lintrend(map = cyear, model = &quot;linear&quot;) + 
+  quadtrend(map = cyear ^ 2, model = &quot;linear&quot;) +
+  rtrend(map = cyear, model = &quot;iid&quot;, n = n_year) +
+  monthdec + monthjan + monthfeb + site(map = loc_id, model = &quot;iid&quot;, n = n_loc)
+m3_inlabru2 &lt;- bru(comp_inlabru, data = goose2, family = &quot;nbinomial&quot;)</code></pre>
+<pre class="r"><code>summary(m3_inlabru2)</code></pre>
+<pre><code>## 
+## --- Likelihoods ----------------------------------------------------------------------------------
+## 
+## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
+## 
+## --- Criteria -------------------------------------------------------------------------------------
+## 
+## Watanabe-Akaike information criterion (WAIC):    5.749e+03
+## Deviance Information Criterion (DIC):        5.747e+03
+## 
+## --- Fixed effects -------------------------------------------------------------------------------- 
+## 
+##                  mean          sd    0.025quant    0.5quant 0.975quant
+## lintrend  -0.04841537 0.125151238 -0.2979217955 -0.04712278 0.19369062
+## quadtrend  0.01267985 0.006803506 -0.0005023783  0.01262024 0.02619449
+## monthdec   1.76923681 0.354530119  1.0736612839  1.76900958 2.46545729
+## monthjan   2.64643485 0.346377499  1.9682546788  2.64573633 3.32788160
+## monthfeb   2.57626431 0.336510916  1.9147938213  2.57648588 3.23586704
+## Intercept -0.25049045 0.607975049 -1.4152468561 -0.26021782 0.97132768
+##                  mode signif
+## lintrend  -0.04455697  FALSE
+## quadtrend  0.01250255  FALSE
+## monthdec   1.76858637   TRUE
+## monthjan   2.64437130   TRUE
+## monthfeb   2.57695209   TRUE
+## Intercept -0.27948069  FALSE
+## 
+## --- Random effects ------------------------------------------------------------------------------- 
+## 
+## rtrend ranges: mean = [-0.000187138, 0.000540354], sd = [0.00803392, 0.008035], quantiles = [-0.0160249 : 0.0163722]
+## site ranges: mean = [-3.21432, 2.48727], sd = [0.48427, 0.966679], quantiles = [-4.55281 : 3.49464]
+## 
+## --- All hyper parameters (internal representation) ----------------------------------------------- 
+## 
+##                                                                mean
+## size for the nbinomial observations (1/overdispersion) 6.273085e-02
+## Precision for rtrend                                   1.539350e+04
+## Precision for site                                     7.158432e-01
+##                                                                  sd
+## size for the nbinomial observations (1/overdispersion) 5.102142e-03
+## Precision for rtrend                                   2.216041e+03
+## Precision for site                                     9.590571e-02
+##                                                          0.025quant
+## size for the nbinomial observations (1/overdispersion) 5.267292e-02
+## Precision for rtrend                                   1.112538e+04
+## Precision for site                                     5.406058e-01
+##                                                            0.5quant
+## size for the nbinomial observations (1/overdispersion) 6.281200e-02
+## Precision for rtrend                                   1.540387e+04
+## Precision for site                                     7.119105e-01
+##                                                          0.975quant
+## size for the nbinomial observations (1/overdispersion) 7.259328e-02
+## Precision for rtrend                                   1.975103e+04
+## Precision for site                                     9.164194e-01
+##                                                                mode
+## size for the nbinomial observations (1/overdispersion) 6.334661e-02
+## Precision for rtrend                                   1.557965e+04
+## Precision for site                                     7.062683e-01</code></pre>
+</div>
+<div id="meshed-random-effects" class="section level2">
+<h2>Meshed random effects</h2>
+<p>One of the great benefits of <code>inlabru</code> is that it makes it much easier to work with random effects on a mesh. The current data are geographic coordinates in “WGS84”. For this analysis we want them in a projected coordinate system. “Belgian Lambert 72” <a href="https://epsg.io/31370">EPSG:31370</a> is a relevant choice. Therefore we convert the data into a <code>SpatialPointsDataFrame</code> and transform it to EPSG:31370.</p>
+<p>Instead of using a convex hull of the locations, we will use the administrative borders of <a href="https://en.wikipedia.org/wiki/Flanders">Flanders</a> as a boundary for the mesh. The simplified version of this border is the blue line in fig. <a href="#fig:flanders-mesh">5</a>). Note that the mesh extents this border because that reduces potential edge effects. The detail of the mesh is defined by <code>cutoff</code> and <code>max.edge</code>, the former defines the minimal length of each edge and the latter the maximal length. These lengths have the same units as the coordinate system, in this case meters. We pass two numbers for both arguments. The first refers to the edges inside the boundary, the second to edges outside the boundary. This creates larger triangles outside the boundary, which will speed up the computation.</p>
+<pre class="r"><code>SpatialPointsDataFrame(
+  coords = goose %&gt;%
+    select(long, lat),
+  data = goose %&gt;%
+    select(loc_id, year, month, count, monthdec, monthjan, monthfeb),
+  proj4string = CRS(&quot;+proj=longlat +datum=WGS84&quot;)
+) %&gt;%
+  spTransform(CRS(&quot;+init=epsg:31370&quot;)) -&gt; goose_lambert
+library(rgdal)
+readOGR(&quot;../../data/20180712/vlaanderen.shp&quot;) -&gt; flanders</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;/home/thierry_onkelinx/thierryo_github/my_blog/data/20180712/vlaanderen.shp&quot;, layer: &quot;vlaanderen&quot;
+## with 1 features
+## It has 9 fields</code></pre>
+<pre class="r"><code>as.inla.mesh.segment(flanders) -&gt; flanders_segment
+inla.mesh.2d(
+  boundary = flanders_segment, 
+  max.edge = c(10e3, 20e3), 
+  cutoff = c(5e3, 10e3)
+) -&gt; flanders_mesh
+ggplot() +
+  gg(flanders_mesh) +
+  gg(goose_lambert, col = &quot;red&quot;) +
+  coord_fixed()</code></pre>
+<div class="figure"><span id="fig:flanders-mesh"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/flanders-mesh-1.png" alt="Mesh for Flanders. Red circles indicate the sites." width="672" />
+<p class="caption">
+Figure 5: Mesh for Flanders. Red circles indicate the sites.
+</p>
+</div>
+<p>Once the mesh is defined, we can create the <a href="https://en.wikipedia.org/wiki/Stochastic_partial_differential_equation">stochastic partial differential equation</a> SPDE model. In this case we define it using a <a href="https://en.wikipedia.org/wiki/Mat%C3%A9rn_covariance_function">Matérn covariance function</a>.</p>
+<pre class="r"><code>flanders_spde &lt;- inla.spde2.pcmatern(
+  flanders_mesh,
+  prior.range = c(1, 0.01),
+  prior.sigma = c(4, 0.01)
+)</code></pre>
+<p>All steps up to this point are needed for both <code>INLA::inla()</code> and <code>inlabr::bru()</code>. In case of <code>INLA::inla()</code> you need use <code>inla.spde.make.A()</code> to define a project matrix. This matrix maps the coordinates of the observation to the three nodes of the triangle in which it is located. In the special case that the observation is on a edge it will map to the two nodes defining the edge, or the node itself in case the observation coincides with a node. Then you need to define a <code>inla.stack()</code>, which is passed to the <code>data</code> argument after transforming it with <code>inla.stack.data()</code>. The SPDE object is used as <code>model</code> in the random effect ‘site’.</p>
+<p>The same model is much easier with <code>inlabr::bru()</code>. In this case you need to pass a <code>SpatialPointsDataFrame</code> to the <code>data</code> argument. The random effect ‘site’ has the SPDE object as <code>model</code> and uses “coordinates” as <code>map</code>. In this case there is no object “coordinates” in the data, hence <code>inlabr::bru()</code> will look in the environment and finds the <code>sp::coordinates()</code> function. This functions returns the coordinates of a <code>SpatialPointsDataFrame</code>, so <code>inlabr::bru()</code> has all the information it needs to map the observations to the SPDE object.</p>
+<pre class="r"><code>## INLA
+A &lt;- inla.spde.make.A(mesh = flanders_mesh, loc = goose_lambert)
+goose_stack &lt;- inla.stack(
+  tag = &#39;estimation&#39;, ## tag
+  data = list(count = goose$count), ## response
+  A = list(A, 1), ## two projector matrices (SPDE and fixed effects)
+  effects = list(## two elements:
+    site = seq_len(flanders_spde$n.spde), ## RF index
+    goose %&gt;%
+      select(cyear, month)
+  )
+)
+comp_inla &lt;- count ~ 0 + month + cyear +
+  f(site, model = flanders_spde)
+m4_inla &lt;- inla(
+  comp_inla, 
+  data = inla.stack.data(goose_stack), family = &quot;nbinomial&quot;, 
+  control.compute = list(waic = TRUE, dic = TRUE),
+  control.predictor = list(A = inla.stack.A(goose_stack))
+)
+
+# inlabru
+comp_inlabru &lt;- count ~ monthdec + monthjan + monthfeb + cyear +
+  site(map = coordinates, model = flanders_spde)
+m4_inlabru &lt;- bru(comp_inlabru, data = goose_lambert, family = &quot;nbinomial&quot;)</code></pre>
+<p>We can also create 1 dimensional meshes. This is useful for line transects or (irregular) time series.</p>
+<pre class="r"><code>trend_mesh &lt;- inla.mesh.1d(min(goose$year):max(goose$year), boundary = &quot;free&quot;)
+trend_spde &lt;- inla.spde2.pcmatern(
+  trend_mesh,
+  prior.range = c(1, 0.5),
+  prior.sigma = c(4, 0.01)
+)
+comp_inlabru &lt;- count ~ monthdec + monthjan + monthfeb +
+  trend(map = year, model = trend_spde) +
+  site(map = coordinates, model = flanders_spde)
+m4b_inlabru &lt;- bru(comp_inlabru, data = goose_lambert, family = &quot;nbinomial&quot;)</code></pre>
+</div>
+<div id="plotting-the-model" class="section level2">
+<h2>Plotting the model</h2>
+<p><code>plot.inla()</code> is an easy way to generate most of the relevant plots with a single command. It will open several plot windows to keep the plots readable. However this doesn’t work well in combination with Rmarkdown. <code>plot.bru()</code> has the opposite philosophy: you get the plot of only one component. Getting a plot for all components is a bit more tedious, but the advantage is that you can use it in combination with Rmarkdown. Another nice feature is that <code>plot.bru()</code> returns <code>ggplot2</code> object. So they are easy to adapt, see e.g. fig. <a href="#fig:plot-fixed">6</a>. <code>inlabru</code> also provides a <code>multiplot()</code> function which can be used to combine several plots.</p>
+<pre class="r"><code>pc_prior &lt;- list(theta = list(prior = &quot;pc.prec&quot;, param = c(1, 0.01)))
+goose %&gt;%
+  mutate(iyear = cyear - min(cyear) + 1) -&gt; goose
+n_year &lt;- max(goose$iyear)
+comp_inla &lt;- count ~ month + 
+  f(cyear, model = &quot;rw1&quot;, hyper = pc_prior) + 
+  f(location_id, model = &quot;iid&quot;, hyper = pc_prior)
+m5_inla &lt;- inla(
+  comp_inla, data = goose, family = &quot;nbinomial&quot;, 
+  control.compute = list(waic = TRUE, dic = TRUE)
+)
+comp_inlabru &lt;- count ~ monthdec + monthjan + monthfeb + 
+  trend(map = iyear, model = &quot;rw1&quot;, n = n_year, hyper = pc_prior) +
+  site(map = loc_id, model = &quot;iid&quot;, n = n_loc, hyper = pc_prior)
+m5_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)</code></pre>
+<pre class="r"><code>plot(m5_inla)</code></pre>
+<pre class="r"><code>p_intercept &lt;- plot(m5_inlabru) + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(-1, 4)
+p_monthdec &lt;- plot(m5_inlabru, &quot;monthdec&quot;) + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(-1, 4)
+p_monthjan &lt;- plot(m5_inlabru, &quot;monthjan&quot;) + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(-1, 4)
+p_monthfeb &lt;- plot(m5_inlabru, &quot;monthfeb&quot;) + 
+  geom_vline(xintercept = 0, linetype = 2) +
+  xlim(-1, 4)
+multiplot(p_intercept, p_monthdec, p_monthjan, p_monthfeb)</code></pre>
+<div class="figure"><span id="fig:plot-fixed"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/plot-fixed-1.png" alt="Posterior density plots of the fixed effects" width="672" />
+<p class="caption">
+Figure 6: Posterior density plots of the fixed effects
+</p>
+</div>
+<pre class="r"><code>plot(m5_inlabru, &quot;trend&quot;)</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-5"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-5-1.png" alt="Posterior density of the trend random intercepts." width="672" />
+<p class="caption">
+Figure 7: Posterior density of the trend random intercepts.
+</p>
+</div>
+<pre class="r"><code>plot(m5_inlabru, &quot;site&quot;)</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-6"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-6-1.png" alt="Posterior density of the site random intercepts." width="672" />
+<p class="caption">
+Figure 8: Posterior density of the site random intercepts.
+</p>
+</div>
+<div id="plotting-meshes" class="section level3">
+<h3>Plotting meshes</h3>
+<p>The mesh effects can be plot in a similar way. The default plot will display the estimate effect at each node. While this can be useful for 1D plot with a small number of nodes (top of fig. <a href="#fig:mesh-plot">9</a>), this is not useful for 2D meshes or meshed with a large number of nodes (bottom of fig. <a href="#fig:mesh-plot">9</a>). Looking at the posterior distributions for the range and the variance of the Matérn covariance structure of SPDE model makes more sense (fig. <a href="#fig:mesh-range-var">10</a>). Or plot the actual Matérn functions (fig. <a href="#fig:matern-function">11</a>).</p>
+<pre class="r"><code>p_trend &lt;- plot(m4b_inlabru, &quot;trend&quot;)
+p_site &lt;- plot(m4b_inlabru, &quot;site&quot;)
+multiplot(p_trend, p_site)</code></pre>
+<div class="figure"><span id="fig:mesh-plot"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/mesh-plot-1.png" alt="Posterior density of the random intercepts at the nodes of the mesh." width="672" />
+<p class="caption">
+Figure 9: Posterior density of the random intercepts at the nodes of the mesh.
+</p>
+</div>
+<pre class="r"><code>spde.range &lt;- spde.posterior(m4b_inlabru, &quot;site&quot;, what = &quot;range&quot;)
+spde.logvar &lt;- spde.posterior(m4b_inlabru, &quot;site&quot;, what = &quot;log.variance&quot;)
+range.plot &lt;- plot(spde.range)
+var.plot &lt;- plot(spde.logvar)
+multiplot(range.plot, var.plot)</code></pre>
+<div class="figure"><span id="fig:mesh-range-var"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/mesh-range-var-1.png" alt="Posterior distributions of the range and log variance of the Matérn covariace for the sites." width="672" />
+<p class="caption">
+Figure 10: Posterior distributions of the range and log variance of the Matérn covariace for the sites.
+</p>
+</div>
+<pre class="r"><code>spde.posterior(m4b_inlabru, &quot;site&quot;, what = &quot;matern.covariance&quot;) %&gt;%
+  plot() +
+  xlab(&quot;distance&quot;) +
+  ylab(&quot;covariance&quot;) -&gt; covplot
+spde.posterior(m4b_inlabru, &quot;site&quot;, what = &quot;matern.correlation&quot;) %&gt;%
+  plot()  +
+  xlab(&quot;distance&quot;) +
+  ylab(&quot;correlation&quot;) -&gt; corplot
+multiplot(covplot, corplot)</code></pre>
+<div class="figure"><span id="fig:matern-function"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/matern-function-1.png" alt="Fitted Matérn covariance and correlation functions." width="672" />
+<p class="caption">
+Figure 11: Fitted Matérn covariance and correlation functions.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="predictions" class="section level1">
+<h1>Predictions</h1>
+<p><code>INLA</code> has, unlike most R packages, no <code>predict()</code> function. So <code>INLA</code> can’t do predictions? No, it can do prediction but it does that simultaneously with fitting the model. This implies that you need to add the observations for which you want prediction to the data prior to the model fitting. Setting the response variable to <code>NA</code> avoid that these observation influence the model parameters. A huge downside of this is, that you need to plan ahead and carefully prepare your data. If you forget some prediction, you will have to fit the model again.</p>
+<p>The <code>predict()</code> function in most R packages split the model fitting and the prediction in two separate steps. Getting prediction for another data set does not require to refit the model. <code>inlabru</code> provided a <code>predict()</code> function for <code>bru</code>, <code>lgcp</code> and <code>inla</code> models. The fitting works slightly different in <code>INLA</code> and <code>inlabru</code>. When the observations for the prediction are available at the time of the model fitting, then the full posterior of those observations becomes available. <code>inlabru::predict.inla()</code> works by repeatedly sampling the posterior distributions of the parameters and use each sample to calculate a predicted values. This yields a sampled posterior distribution for the fitted value of the observations.</p>
+<p><code>predict.bru()</code> requires at least three arguments: <code>object</code> the fitted model; <code>data</code> the new observations for which you want a prediction and <code>formula</code> the components of the model you want to use in the predictions. The example below calculates the predictions for only the trend component. Note that the predict function returns the <code>data</code> and adds several columns with relevant information on the prediction. The names of these columns are more efficient than those returned by <code>INLA</code>: <code>q0.025</code> is a valid name for an R object, whereas <code>0.025quant</code> isn’t. Another nice feather is that you can incorporate the prediction directly into a ggplot2 plot.</p>
+<pre class="r"><code>goose %&gt;%
+  distinct(year, iyear) %&gt;%
+  predict(object = m5_inlabru, formula = ~ trend) -&gt; pred_trend_log
+# predictions from inlabru
+glimpse(pred_trend_log)</code></pre>
+<pre><code>## Observations: 16
+## Variables: 11
+## $ year   &lt;int&gt; 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2...
+## $ iyear  &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+## $ mean   &lt;dbl&gt; -1.2053137, -1.0649852, -0.6761556, -0.1144928, -0.3410...
+## $ sd     &lt;dbl&gt; 0.4192508, 0.3815485, 0.3182013, 0.3782434, 0.2817528, ...
+## $ q0.025 &lt;dbl&gt; -2.0698176, -1.7840445, -1.3935641, -0.7087731, -0.8920...
+## $ median &lt;dbl&gt; -1.1942671, -1.1124339, -0.6731860, -0.1182653, -0.3086...
+## $ q0.975 &lt;dbl&gt; -0.42825508, -0.33270611, -0.11662306, 0.70273140, 0.15...
+## $ smin   &lt;dbl&gt; -2.30570024, -1.92673791, -1.44083137, -0.94309669, -1....
+## $ smax   &lt;dbl&gt; -0.28486439, -0.25616510, 0.03060956, 0.96897807, 0.447...
+## $ cv     &lt;dbl&gt; -0.3478354, -0.3582665, -0.4706037, -3.3036442, -0.8260...
+## $ var    &lt;dbl&gt; 0.17577125, 0.14557928, 0.10125210, 0.14306808, 0.07938...</code></pre>
+<pre class="r"><code># fitted value from INLA
+glimpse(m5_inla$summary.fitted.values)</code></pre>
+<pre><code>## Observations: 1,502
+## Variables: 6
+## $ mean         &lt;dbl&gt; 0.31300859, 0.02561069, 0.41821156, 0.37019461, 0...
+## $ sd           &lt;dbl&gt; 0.29743332, 0.03009056, 0.33862467, 0.36549445, 0...
+## $ `0.025quant` &lt;dbl&gt; 0.056516960, 0.003480958, 0.099444845, 0.05884753...
+## $ `0.5quant`   &lt;dbl&gt; 0.22831234, 0.01696218, 0.32522039, 0.26536341, 0...
+## $ `0.975quant` &lt;dbl&gt; 1.0806011, 0.1004282, 1.2975899, 1.3134937, 1.234...
+## $ mode         &lt;dbl&gt; 0.130061341, 0.008328049, 0.211810470, 0.14304681...</code></pre>
+<pre class="r"><code>ggplot() +
+  gg(pred_trend_log) +
+  geom_hline(yintercept = 0, linetype = 2)</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-8"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-8-1.png" alt="Predicted effect of 'trend' on the link scale" width="672" />
+<p class="caption">
+Figure 12: Predicted effect of ‘trend’ on the link scale
+</p>
+</div>
+<p>The default prediction are on the link scale, which is the log link in this case. Back-transformation is straightforward, just add the back transformation function to the formula.</p>
+<pre class="r"><code>goose %&gt;%
+  distinct(year, iyear) %&gt;%
+  predict(object = m5_inlabru, formula = ~ exp(trend)) -&gt; pred_trend_natural
+ggplot() +
+  gg(pred_trend_natural) +
+  geom_hline(yintercept = 1, linetype = 2)</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-9"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-9-1.png" alt="Predicted effect of 'trend' on the natural scale" width="672" />
+<p class="caption">
+Figure 13: Predicted effect of ‘trend’ on the natural scale
+</p>
+</div>
+<p>The <code>gg()</code> solutions works only in case of a single covariate. With multiple covariate you have to create the plot manually. But that is not very hard given the nice format of the output returned by <code>predict.bru()</code>.</p>
+<pre class="r"><code>goose %&gt;%
+  distinct(year, month, iyear, monthdec, monthjan, monthfeb) %&gt;%
+  predict(
+    object = m5_inlabru, 
+    formula = ~ exp(Intercept + trend + monthdec + monthjan + monthfeb)
+  ) -&gt; pred_trend_month
+ggplot(pred_trend_month, aes(x = year, y = mean, ymin = q0.025, ymax = q0.975)) +
+  geom_ribbon(aes(fill = month), alpha = 0.1) +
+  geom_line(aes(colour = month))</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-10"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-10-1.png" alt="Predicted average expected mean of the counts." width="672" />
+<p class="caption">
+Figure 14: Predicted average expected mean of the counts.
+</p>
+</div>
+<p>Another very neat feature is that you can take both the model uncertainty as the natural variability into account. The model estimates the mean of the negative binomial distribution. The variability of this mean only includes the model uncertainty. In case we are interested in the total variability in the count, we need to plug this mean into the distribution. Below is an example on how to do this. AFAIK this works only for a single prediction. The result yields the distribution of the counts. <code>inla.zmarginal</code> is used to calculate the mean and the quantiles of this distribution. Please to that is not entirely correct as we are ignoring the variability of the dispersion parameter of the negative binomial distribution. I’m not sure how to incorporate that at the moment.</p>
+
+<pre class="r"><code>size &lt;- 1 / m5_inlabru$summary.hyperpar[1, &quot;mean&quot;]
+goose %&gt;%
+  distinct(year, iyear, month, monthjan) %&gt;%
+  filter(year == max(year), month == &quot;jan&quot;) %&gt;%
+  predict(
+    object = m5_inlabru, 
+    formula =   ~ data.frame(
+      N = 0:450,
+      dnbinom(
+        0:450,
+        size = size,
+        mu = exp(Intercept + trend + monthjan)
+      )
+    ),
+    n.samples = 1e2
+  ) -&gt; pred_trend_natural_N
+pred_trend_natural_N %&gt;%
+  select(x = N, y = mean) %&gt;%
+  as.list() %&gt;%
+  inla.zmarginal(silent = TRUE) %&gt;%
+  unlist() -&gt; quants
+ggplot(pred_trend_natural_N, aes(x = N, y = mean)) +
+  geom_line() +
+  geom_vline(
+    xintercept = quants[c(&quot;mean&quot;, &quot;quant0.025&quot;, &quot;quant0.975&quot;)],
+    linetype = 2
+  )</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-11"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-11-1.png" alt="Distribution of the average counts for the last year in January. Dashed lines indicate the mean, 2.5% and 97.5% quantiles." width="672" />
+<p class="caption">
+Figure 15: Distribution of the average counts for the last year in January. Dashed lines indicate the mean, 2.5% and 97.5% quantiles.
+</p>
+</div>
+
+<pre class="r"><code>goose %&gt;%
+  distinct(year, iyear, month, monthjan) %&gt;%
+  filter(year == max(year), month == &quot;jan&quot;) %&gt;%
+  predict(
+    object = m5_inlabru, 
+    formula =   ~ data.frame(
+      N = 0:450,
+      dnbinom(
+        0:450,
+        size = size,
+        mu = exp(Intercept + trend + monthjan)
+      )
+    ),
+    n.samples = 1e3
+  ) -&gt; pred_trend_natural_N2
+pred_trend_natural_N2 %&gt;%
+  select(x = N, y = mean) %&gt;%
+  as.list() %&gt;%
+  inla.zmarginal(silent = TRUE) %&gt;%
+  unlist() -&gt; quants2
+ggplot(pred_trend_natural_N, aes(x = N, y = mean)) +
+  geom_line() +
+  geom_line(data = pred_trend_natural_N2, colour = &quot;red&quot;) +
+  geom_vline(
+    xintercept = quants[c(&quot;mean&quot;, &quot;quant0.025&quot;, &quot;quant0.975&quot;)],
+    linetype = 2
+  ) +
+  geom_vline(
+    xintercept = quants2[c(&quot;mean&quot;, &quot;quant0.025&quot;, &quot;quant0.975&quot;)],
+    linetype = 2,
+    colour = &quot;red&quot;
+  )</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-12"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-12-1.png" alt="Distribution of the average counts for the last year in January. Dashed lines indicate the mean, 2.5% and 97.5% quantiles. Black lines are based on 100 samples, red lines on 1000 samples." width="672" />
+<p class="caption">
+Figure 16: Distribution of the average counts for the last year in January. Dashed lines indicate the mean, 2.5% and 97.5% quantiles. Black lines are based on 100 samples, red lines on 1000 samples.
+</p>
+</div>
+<p>We can also use aggregations in the formula. Let’s say we want to estimate the total number of birds over all sites at a given year and month. The example below illustrated how you can use aggregation.</p>
+
+<pre class="r"><code># total of expected counts
+goose %&gt;%
+  filter(year == max(year), month == &quot;jan&quot;) %&gt;%
+  predict(
+    object = m5_inlabru, 
+    formula = ~ sum(exp(Intercept + trend + monthdec + monthjan + monthfeb + site))
+  ) -&gt; pred_total
+glimpse(pred_total)</code></pre>
+<pre><code>## Observations: 1
+## Variables: 9
+## $ mean   &lt;dbl&gt; 9205.155
+## $ sd     &lt;dbl&gt; 4695.403
+## $ q0.025 &lt;dbl&gt; 3660.104
+## $ median &lt;dbl&gt; 8332.972
+## $ q0.975 &lt;dbl&gt; 18290.23
+## $ smin   &lt;dbl&gt; 2118.435
+## $ smax   &lt;dbl&gt; 35651.93
+## $ cv     &lt;dbl&gt; 0.5100841
+## $ var    &lt;dbl&gt; 22046809</code></pre>
+<pre class="r"><code># distribution of total counts
+low &lt;- qnbinom(0.001, mu = pred_total$q0.025, size = size)
+high &lt;- qnbinom(0.999, mu = pred_total$q0.975, size = size)
+goose %&gt;%
+  filter(year == max(year), month == &quot;jan&quot;) %&gt;%
+  predict(
+    object = m5_inlabru, 
+    formula =   ~ data.frame(
+      N = low:high,
+      dnbinom(
+        low:high,
+        size = size,
+        mu = sum(exp(Intercept + trend + monthdec + monthjan + monthfeb + site))
+      )
+    )
+  ) -&gt; pred_total_natural
+pred_total_natural %&gt;%
+  select(x = N, y = mean) %&gt;%
+  as.list() %&gt;%
+  inla.zmarginal(silent = TRUE) %&gt;%
+  unlist() -&gt; quants
+ggplot(pred_total_natural, aes(x = N, y = mean)) +
+  geom_line() +
+  geom_vline(
+    xintercept = quants[c(&quot;mean&quot;, &quot;quant0.025&quot;, &quot;quant0.975&quot;)],
+    linetype = 2
+  )</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-13"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-13-1.png" alt="Distribution of the total counts for the last year in January. Dashed lines indicate the mean, 2.5% and 97.5% quantiles." width="672" />
+<p class="caption">
+Figure 17: Distribution of the total counts for the last year in January. Dashed lines indicate the mean, 2.5% and 97.5% quantiles.
+</p>
+</div>
+<p>We can make predictions for the mesh as well.</p>
+<pre class="r"><code>pred_mesh &lt;- predict(m4b_inlabru, pixels(flanders_mesh), ~exp(site))
+colsc &lt;- function(...) {
+  scale_fill_gradientn(colours = rev(RColorBrewer::brewer.pal(11,&quot;RdYlBu&quot;)),
+                       limits = range(..., na.rm = TRUE))
+}
+csc &lt;- colsc(pred_mesh@data[&quot;median&quot;],
+             pred_mesh@data[&quot;q0.025&quot;],
+             pred_mesh@data[&quot;q0.975&quot;]) ## Common colour scale from SpatialPixelsDataFrame
+site_mean &lt;- ggplot() +
+  gg(pred_mesh) +
+  gg(flanders) +
+  csc +
+  coord_fixed()
+site_q0.025 &lt;- ggplot() +
+  gg(pred_mesh[&quot;q0.025&quot;]) +
+  gg(flanders) +
+  csc +
+  coord_fixed()
+site_q0.975 &lt;- ggplot() +
+  gg(pred_mesh[&quot;q0.975&quot;]) +
+  gg(flanders) +
+  csc +
+  coord_fixed()
+site_cv &lt;- ggplot() +
+  gg(pred_mesh[&quot;cv&quot;]) +
+  gg(flanders) +
+  coord_fixed()
+multiplot(site_mean, site_q0.025, site_cv, site_q0.975, cols = 2)</code></pre>
+<div class="figure"><span id="fig:unnamed-chunk-14"></span>
+<img src="/post/2018-07-12-inlabru-bru_files/figure-html/unnamed-chunk-14-1.png" alt="Relative effect of the spatial field of the sites." width="672" />
+<p class="caption">
+Figure 18: Relative effect of the spatial field of the sites.
+</p>
+</div>
+</div>
+
+        </div>
+        <footer class="article-footer">
+    <a data-url="/2018/07/inlabru-bru/" data-id="63d2654742fd176642c7065d673aeaf7" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="/2018/07/inlabru-bru/#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+    </div>
+
+    
+<nav id="article-nav">
+    
+    <a href="/2018/05/silhouette/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Bat silhouettes at 1:1 scale</div>
+    </a>
+    
+
+    
+</nav>
+
+
+</article>
+
+
+<section id="comments">
+    <div id="disqus_thread">
+        <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "stats-bats" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+</section>
+
+
+    </section>
+
+   	
+    	<aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/07/inlabru-bru/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/07/inlabru-bru/" class="title">Comparing inlabru with INLA</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-07-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">12 July 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/05/silhouette/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/bats">
+                        bats
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/05/silhouette/" class="title">Bat silhouettes at 1:1 scale</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-05-19 00:00:00 &#43;0000 UTC" itemprop="datePublished">19 May 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/03/inla-temporal/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/03/inla-temporal/" class="title">Temporal autocorrelation in INLA</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-03-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">5 March 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/02/highly-correlated-random-effects/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/02/highly-correlated-random-effects/" class="title">Highly correlated random effects</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-02-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">16 February 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2017/09/readrpa/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/bats">
+                        bats
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2017/09/readrpa/" class="title">Review of the ReadRPA software</a></p>
+                    <p class="item-date">
+                        <time datetime="2017-09-26 00:00:00 &#43;0000 UTC" itemprop="datePublished">26 September 2017</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/about">
+                    about
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/analysis">
+                    analysis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/bats">
+                    bats
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/maps">
+                    maps
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/mixed-models">
+                    mixed-models
+                </a>
+                <span class="category-list-count">5</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/point-pattern">
+                    point-pattern
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/reproducible-research">
+                    reproducible-research
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/statistics">
+                    statistics
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/text">
+                    text
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/tool-review">
+                    tool-review
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/version-control">
+                    version-control
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/bat-detector">
+                    bat-detector
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/bookdown">
+                    bookdown
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/density">
+                    density
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/ggmap">
+                    ggmap
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/git">
+                    git
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/gitbook">
+                    gitbook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/inla">
+                    inla
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/inlabru">
+                    inlabru
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/introduction">
+                    introduction
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/kml">
+                    kml
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/leaflet">
+                    leaflet
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/lme4">
+                    lme4
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/maps">
+                    maps
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/openstreetmap">
+                    openstreetmap
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/osm">
+                    osm
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/peersonic">
+                    peersonic
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/point-pattern">
+                    point-pattern
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/projection">
+                    projection
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/random-effect">
+                    random-effect
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/review">
+                    review
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/rmarkdown">
+                    rmarkdown
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/silhouette">
+                    silhouette
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/spatial-point-process">
+                    spatial-point-process
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        
+        <a href="/tags/bat-detector" style="font-size: 12px;">bat-detector</a>
+        
+        
+        <a href="/tags/bookdown" style="font-size: 12px;">bookdown</a>
+        
+        
+        <a href="/tags/density" style="font-size: 12px;">density</a>
+        
+        
+        <a href="/tags/ggmap" style="font-size: 12px;">ggmap</a>
+        
+        
+        <a href="/tags/git" style="font-size: 12px;">git</a>
+        
+        
+        <a href="/tags/gitbook" style="font-size: 12px;">gitbook</a>
+        
+        
+        <a href="/tags/inla" style="font-size: 12px;">inla</a>
+        
+        
+        <a href="/tags/inlabru" style="font-size: 12px;">inlabru</a>
+        
+        
+        <a href="/tags/introduction" style="font-size: 12px;">introduction</a>
+        
+        
+        <a href="/tags/kml" style="font-size: 12px;">kml</a>
+        
+        
+        <a href="/tags/leaflet" style="font-size: 12px;">leaflet</a>
+        
+        
+        <a href="/tags/lme4" style="font-size: 12px;">lme4</a>
+        
+        
+        <a href="/tags/maps" style="font-size: 12px;">maps</a>
+        
+        
+        <a href="/tags/openstreetmap" style="font-size: 12px;">openstreetmap</a>
+        
+        
+        <a href="/tags/osm" style="font-size: 12px;">osm</a>
+        
+        
+        <a href="/tags/peersonic" style="font-size: 12px;">peersonic</a>
+        
+        
+        <a href="/tags/point-pattern" style="font-size: 12px;">point-pattern</a>
+        
+        
+        <a href="/tags/projection" style="font-size: 12px;">projection</a>
+        
+        
+        <a href="/tags/random-effect" style="font-size: 12px;">random-effect</a>
+        
+        
+        <a href="/tags/review" style="font-size: 12px;">review</a>
+        
+        
+        <a href="/tags/rmarkdown" style="font-size: 12px;">rmarkdown</a>
+        
+        
+        <a href="/tags/silhouette" style="font-size: 12px;">silhouette</a>
+        
+        
+        <a href="/tags/spatial-point-process" style="font-size: 12px;">spatial-point-process</a>
+        
+    </div>
+</div>
+
+
+
+
+
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+
+    
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018
+      Thierry Onkelinx. <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0+</a>. Source code available at <a href="http://github.com/thierryo/my_blog">GitHub</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66337116-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+</body>
+</html>

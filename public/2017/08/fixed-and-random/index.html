@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Using a variable both as fixed and random effect &middot; Stats &amp; bats</title>
+    <meta name="generator" content="Hugo 0.30" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="canonical" href="/2017/08/fixed-and-random/"/>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/monokai.css">
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+    
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Using a variable both as fixed and random effect" />
+<meta property="og:description" content="Categorical variable Discrete variable Intro Fit with lme4 Fit with INLA  Continuous variable Conclusion    One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/2017/08/fixed-and-random/" />
+
+
+
+<meta property="article:published_time" content="2017-08-23T00:00:00&#43;00:00"/>
+
+<meta property="article:modified_time" content="2017-08-23T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Using a variable both as fixed and random effect">
+<meta itemprop="description" content="Categorical variable Discrete variable Intro Fit with lme4 Fit with INLA  Continuous variable Conclusion    One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so.">
+
+
+<meta itemprop="datePublished" content="2017-08-23T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2017-08-23T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="2903">
+
+
+
+<meta itemprop="keywords" content="lme4,INLA," />
+
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Using a variable both as fixed and random effect"/>
+<meta name="twitter:description" content="Categorical variable Discrete variable Intro Fit with lme4 Fit with INLA  Continuous variable Conclusion    One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so."/>
+
+    
+
+    
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo">
+          
+          <i class="logo" style="background-image: url('/images/full_moon.jpg')"></i>
+          
+          <span class="site-title">Stats &amp; bats</span>
+      </a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/images/androidify.png"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="sitesearch" value="/" />
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="sitesearch" value="/" />
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+   	
+    	<aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      
+      <img id="avatar" src="/images/androidify.png">
+      
+      
+      <h3 id="title">Statistician in daylight, chiropterologist after sunset. But often things get mixed up.</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Belgium</span>
+      
+          <a id="follow" href="https://github.com/thierryo">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        16
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          23
+        
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="profile-block social-links">
+      <table>
+        <tr>
+          
+<td><a href="//github.com/thierryo" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/thierryonkelinx" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+<td><a href="//stackoverflow.com/users/142651/thierry" target="_blank" title="Stack Overflow"><i class="fa fa-stack-overflow"></i></a></td>
+
+
+
+
+
+
+
+<td><a href="//plus.google.com/+ThierryOnkelinx" target="_blank" title="Google+"><i class="fa fa-google-plus"></i></a></td>
+
+
+
+
+
+
+          <td><a href="/index.xml" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+    
+
+    <section id="main">
+    
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+    <div class="article-inner">
+        
+
+        <header class="article-header">
+    <a href="/2017/08/fixed-and-random/">
+    <h1 class="article-title" itemprop="name">
+        Using a variable both as fixed and random effect
+    </h1>
+    </a>
+    <div class="article-meta">
+
+        
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2017-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">23 August 2017</time>
+            &middot;
+            2903
+            words
+            &middot;
+            14
+            minute read
+        </div>
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                
+                <a class="article-category-link" href="/categories/statistics">statistics</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/categories/mixed-models">mixed-models</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                
+                <a class="article-category-link" href="/tags/lme4">lme4</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/tags/inla">INLA</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+        <div class="article-entry" itemprop="articleBody">
+            <div id="TOC">
+<ul>
+<li><a href="#categorical-variable">Categorical variable</a></li>
+<li><a href="#discrete-variable">Discrete variable</a><ul>
+<li><a href="#intro">Intro</a></li>
+<li><a href="#fit-with-lme4">Fit with <code>lme4</code></a></li>
+<li><a href="#fit-with-inla">Fit with <code>INLA</code></a></li>
+</ul></li>
+<li><a href="#continuous-variable">Continuous variable</a><ul>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn’t make sense. Much will depend on the nature of the variable. Therefore to post is split into three sections: categorical, discrete and continuous. I will only display to most relevant parts of the code. The full code is available on <a href="https:/github.com/thierryo/my_blog">GitHub</a>.</p>
+<div id="categorical-variable" class="section level1">
+<h1>Categorical variable</h1>
+<p>To make this clear, we start by creating a dummy dataset with 3 categorical covariates. <code>B</code> is nested within <code>A</code>. The resulting dataset is displayed in fig <a href="#fig:cat-dummy">1</a>.</p>
+<pre class="r"><code>library(tidyverse)
+library(lme4)
+library(INLA)</code></pre>
+<pre class="r"><code>n_a &lt;- 6
+n_b &lt;- 2
+n_sample &lt;- 3
+sd_A &lt;- 2
+sd_B &lt;- 1
+sd_noise &lt;- 1
+dataset &lt;- expand.grid(
+  B = paste0(&quot;b&quot;, seq_len(n_a * n_b)),
+  sample = seq_len(n_sample)
+) %&gt;%
+  mutate(
+    A = paste0(&quot;a&quot;, as.integer(B) %% n_a) %&gt;%
+      factor(),
+    mu = rnorm(n_a, sd = sd_A)[A] + 
+         rnorm(n_a * n_b, sd = sd_B)[B],
+    Y = mu + rnorm(n(), sd = sd_noise)
+  )</code></pre>
+<div class="figure"><span id="fig:cat-dummy"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-dummy-1.svg" alt="Dummy dataset with categorical variables." width="672" />
+<p class="caption">
+Figure 1: Dummy dataset with categorical variables.
+</p>
+</div>
+<p>The first model is one that doesn’t make sense. Using a categorical variable both as random and a fixed effect. In this case both effects are competing for the same information. Below is the resulting fit from <code>lme4</code> and <code>INLA</code>. Note the warning in the <code>lme4</code> output, the model failed to converge. Nevertheless, both <code>lme4</code> and <code>INLA</code> yield the same parameter estimate (fig <a href="#fig:cat-fixed">2</a>), albeit the much wider confidence intervals for <code>lme4</code>. The estimates for the random effects in both packages are equivalent to zero (fig. <a href="#fig:cat-random">3</a>). Again the <code>lme4</code> estimate has more uncertainty.</p>
+<pre class="r"><code>model.1 &lt;- lmer(Y ~ 0 + A + (1|A), data = dataset)
+summary(model.1)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: Y ~ 0 + A + (1 | A)
+##    Data: dataset
+## 
+## REML criterion at convergence: 104.4
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.4767 -0.6682  0.1283  0.6737  2.0707 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  A        (Intercept) 8.126    2.851   
+##  Residual             1.329    1.153   
+## Number of obs: 36, groups:  A, 6
+## 
+## Fixed effects:
+##     Estimate Std. Error t value
+## Aa0   0.1189     2.8893   0.041
+## Aa1  -0.6936     2.8893  -0.240
+## Aa2   3.6324     2.8893   1.257
+## Aa3  -3.3228     2.8893  -1.150
+## Aa4   0.8612     2.8893   0.298
+## Aa5   1.9575     2.8893   0.678
+## 
+## Correlation of Fixed Effects:
+##     Aa0   Aa1   Aa2   Aa3   Aa4  
+## Aa1 0.000                        
+## Aa2 0.000 0.000                  
+## Aa3 0.000 0.000 0.000            
+## Aa4 0.000 0.000 0.000 0.000      
+## Aa5 0.000 0.000 0.000 0.000 0.000</code></pre>
+<pre class="r"><code>model.2 &lt;- inla(Y ~ 0 + A + f(A, model = &quot;iid&quot;), data = dataset)
+summary(model.2)</code></pre>
+<pre><code>## 
+## Call:
+## &quot;inla(formula = Y ~ 0 + A + f(A, model = \&quot;iid\&quot;), data = dataset)&quot;
+## 
+## Time used:
+##  Pre-processing    Running inla Post-processing           Total 
+##          1.3575          0.1932          0.3231          1.8738 
+## 
+## Fixed effects:
+##        mean     sd 0.025quant 0.5quant 0.975quant    mode kld
+## Aa0  0.1189 0.4714    -0.8125   0.1189     1.0492  0.1189   0
+## Aa1 -0.6935 0.4714    -1.6249  -0.6935     0.2368 -0.6935   0
+## Aa2  3.6316 0.4714     2.7001   3.6316     4.5618  3.6316   0
+## Aa3 -3.3220 0.4714    -4.2534  -3.3221    -2.3917 -3.3221   0
+## Aa4  0.8610 0.4714    -0.0704   0.8610     1.7913  0.8610   0
+## Aa5  1.9571 0.4714     1.0256   1.9571     2.8873  1.9571   0
+## 
+## Random effects:
+## Name   Model
+##  A   IID model 
+## 
+## Model hyperparameters:
+##                                              mean        sd 0.025quant
+## Precision for the Gaussian observations 8.009e-01 2.003e-01     0.4671
+## Precision for A                         1.859e+04 1.835e+04  1262.3132
+##                                          0.5quant 0.975quant     mode
+## Precision for the Gaussian observations     0.782       1.25    0.746
+## Precision for A                         13169.497   67118.45 3448.972
+## 
+## Expected number of effective parameters(std dev): 5.999(4e-04)
+## Number of equivalent replicates : 6.001 
+## 
+## Marginal log-Likelihood:  -89.16</code></pre>
+<div class="figure"><span id="fig:cat-fixed"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-fixed-1.svg" alt="Comparison of fixed effects parameters for model `A + (1|A)`" width="672" />
+<p class="caption">
+Figure 2: Comparison of fixed effects parameters for model <code>A + (1|A)</code>
+</p>
+</div>
+<div class="figure"><span id="fig:cat-random"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-random-1.svg" alt="Comparison of random effects parameters for model `A + (1|A)`" width="672" />
+<p class="caption">
+Figure 3: Comparison of random effects parameters for model <code>A + (1|A)</code>
+</p>
+</div>
+<p>What if we want to add variable <code>B</code> as a nested random effect? We already know that adding <code>A</code> to both the fixed and the random effects is nonsense. The correct way of doing this is to use <code>A</code> as a fixed effect and <code>B</code> as an <a href="../../07/lme4-random-effects/index.html#implicit-nesting">implicit nested</a> random effect.</p>
+<pre class="r"><code>model.1 &lt;- lmer(Y ~ 0 + A + (1|A/B), data = dataset)</code></pre>
+<pre><code>## Warning in checkConv(attr(opt, &quot;derivs&quot;), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: large eigenvalue ratio
+##  - Rescale variables?</code></pre>
+<pre class="r"><code>summary(model.1)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: Y ~ 0 + A + (1 | A/B)
+##    Data: dataset
+## 
+## REML criterion at convergence: 97.8
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.05094 -0.36611  0.04198  0.45060  2.10794 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  B:A      (Intercept) 0.8926   0.9448  
+##  A        (Intercept) 1.1258   1.0611  
+##  Residual             0.7933   0.8907  
+## Number of obs: 36, groups:  B:A, 12; A, 6
+## 
+## Fixed effects:
+##     Estimate Std. Error t value
+## Aa0   0.1189     1.3055   0.091
+## Aa1  -0.6936     1.3055  -0.531
+## Aa2   3.6324     1.3055   2.782
+## Aa3  -3.3228     1.3055  -2.545
+## Aa4   0.8612     1.3055   0.660
+## Aa5   1.9575     1.3055   1.499
+## 
+## Correlation of Fixed Effects:
+##     Aa0   Aa1   Aa2   Aa3   Aa4  
+## Aa1 0.000                        
+## Aa2 0.000 0.000                  
+## Aa3 0.000 0.000 0.000            
+## Aa4 0.000 0.000 0.000 0.000      
+## Aa5 0.000 0.000 0.000 0.000 0.000
+## convergence code: 0
+## Model is nearly unidentifiable: large eigenvalue ratio
+##  - Rescale variables?</code></pre>
+<pre class="r"><code>model.1b &lt;- lmer(Y ~ 0 + A + (1|B), data = dataset)
+summary(model.1b)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: Y ~ 0 + A + (1 | B)
+##    Data: dataset
+## 
+## REML criterion at convergence: 97.8
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.05094 -0.36611  0.04198  0.45060  2.10794 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  B        (Intercept) 0.8926   0.9448  
+##  Residual             0.7933   0.8907  
+## Number of obs: 36, groups:  B, 12
+## 
+## Fixed effects:
+##     Estimate Std. Error t value
+## Aa0   0.1189     0.7606   0.156
+## Aa1  -0.6936     0.7606  -0.912
+## Aa2   3.6324     0.7606   4.776
+## Aa3  -3.3228     0.7606  -4.369
+## Aa4   0.8612     0.7606   1.132
+## Aa5   1.9575     0.7606   2.574
+## 
+## Correlation of Fixed Effects:
+##     Aa0   Aa1   Aa2   Aa3   Aa4  
+## Aa1 0.000                        
+## Aa2 0.000 0.000                  
+## Aa3 0.000 0.000 0.000            
+## Aa4 0.000 0.000 0.000 0.000      
+## Aa5 0.000 0.000 0.000 0.000 0.000</code></pre>
+<pre class="r"><code>model.2 &lt;- inla(
+  Y ~ 0 + A + f(A, model = &quot;iid&quot;) + f(B, model = &quot;iid&quot;), 
+  data = dataset
+)
+summary(model.2)</code></pre>
+<pre><code>## 
+## Call:
+## c(&quot;inla(formula = Y ~ 0 + A + f(A, model = \&quot;iid\&quot;) + f(B, model = \&quot;iid\&quot;), &quot;,  &quot;    data = dataset)&quot;)
+## 
+## Time used:
+##  Pre-processing    Running inla Post-processing           Total 
+##          1.8560          0.2000          1.3029          3.3588 
+## 
+## Fixed effects:
+##        mean     sd 0.025quant 0.5quant 0.975quant    mode kld
+## Aa0  0.1188 0.6589    -1.2099   0.1188     1.4481  0.1189   0
+## Aa1 -0.6933 0.6589    -2.0219  -0.6934     0.6361 -0.6934   0
+## Aa2  3.6308 0.6589     2.3015   3.6310     4.9593  3.6313   0
+## Aa3 -3.3213 0.6589    -4.6495  -3.3215    -1.9915 -3.3218   0
+## Aa4  0.8608 0.6589    -0.4680   0.8608     2.1899  0.8609   0
+## Aa5  1.9567 0.6589     0.6276   1.9568     3.2855  1.9570   0
+## 
+## Random effects:
+## Name   Model
+##  A   IID model 
+## B   IID model 
+## 
+## Model hyperparameters:
+##                                              mean        sd 0.025quant
+## Precision for the Gaussian observations     1.308 3.904e-01     0.6800
+## Precision for A                         18796.212 1.844e+04  1262.3756
+## Precision for B                             5.677 1.065e+01     0.5001
+##                                          0.5quant 0.975quant     mode
+## Precision for the Gaussian observations     1.264      2.202    1.178
+## Precision for A                         13357.779  67584.968 3452.483
+## Precision for B                             2.775     28.811    1.119
+## 
+## Expected number of effective parameters(std dev): 9.247(1.657)
+## Number of equivalent replicates : 3.893 
+## 
+## Marginal log-Likelihood:  -94.06</code></pre>
+<pre class="r"><code>model.2b &lt;- inla(Y ~ 0 + A + f(B, model = &quot;iid&quot;), data = dataset)
+summary(model.2b)</code></pre>
+<pre><code>## 
+## Call:
+## &quot;inla(formula = Y ~ 0 + A + f(B, model = \&quot;iid\&quot;), data = dataset)&quot;
+## 
+## Time used:
+##  Pre-processing    Running inla Post-processing           Total 
+##          0.2092          0.1876          0.0354          0.4322 
+## 
+## Fixed effects:
+##        mean     sd 0.025quant 0.5quant 0.975quant    mode kld
+## Aa0  0.1189 0.4869    -0.8409   0.1189     1.0781  0.1189   0
+## Aa1 -0.6934 0.4869    -1.6532  -0.6935     0.2658 -0.6935   0
+## Aa2  3.6315 0.4869     2.6716   3.6315     4.5907  3.6316   0
+## Aa3 -3.3220 0.4869    -4.2817  -3.3220    -2.3627 -3.3220   0
+## Aa4  0.8610 0.4869    -0.0988   0.8610     1.8202  0.8610   0
+## Aa5  1.9571 0.4869     0.9972   1.9571     2.9163  1.9571   0
+## 
+## Random effects:
+## Name   Model
+##  B   IID model 
+## 
+## Model hyperparameters:
+##                                          mean      sd 0.025quant 0.5quant
+## Precision for the Gaussian observations 1.310  0.3899     0.6817    1.266
+## Precision for B                         5.561 10.2918     0.4992    2.743
+##                                         0.975quant  mode
+## Precision for the Gaussian observations      2.202 1.181
+## Precision for B                             28.059 1.117
+## 
+## Expected number of effective parameters(std dev): 6.042(0.3803)
+## Number of equivalent replicates : 5.958 
+## 
+## Marginal log-Likelihood:  -93.98</code></pre>
+</div>
+<div id="discrete-variable" class="section level1">
+<h1>Discrete variable</h1>
+<div id="intro" class="section level2">
+<h2>Intro</h2>
+<p>A discrete variable is a numerical variable but each interval between two values is an integer multiple of a fixed step size. Typical examples are related to time, e.g. the year in steps of 1 year, months expressed in terms of years (step size 1/12), …</p>
+<p>We create a new dummy dataset with a discrete variable. The response variable is a third order polynomial of the discrete variable. The <code>X</code> variable is rescaled to -1 and 1.</p>
+<pre class="r"><code>n_x &lt;- 25
+n_sample &lt;- 10
+sd_noise &lt;- 10
+dataset &lt;- expand.grid(
+  X = seq_len(n_x),
+  sample = seq_len(n_sample)
+) %&gt;%
+  mutate(
+    mu =  0.045 * X ^ 3 - X ^ 2 + 10,
+    Y = mu + rnorm(n(), sd = sd_noise),
+    X = (X - ceiling(n_x / 2)) / floor(n_x / 2)
+  )</code></pre>
+<div class="figure"><span id="fig:discrete-dummy"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-dummy-1.svg" alt="Dummy dataset with a discrete variable. The line represents the true model." width="672" />
+<p class="caption">
+Figure 4: Dummy dataset with a discrete variable. The line represents the true model.
+</p>
+</div>
+</div>
+<div id="fit-with-lme4" class="section level2">
+<h2>Fit with <code>lme4</code></h2>
+<p>Suppose we fit a simple linear model to the data. We know that this is not accurate because the real pattern is a third order polynomial. And let’s add the variable also as a random effect. We use first <code>lme4</code> to illustrate the principle. Fig. <a href="#fig:discrete-fit">5</a> illustrate how the fit of the fixed part is poor but the random effect of X compensates the fit.</p>
+<pre class="r"><code>model.1 &lt;- lmer(Y ~ X + (1|X), data = dataset)
+summary(model.1)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: Y ~ X + (1 | X)
+##    Data: dataset
+## 
+## REML criterion at convergence: 1965.4
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.69377 -0.61555 -0.04821  0.57338  2.21380 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  X        (Intercept) 1498.22  38.71   
+##  Residual               97.41   9.87   
+## Number of obs: 250, groups:  X, 25
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  -20.545      7.766  -2.645
+## X             10.926     12.924   0.845
+## 
+## Correlation of Fixed Effects:
+##   (Intr)
+## X 0.000</code></pre>
+<div class="figure"><span id="fig:discrete-fit"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit-1.svg" alt="Fitted values (line) and observed values (points) from the lme4 model." width="672" />
+<p class="caption">
+Figure 5: Fitted values (line) and observed values (points) from the lme4 model.
+</p>
+</div>
+<p>The overall model fit improves when we add a second and third polynomial term. And the variance of the random effect decreases. It reduces even to zero once the third polynomial is in the model. Fig. <a href="#fig:discrete-fit2">6</a> illustrates how the fit of the fixed effect improves when adding the higher order terms. The effect on the fitted values with the random effect is marginal.</p>
+<pre class="r"><code>model.1b &lt;- lmer(Y ~ X + I(X ^ 2) + (1|X), data = dataset)
+model.1c &lt;- lmer(Y ~ X + I(X ^ 2) + I(X ^ 3) + (1|X), data = dataset)
+anova(model.1, model.1b, model.1c)</code></pre>
+<pre><code>## refitting model(s) with ML (instead of REML)</code></pre>
+<pre><code>## Data: dataset
+## Models:
+## model.1: Y ~ X + (1 | X)
+## model.1b: Y ~ X + I(X^2) + (1 | X)
+## model.1c: Y ~ X + I(X^2) + I(X^3) + (1 | X)
+##          Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(&gt;Chisq)    
+## model.1   4 1986.2 2000.2 -989.08   1978.2                             
+## model.1b  5 1940.8 1958.4 -965.39   1930.8 47.386      1   5.83e-12 ***
+## model.1c  6 1869.6 1890.7 -928.78   1857.6 73.211      1  &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>summary(model.1b)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: Y ~ X + I(X^2) + (1 | X)
+##    Data: dataset
+## 
+## REML criterion at convergence: 1915.4
+## 
+## Scaled residuals: 
+##      Min       1Q   Median       3Q      Max 
+## -2.64291 -0.63543 -0.04698  0.59239  2.21231 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  X        (Intercept) 227.13   15.07   
+##  Residual              97.41    9.87   
+## Number of obs: 250, groups:  X, 25
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  -59.025      4.623 -12.766
+## X             10.926      5.122   2.133
+## I(X^2)       106.560      9.553  11.154
+## 
+## Correlation of Fixed Effects:
+##        (Intr) X     
+## X       0.000       
+## I(X^2) -0.746  0.000</code></pre>
+<pre class="r"><code>summary(model.1c)</code></pre>
+<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+## Formula: Y ~ X + I(X^2) + I(X^3) + (1 | X)
+##    Data: dataset
+## 
+## REML criterion at convergence: 1846.3
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7307 -0.6612 -0.0031  0.6840  2.3228 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  X        (Intercept)  3.531   1.879   
+##  Residual             97.407   9.870   
+## Number of obs: 250, groups:  X, 25
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  -59.025      1.094  -53.94
+## X            -42.993      3.048  -14.10
+## I(X^2)       106.560      2.261   47.12
+## I(X^3)        83.130      4.312   19.28
+## 
+## Correlation of Fixed Effects:
+##        (Intr) X      I(X^2)
+## X       0.000              
+## I(X^2) -0.746  0.000       
+## I(X^3)  0.000 -0.917  0.000</code></pre>
+<div class="figure"><span id="fig:discrete-fit2"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit2-1.svg" alt="Fitted values from the fixed and random part of the `lme4` models. Points represent the true model." width="672" />
+<p class="caption">
+Figure 6: Fitted values from the fixed and random part of the <code>lme4</code> models. Points represent the true model.
+</p>
+</div>
+</div>
+<div id="fit-with-inla" class="section level2">
+<h2>Fit with <code>INLA</code></h2>
+<p><code>INLA</code> requires that we alter the data to get the same output. First we copy <code>X</code> into <code>X.copy</code> because <code>inla</code> allows the variable to be used only once in the formula. For some reason this wasn’t needed with the categorical variables. The <code>lme4</code> syntax <code>X + (1|X)</code> translates into the following <code>INLA</code> syntax: <code>X + f(X.copy, model = &quot;iid&quot;)</code>. Then next thing is that <code>INLA</code> does the model fitting and prediction in a single step. Getting predictions for new data requires to add the new data to the original data while setting the response to <code>NA</code>. If we want predictions for the fixed effect only, then we need to add rows were all random effect covariates are set to <code>NA</code>. Hence <code>X.copy</code> must be <code>NA</code> while <code>X</code> must be non <code>NA</code>. Note that this would be impossible without creating <code>X.copy</code>.</p>
+<p>Let’s fit the three same models with <code>INLA</code>. The predictions are given in fig. <a href="#fig:discrete-fit3">7</a>. The results are very similar to the <code>lme4</code> results.</p>
+<pre class="r"><code>dataset2 &lt;- dataset %&gt;%
+  mutate(X.copy = X) %&gt;%
+  bind_rows(
+    dataset %&gt;%
+      distinct(X, mu)
+  )</code></pre>
+<pre class="r"><code>model.2 &lt;- inla(
+  Y ~ X + f(X.copy, model = &quot;iid&quot;), 
+  data = dataset2, 
+  control.compute = list(waic = TRUE)
+)
+model.2b &lt;- inla(
+  Y ~ X + I(X ^ 2) + f(X.copy, model = &quot;iid&quot;), 
+  data = dataset2, 
+  control.compute = list(waic = TRUE)
+)
+model.2c &lt;- inla(
+  Y ~ X + I(X ^ 2) + I(X ^ 3) + f(X.copy, model = &quot;iid&quot;), 
+  data = dataset2, 
+  control.compute = list(waic = TRUE)
+)</code></pre>
+<div class="figure"><span id="fig:discrete-fit3"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit3-1.svg" alt="Fitted values from the fixed and random part of the `INLA` models. Points represent the true model." width="672" />
+<p class="caption">
+Figure 7: Fitted values from the fixed and random part of the <code>INLA</code> models. Points represent the true model.
+</p>
+</div>
+</div>
+</div>
+<div id="continuous-variable" class="section level1">
+<h1>Continuous variable</h1>
+<p>A continuous variable is a numeric variable were there is not fixed step size between two values. In practice the step size will be several magnitudes smaller than the measured values. Again let’s clarify this with an example dataset. For the sake of simplicity we’ll reuse the true model from the example with the discrete variable. Compare fig. <a href="#fig:continuous-dummy">8</a> with fig. <a href="#fig:discrete-dummy">4</a> and you’ll see that fig. <a href="#fig:continuous-dummy">8</a> has no step size while fig. <a href="#fig:discrete-dummy">4</a> does.</p>
+<pre class="r"><code>n_x &lt;- 25
+n_sample &lt;- 10
+sd_noise &lt;- 10
+dataset &lt;- data.frame(
+  X = runif(n_x * n_sample, min = 1, max = n_x)
+) %&gt;%
+  mutate(
+    mu =  0.045 * X ^ 3 - X ^ 2 + 10,
+    Y = mu + rnorm(n(), sd = sd_noise),
+    X = (X - ceiling(n_x / 2)) / floor(n_x / 2),
+    X.copy = X
+  )</code></pre>
+<div class="figure"><span id="fig:continuous-dummy"></span>
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/continuous-dummy-1.svg" alt="Dummy dataset with a continuous variable. The line represents the true model." width="672" />
+<p class="caption">
+Figure 8: Dummy dataset with a continuous variable. The line represents the true model.
+</p>
+</div>
+<p>The <code>lmer</code> model fails because the random effect has as many unique values as observations.</p>
+<pre class="r"><code>tryCatch(
+  lmer(Y ~ X + (1|X), data = dataset),
+  error = function(e){e}
+)</code></pre>
+<pre><code>## &lt;simpleError: number of levels of each grouping factor must be &lt; number of observations&gt;</code></pre>
+<p>The <code>INLA</code> model yields output but the variance of the random effect is very high. A good indicator that there is something wrong.</p>
+<pre class="r"><code>model.2 &lt;- inla(
+  Y ~ X + f(X.copy, model = &quot;iid&quot;), 
+  data = dataset, 
+  control.compute = list(waic = TRUE)
+)
+inla.tmarginal(
+  function(x){x^-1}, 
+  model.2$marginals.hyperpar$`Precision for X.copy`
+) %&gt;%
+  inla.zmarginal()</code></pre>
+<pre><code>## Mean            1306.61 
+## Stdev           116.922 
+## Quantile  0.025 1090.95 
+## Quantile  0.25  1224.87 
+## Quantile  0.5   1301.63 
+## Quantile  0.75  1382.66 
+## Quantile  0.975 1549.7</code></pre>
+<div id="conclusion" class="section level2">
+<h2>Conclusion</h2>
+<ul>
+<li>Using a variable both in the fixed and random part of the model makes only sense in case of a discrete variable.</li>
+</ul>
+</div>
+</div>
+
+        </div>
+        <footer class="article-footer">
+    <a data-url="/2017/08/fixed-and-random/" data-id="e6f09620f4d1aab9829ddcddf8aeb0cc" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="/2017/08/fixed-and-random/#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+    </div>
+
+    
+<nav id="article-nav">
+    
+    <a href="/2017/07/peersonic-ip67/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Peersonic bat-detector in waterproof IP67 enclosure</div>
+    </a>
+    
+
+    
+    <a href="/2017/08/git_workflow_ecologists/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Newer
+      </strong>
+      <div class="article-nav-title">A git workflow for ecologists</div>
+    </a>
+    
+</nav>
+
+
+</article>
+
+
+<section id="comments">
+    <div id="disqus_thread">
+        <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "stats-bats" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    </div>
+</section>
+
+
+    </section>
+
+   	
+    	<aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/07/inlabru-bru/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/07/inlabru-bru/" class="title">Comparing inlabru with INLA</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-07-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">12 July 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/05/silhouette/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/bats">
+                        bats
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/05/silhouette/" class="title">Bat silhouettes at 1:1 scale</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-05-19 00:00:00 &#43;0000 UTC" itemprop="datePublished">19 May 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/03/inla-temporal/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/03/inla-temporal/" class="title">Temporal autocorrelation in INLA</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-03-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">5 March 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/02/highly-correlated-random-effects/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/02/highly-correlated-random-effects/" class="title">Highly correlated random effects</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-02-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">16 February 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2017/09/readrpa/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/bats">
+                        bats
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2017/09/readrpa/" class="title">Review of the ReadRPA software</a></p>
+                    <p class="item-date">
+                        <time datetime="2017-09-26 00:00:00 &#43;0000 UTC" itemprop="datePublished">26 September 2017</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/about">
+                    about
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/analysis">
+                    analysis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/bats">
+                    bats
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/maps">
+                    maps
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/mixed-models">
+                    mixed-models
+                </a>
+                <span class="category-list-count">5</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/point-pattern">
+                    point-pattern
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/reproducible-research">
+                    reproducible-research
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/statistics">
+                    statistics
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/text">
+                    text
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/tool-review">
+                    tool-review
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/categories/version-control">
+                    version-control
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/bat-detector">
+                    bat-detector
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/bookdown">
+                    bookdown
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/density">
+                    density
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/ggmap">
+                    ggmap
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/git">
+                    git
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/gitbook">
+                    gitbook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/inla">
+                    inla
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/inlabru">
+                    inlabru
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/introduction">
+                    introduction
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/kml">
+                    kml
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/leaflet">
+                    leaflet
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/lme4">
+                    lme4
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/maps">
+                    maps
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/openstreetmap">
+                    openstreetmap
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/osm">
+                    osm
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/peersonic">
+                    peersonic
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/point-pattern">
+                    point-pattern
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/projection">
+                    projection
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/random-effect">
+                    random-effect
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/review">
+                    review
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/rmarkdown">
+                    rmarkdown
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/silhouette">
+                    silhouette
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/spatial-point-process">
+                    spatial-point-process
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        
+        <a href="/tags/bat-detector" style="font-size: 12px;">bat-detector</a>
+        
+        
+        <a href="/tags/bookdown" style="font-size: 12px;">bookdown</a>
+        
+        
+        <a href="/tags/density" style="font-size: 12px;">density</a>
+        
+        
+        <a href="/tags/ggmap" style="font-size: 12px;">ggmap</a>
+        
+        
+        <a href="/tags/git" style="font-size: 12px;">git</a>
+        
+        
+        <a href="/tags/gitbook" style="font-size: 12px;">gitbook</a>
+        
+        
+        <a href="/tags/inla" style="font-size: 12px;">inla</a>
+        
+        
+        <a href="/tags/inlabru" style="font-size: 12px;">inlabru</a>
+        
+        
+        <a href="/tags/introduction" style="font-size: 12px;">introduction</a>
+        
+        
+        <a href="/tags/kml" style="font-size: 12px;">kml</a>
+        
+        
+        <a href="/tags/leaflet" style="font-size: 12px;">leaflet</a>
+        
+        
+        <a href="/tags/lme4" style="font-size: 12px;">lme4</a>
+        
+        
+        <a href="/tags/maps" style="font-size: 12px;">maps</a>
+        
+        
+        <a href="/tags/openstreetmap" style="font-size: 12px;">openstreetmap</a>
+        
+        
+        <a href="/tags/osm" style="font-size: 12px;">osm</a>
+        
+        
+        <a href="/tags/peersonic" style="font-size: 12px;">peersonic</a>
+        
+        
+        <a href="/tags/point-pattern" style="font-size: 12px;">point-pattern</a>
+        
+        
+        <a href="/tags/projection" style="font-size: 12px;">projection</a>
+        
+        
+        <a href="/tags/random-effect" style="font-size: 12px;">random-effect</a>
+        
+        
+        <a href="/tags/review" style="font-size: 12px;">review</a>
+        
+        
+        <a href="/tags/rmarkdown" style="font-size: 12px;">rmarkdown</a>
+        
+        
+        <a href="/tags/silhouette" style="font-size: 12px;">silhouette</a>
+        
+        
+        <a href="/tags/spatial-point-process" style="font-size: 12px;">spatial-point-process</a>
+        
+    </div>
+</div>
+
+
+
+
+
+    <div id="toTop" class="fa fa-angle-up"></div>
+</aside>
+
+    
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018
+      Thierry Onkelinx. <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL 3.0+</a>. Source code available at <a href="http://github.com/thierryo/my_blog">GitHub</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-66337116-4', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.9.0/highlight.min.js"></script>
+
+
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+
+
+</body>
+</html>

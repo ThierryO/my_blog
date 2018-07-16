@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mixed Models on Stats &amp; bats</title>
+    <link>/categories/mixed-models/</link>
+    <description>Recent content in Mixed Models on Stats &amp; bats</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
+    <lastBuildDate>Thu, 12 Jul 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/mixed-models/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Comparing inlabru with INLA</title>
+      <link>/2018/07/inlabru-bru/</link>
+      <pubDate>Thu, 12 Jul 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/07/inlabru-bru/</guid>
+      <description>inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data.</description>
+    </item>
+    
+    <item>
+      <title>Temporal autocorrelation in INLA</title>
+      <link>/2018/03/inla-temporal/</link>
+      <pubDate>Mon, 05 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/03/inla-temporal/</guid>
+      <description>One of the reason why I often use INLA is because it allows for correlated random effects. In this blog post, I will handle random effect with temporal autocorrelation. INLA has several options for this. There are two major types of model, the first handles discrete time step, the latter continuous time steps.
+Dummy data set This blog post was inspired by a post on the R-Sig-Mixed models mailing list.</description>
+    </item>
+    
+    <item>
+      <title>Highly correlated random effects</title>
+      <link>/2018/02/highly-correlated-random-effects/</link>
+      <pubDate>Fri, 16 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/02/highly-correlated-random-effects/</guid>
+      <description>Recently, I got a question on a mixed model with highly correlated random slopes. I requested a copy of the data because it is much easier to diagnose the problem when you have the actual data. The data owner gave permission to use an anonymised version of the data for this blog post. In this blog post, I will discuss how I’d tackle this problem.
+Data exploration Every data analysis should start with some data exploration.</description>
+    </item>
+    
+    <item>
+      <title>Using a variable both as fixed and random effect</title>
+      <link>/2017/08/fixed-and-random/</link>
+      <pubDate>Wed, 23 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/08/fixed-and-random/</guid>
+      <description>Categorical variable Discrete variable Intro Fit with lme4 Fit with INLA  Continuous variable Conclusion    One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so.</description>
+    </item>
+    
+    <item>
+      <title>Nested and crossed random effects in &#34;lme4&#34;</title>
+      <link>/2017/07/lme4-random-effects/</link>
+      <pubDate>Tue, 18 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/07/lme4-random-effects/</guid>
+      <description>People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
+Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes.</description>
+    </item>
+    
+  </channel>
+</rss>

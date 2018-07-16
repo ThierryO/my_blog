@@ -18,6 +18,8 @@ opts_chunk$set(
   cache = TRUE,
   autodep = TRUE
 )
+library(htmlwidgets)
+setWidgetIdSeed(20170628)
 ```
 
 

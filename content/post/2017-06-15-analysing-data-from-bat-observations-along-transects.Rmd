@@ -4,7 +4,7 @@ author: Thierry Onkelinx
 date: '2017-06-15'
 slug: analysing-data-from-bat-observations-along-transects
 categories: ["bats", "analysis"]
-tags: ["spatial point process", "kml"]
+tags: ["spatial point process", "kml", "leaflet"]
 coverImage: images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png
 thumbnailImagePosition: "right"
 banner: images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png
@@ -28,12 +28,14 @@ library(lubridate)
 library(curl)
 library(XML)
 library(sp)
+library(htmlwidgets)
 library(leaflet)
 library(tidyr)
 library(INLA)
 library(plotROC)
 library(mapview)
 library(scales)
+setWidgetIdSeed(20170615)
 ```
 
 This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
