@@ -366,7 +366,7 @@ dataset &lt;- expand.grid(
     Y = mu + rnorm(n(), sd = sd_noise)
   )</code></pre>
 <div class="figure"><span id="fig:cat-dummy"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-dummy-1.svg" alt="Dummy dataset with categorical variables." width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-dummy-1.svg" alt="Dummy dataset with categorical variables." width="672" />
 <p class="caption">
 Figure 1: Dummy dataset with categorical variables.
 </p>
@@ -442,13 +442,13 @@ summary(model.2)</code></pre>
 ## 
 ## Marginal log-Likelihood:  -89.16</code></pre>
 <div class="figure"><span id="fig:cat-fixed"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-fixed-1.svg" alt="Comparison of fixed effects parameters for model `A + (1|A)`" width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-fixed-1.svg" alt="Comparison of fixed effects parameters for model `A + (1|A)`" width="672" />
 <p class="caption">
 Figure 2: Comparison of fixed effects parameters for model <code>A + (1|A)</code>
 </p>
 </div>
 <div class="figure"><span id="fig:cat-random"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-random-1.svg" alt="Comparison of random effects parameters for model `A + (1|A)`" width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/cat-random-1.svg" alt="Comparison of random effects parameters for model `A + (1|A)`" width="672" />
 <p class="caption">
 Figure 3: Comparison of random effects parameters for model <code>A + (1|A)</code>
 </p>
@@ -624,7 +624,7 @@ dataset &lt;- expand.grid(
     X = (X - ceiling(n_x / 2)) / floor(n_x / 2)
   )</code></pre>
 <div class="figure"><span id="fig:discrete-dummy"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-dummy-1.svg" alt="Dummy dataset with a discrete variable. The line represents the true model." width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-dummy-1.svg" alt="Dummy dataset with a discrete variable. The line represents the true model." width="672" />
 <p class="caption">
 Figure 4: Dummy dataset with a discrete variable. The line represents the true model.
 </p>
@@ -660,7 +660,7 @@ summary(model.1)</code></pre>
 ##   (Intr)
 ## X 0.000</code></pre>
 <div class="figure"><span id="fig:discrete-fit"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit-1.svg" alt="Fitted values (line) and observed values (points) from the lme4 model." width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit-1.svg" alt="Fitted values (line) and observed values (points) from the lme4 model." width="672" />
 <p class="caption">
 Figure 5: Fitted values (line) and observed values (points) from the lme4 model.
 </p>
@@ -738,7 +738,7 @@ anova(model.1, model.1b, model.1c)</code></pre>
 ## I(X^2) -0.746  0.000       
 ## I(X^3)  0.000 -0.917  0.000</code></pre>
 <div class="figure"><span id="fig:discrete-fit2"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit2-1.svg" alt="Fitted values from the fixed and random part of the `lme4` models. Points represent the true model." width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit2-1.svg" alt="Fitted values from the fixed and random part of the `lme4` models. Points represent the true model." width="672" />
 <p class="caption">
 Figure 6: Fitted values from the fixed and random part of the <code>lme4</code> models. Points represent the true model.
 </p>
@@ -770,7 +770,7 @@ model.2c &lt;- inla(
   control.compute = list(waic = TRUE)
 )</code></pre>
 <div class="figure"><span id="fig:discrete-fit3"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit3-1.svg" alt="Fitted values from the fixed and random part of the `INLA` models. Points represent the true model." width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/discrete-fit3-1.svg" alt="Fitted values from the fixed and random part of the `INLA` models. Points represent the true model." width="672" />
 <p class="caption">
 Figure 7: Fitted values from the fixed and random part of the <code>INLA</code> models. Points represent the true model.
 </p>
@@ -793,7 +793,7 @@ dataset &lt;- data.frame(
     X.copy = X
   )</code></pre>
 <div class="figure"><span id="fig:continuous-dummy"></span>
-<img src="/post/2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/continuous-dummy-1.svg" alt="Dummy dataset with a continuous variable. The line represents the true model." width="672" />
+<img src="2017-08-22-using-a-variable-both-as-fixed-and-random-effect_files/figure-html/continuous-dummy-1.svg" alt="Dummy dataset with a continuous variable. The line represents the true model." width="672" />
 <p class="caption">
 Figure 8: Dummy dataset with a continuous variable. The line represents the true model.
 </p>

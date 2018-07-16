@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
 <head>
-    <title>A git workflow for ecologists &middot; Stats &amp; bats</title>
+    <title>Posts &middot; Stats &amp; bats</title>
     <meta name="generator" content="Hugo 0.30" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -10,7 +10,10 @@
       <meta name="description" content="">
     
     
-    <link rel="canonical" href="/2017/08/git_workflow_ecologists/"/>
+      <link href="/post/index.xml" rel="alternate" type="application/rss+xml" title="Stats &amp; bats" />
+      <link href="/post/index.xml" rel="feed" type="application/rss+xml" title="Stats &amp; bats" />
+    
+    <link rel="canonical" href="/post/"/>
     <link rel="icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
     <link rel="stylesheet" href="/css/style.css">
@@ -20,17 +23,14 @@
     
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
-    <meta property="og:title" content="A git workflow for ecologists" />
-<meta property="og:description" content="Git Target audience for this workflow Basic workflow Use case Principle  Branching workflow with pull requests Use case Principle Branch Pull request Conflicts  Flowcharts Rules for collaboration Exceptions    Git For those how don’t know git, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this blog." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/2017/08/git_workflow_ecologists/" />
+    <meta property="og:title" content="Posts" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="/post/" />
 
 
 
-<meta property="article:published_time" content="2017-08-23T00:00:00&#43;00:00"/>
-
-<meta property="article:modified_time" content="2017-08-23T00:00:00&#43;00:00"/>
-
+<meta property="og:updated_time" content="2017-07-14T00:00:00&#43;00:00"/>
 
 
 
@@ -43,20 +43,12 @@
 
     
     
-<meta itemprop="name" content="A git workflow for ecologists">
-<meta itemprop="description" content="Git Target audience for this workflow Basic workflow Use case Principle  Branching workflow with pull requests Use case Principle Branch Pull request Conflicts  Flowcharts Rules for collaboration Exceptions    Git For those how don’t know git, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this blog.">
+<meta itemprop="name" content="Posts">
+<meta itemprop="description" content="">
 
 
-<meta itemprop="datePublished" content="2017-08-23T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2017-08-23T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1433">
-
-
-
-<meta itemprop="keywords" content="git," />
-
-    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="A git workflow for ecologists"/>
-<meta name="twitter:description" content="Git Target audience for this workflow Basic workflow Use case Principle  Branching workflow with pull requests Use case Principle Branch Pull request Conflicts  Flowcharts Rules for collaboration Exceptions    Git For those how don’t know git, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this blog."/>
+    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Posts"/>
+<meta name="twitter:description" content=""/>
 
     
 
@@ -264,357 +256,162 @@
 
     <section id="main">
     
-    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
-    <div class="article-inner">
-        
-
-        <header class="article-header">
-    <a href="/2017/08/git_workflow_ecologists/">
-    <h1 class="article-title" itemprop="name">
-        A git workflow for ecologists
-    </h1>
-    </a>
-    <div class="article-meta">
-
-        
-        <div class="article-date">
-            <i class="fa fa-calendar"></i>
-            <time datetime="2017-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">23 August 2017</time>
-            &middot;
-            1433
-            words
-            &middot;
-            7
-            minute read
+    
+    
+    
+    <section class="archives-wrap">
+        <div class="archive-category-wrap">
+            <span class="archive-category">Posts</span>
         </div>
-        
-        
+        <div class="archives">
             
             
-            <div class="article-category">
-                <i class="fa fa-folder"></i>
-                
-                
-                <a class="article-category-link" href="/categories/reproducible-research">reproducible research</a>
-                &middot;
-                
-                
-                <a class="article-category-link" href="/categories/version-control">version control</a>
-                
-                
-            </div>
+                <article class="archive-article archive-type-post">
+    <div class="archive-article-inner">
+        <div class="archive-article-thumbnail">
             
-        
-
-        
+            <a href="/2017/07/peersonic-and-low-frequencies/" class="thumbnail">
+                <span style="background-image:url(/post/2017-07-14-peersonic-and-low-frequencies_files/figure-html/rec-spec-detail-1.png)" alt="Peersonic RPA2 bat detector and low frequencies" class="thumbnail-image"></span>
+            </a>
             
-            
-            <div class="article-category">
-                <i class="fa fa-tags"></i>
-                
-                
-                <a class="article-category-link" href="/tags/git">git</a>
-                
-                
-            </div>
-            
-        
-    </div>
-</header>
-
-        <div class="article-entry" itemprop="articleBody">
-            <div id="TOC">
-<ul>
-<li><a href="#git">Git</a></li>
-<li><a href="#target-audience-for-this-workflow">Target audience for this workflow</a></li>
-<li><a href="#basic-workflow">Basic workflow</a><ul>
-<li><a href="#use-case">Use case</a></li>
-<li><a href="#principle">Principle</a></li>
-</ul></li>
-<li><a href="#branching-workflow-with-pull-requests">Branching workflow with pull requests</a><ul>
-<li><a href="#use-case-1">Use case</a></li>
-<li><a href="#principle-1">Principle</a></li>
-<li><a href="#branch">Branch</a></li>
-<li><a href="#pull-request">Pull request</a></li>
-<li><a href="#conflicts">Conflicts</a></li>
-</ul></li>
-<li><a href="#flowcharts">Flowcharts</a></li>
-<li><a href="#rules-for-collaboration">Rules for collaboration</a><ul>
-<li><a href="#exceptions">Exceptions</a></li>
-</ul></li>
-</ul>
-</div>
-
-<div id="git" class="section level1">
-<h1>Git</h1>
-<p>For those how don’t know <a href="https://git-scm.com/">git</a>, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this <a href="https://github.com/thierryo/my_blog">blog</a>. Have a look at <a href="https://en.wikipedia.org/wiki/Git">Wikipedia</a> for more background.</p>
-<p>Although it requires some overhead, it saves a lot of time once you get the hang of it. Why? Because you have the confidence that you can go back to any point in the history of a project. So you can explore new things without risking to ruin everything. The new things don’t work out? Just go back to the last good point in the history and start over.</p>
-<p>Each point in the history is called a <code>commmit</code>. A <code>commit</code> contains all essential information on <em>what</em> needs to change to recreate the current state starting from the previous <code>commit</code>. It also contains useful metadata: <em>who</em> created the <code>commit</code>, <em>when</em> and <em>why<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></em>.</p>
-<p>Git works great with plain text files like R scripts, RMarkdown files, data in txt or csv format, … You can add binary files (Word, Excel, pdf, jpg, …) to a git project, but not as efficient as plain text files and with less options. In case of a plain text file, git notes which lines in the file are removed and where a line was inserted. A change in a line is a combination of removing the old line and inserting the new line. Have a look a <a href="https://github.com/ThierryO/my_blog/commit/fcab2804b75e7848283ef460f945f93aa3538bf5">this commit</a> if you want a real life example. Such granular approach is not available for binary files. Hence the old version is removed and the new version is added.</p>
-</div>
-<div id="target-audience-for-this-workflow" class="section level1">
-<h1>Target audience for this workflow</h1>
-<p>The workflow is useful for anyone with basic computer skills. The workflow does not use all whistles and bells available in git. Only the minimal functionality which is all accessible via either a graphical user interface (GUI) or a website. We target ecologists who often write R scripts and have no prior knowledge on version control systems.</p>
-<p>This workflow seems to work for a team of scientists how work on the same project and have all write access to that project (<code>repository</code> in git terminology).</p>
-</div>
-<div id="basic-workflow" class="section level1">
-<h1>Basic workflow</h1>
-<div id="use-case" class="section level2">
-<h2>Use case</h2>
-<ul>
-<li>First <code>repositories</code> of git novices.</li>
-<li>Initial start of a <code>repository</code>.</li>
-</ul>
-<p>It is no longer valid as soon as more than one user commits to the <code>repository</code>.</p>
-</div>
-<div id="principle" class="section level2">
-<h2>Principle</h2>
-<p>The basic workflow is just a simple linear history. The user makes a set of changes and commits those changes. This is repeated over and over until the project is finished. The resulting history will look like fig. <a href="#fig:basic">1</a>.</p>
-<p>One extra step is at least a daily <code>push</code> to another machine. This creates (or updates) a copy of the entire project history to that other machine. And thus serves as a backup copy. Therefore this should be done at least daily. The easiest way is to use an on-line service like <a href="https://github.com">GitHub</a>, <a href="https://bitbucket.com">Bitbucket</a>, <a href="https://gitlab.com">GitLab</a>, … GitHub is free for public repositories and is popular for freeware open source projects. Bitbucket offers free private repositories but only for small teams (max. 5 users). Having the repository on an on-line platform has another benefit: it is easy to share your work and collaborate.</p>
-<div class="figure"><span id="fig:basic"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/basic-1.png" alt="An example of the history of a basic workflow" width="576" />
-<p class="caption">
-Figure 1: An example of the history of a basic workflow
-</p>
-</div>
-</div>
-</div>
-<div id="branching-workflow-with-pull-requests" class="section level1">
-<h1>Branching workflow with pull requests</h1>
-<div id="use-case-1" class="section level2">
-<h2>Use case</h2>
-<ul>
-<li>Working with several people on the same repository</li>
-<li>More experienced git users</li>
-</ul>
-</div>
-<div id="principle-1" class="section level2">
-<h2>Principle</h2>
-<ol style="list-style-type: decimal">
-<li>Commits are only created in <code>feature branches</code>, not in the <code>master branch</code>.</li>
-<li>Finalised <code>branches</code> are <code>merged</code> into the <code>master branch</code> by <code>pull requests</code>.</li>
-</ol>
-</div>
-<div id="branch" class="section level2">
-<h2>Branch</h2>
-<p>The <a href="#basic-workflow">basic workflow</a> has a single <code>branch</code> which is called <code>master</code>. Git makes it easy to create new <code>branches</code>. A <code>branch</code> starts from a specific commit. Each user should create a new <code>branch</code> when he starts working on a new feature in the repository. Because each user works in his own branch, he is the only one writing to this part of the history. This avoids a lot of conflicts. Fig. <a href="#fig:branching">2</a> illustrates how the history looks like when a few branches are created.</p>
-<div class="figure"><span id="fig:branching"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/branching-1.png" alt="An example of a history with a few feature branches" width="576" />
-<p class="caption">
-Figure 2: An example of a history with a few feature branches
-</p>
-</div>
-</div>
-<div id="pull-request" class="section level2">
-<h2>Pull request</h2>
-<p>Creating branches is fine, but they diverge the history of the repository. So we need a mechanism to <code>merge</code> branches together. In this workflow we will work on a feature branch until it is finished. Then we merge it into the master branch. Fig. <a href="#fig:pull-request">3</a> illustrates the resulting history. This can be done locally using a <code>merge</code>, but it is safer to do it on-line via a <code>pull request</code>.</p>
-<div class="figure"><span id="fig:pull-request"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/pull-request-1.png" alt="An example of a history after two pull requests" width="576" />
-<p class="caption">
-Figure 3: An example of a history after two pull requests
-</p>
-</div>
-<p>A <code>pull request</code> is a two step procedure. First you create the <code>pull request</code> by indicating via the webapp which branches you would like to <code>merge</code>. The second step is to <code>merge</code> the pull request. Documentation on how to handle <code>pull requests</code> can be found on the websites of <a href="https://help.github.com/articles/about-pull-requests/">GitHub</a>, <a href="https://www.atlassian.com/git/tutorials/making-a-pull-request">Bitbucket</a> and <a href="https://docs.gitlab.com/ee/gitlab-basics/add-merge-request.html">GitLab</a>.</p>
-<p>Pull requests have several advantages over local merges</p>
-<ol style="list-style-type: decimal">
-<li>It works only when the branches are pushed to the on-line copy of the repository. This ensures not only a backup but also gives access to the latest version to your collaborators.</li>
-<li>All pull requests are done against the common (on-line) master branch. Local merges would create diverging master branches which will create a lot of conflicts.</li>
-<li>Since the pull request is a two step procedure, one user can create the pull request and another (e.g. the project leader) can do the actual merge.</li>
-<li>The pull request gives an overview of the aggregated changes of all the commits in the pull request. This makes it easier to get a feeling on what has been changed within the range of the pull request.</li>
-<li>Most on-line tools allow to add comments and reviews to a pull request. This is useful to discuss a feature prior to merging it. In case additional changes are required, the user should update his feature branch. The pull request gets automatically updated.</li>
-</ol>
-</div>
-<div id="conflicts" class="section level2">
-<h2>Conflicts</h2>
-<p>Conflicts arise when a file is changed at the same location in two different branches and with different changes. Git cannot decide which version is correct and therefore blocks the merging of the pull request. It is up to the user to select the correct version and commit the required changes. See on-line <a href="https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/">tutorials</a> on how to do this. Once the conflicts are resolved, you can go ahead and merge the pull request. This is illustrated in fig. <a href="#fig:pull-request">3</a>. First <code>master</code> is merged back into <code>feature B</code> to handle the merge conflict and then <code>feature B</code> is merged into <code>master</code>.</p>
-<p><em>What if I choose the wrong version?</em> Don’t panic, both versions remain in the history so you don’t loose any. So you can create a new branch starting for the latest commit with the correct version and merge that branch.</p>
-</div>
-</div>
-<div id="flowcharts" class="section level1">
-<h1>Flowcharts</h1>
-<p>Here a a few flowcharts that illustrate several components of the branching workflow with pull requests. Fig. <a href="#fig:prepare-repo">4</a> illustrates the steps you need when you want to start working on a project. Once you have a local <code>clone</code> of the repository you can <code>check out</code> the required feature branch (fig. <a href="#fig:create-branch">5</a>). The last flowchart handles working in a feature branch and merge it when finished (fig. <a href="#fig:commit">6</a>).</p>
-<div class="figure"><span id="fig:prepare-repo"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/prepare-repo-1.png" alt="Flowchart for preparing a repository." width="576" />
-<p class="caption">
-Figure 4: Flowchart for preparing a repository.
-</p>
-</div>
-<div class="figure"><span id="fig:create-branch"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/create-branch-1.png" alt="Flowchart for changing to a feature branch." width="576" />
-<p class="caption">
-Figure 5: Flowchart for changing to a feature branch.
-</p>
-</div>
-<div class="figure"><span id="fig:commit"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/commit-1.png" alt="Flowchart for applying changes in a feature branch." width="576" />
-<p class="caption">
-Figure 6: Flowchart for applying changes in a feature branch.
-</p>
-</div>
-</div>
-<div id="rules-for-collaboration" class="section level1">
-<h1>Rules for collaboration</h1>
-<ol style="list-style-type: decimal">
-<li>Always commit into a feature branch, never in the master branch.</li>
-<li>Always start features branches for the master branch.</li>
-<li>Only work in your own branches.</li>
-<li>Never merge someone else’s pull request without their consent.</li>
-<li>Don’t wait too long for merging a branch. Keep the scope of a feature branch narrow.</li>
-</ol>
-<div id="exceptions" class="section level2">
-<h2>Exceptions</h2>
-<p><strong>Starting branches not from master</strong></p>
-<p>In case you want to apply a change to someone else’s branch. Create a new branch starting from the other’s branch, add commits and create a pull request. Ask the branch owner to merge the pull request. Basically you use someone else’s branch as the master branch.</p>
-<p><strong>Working with multiple users in the same branch</strong></p>
-<p>This is OK as long as users don’t work simultaneously in the branch.</p>
-<ul>
-<li>Person A create the branch</li>
-<li>Person A adds commits</li>
-<li>Person A pushes and notifies person B</li>
-<li>Person B adds commits</li>
-<li>Person B pushes and notifies the next person</li>
-<li>…</li>
-<li>Person A creates a pull request</li>
-</ul>
-</div>
-</div>
-<div class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>Assuming that the user entered a sensible commit message.<a href="#fnref1">↩</a></p></li>
-</ol>
-</div>
-
         </div>
-        <footer class="article-footer">
-    <a data-url="/2017/08/git_workflow_ecologists/" data-id="9f58616143eca5011d48d9337cc430b9" class="article-share-link">
-        <i class="fa fa-share"></i>
-        Share
-    </a>
-    
-    <a href="/2017/08/git_workflow_ecologists/#disqus_thread" class="article-comment-link">
-        Comments
-    </a>
-    
-
-    <script>
-    (function ($) {
-        
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-    </script>
-</footer>
-
+        <header class="archive-article-header">
+            <h1 itemprop="name">
+            <a class="archive-article-title" href="/2017/07/peersonic-and-low-frequencies/">Peersonic RPA2 bat detector and low frequencies</a>
+            </h1>
+            <div class="archive-article-date">
+                <i class="fa fa-calendar"></i>
+                <time datetime="2017-07-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">14 July 2017</time>
+            </div>
+        </header>
     </div>
+</article>
+ 
+            
+                <article class="archive-article archive-type-post">
+    <div class="archive-article-inner">
+        <div class="archive-article-thumbnail">
+            
+            <a href="/2017/06/estimating-densities-from-a-point-pattern/" class="thumbnail">
+                <span style="background-image:url(/post/2017-06-28-estimating-densities-from-a-point-pattern_files/figure-html/ggmap-1.png)" alt="Estimating densities from a point pattern" class="thumbnail-image"></span>
+            </a>
+            
+        </div>
+        <header class="archive-article-header">
+            <h1 itemprop="name">
+            <a class="archive-article-title" href="/2017/06/estimating-densities-from-a-point-pattern/">Estimating densities from a point pattern</a>
+            </h1>
+            <div class="archive-article-date">
+                <i class="fa fa-calendar"></i>
+                <time datetime="2017-06-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">28 June 2017</time>
+            </div>
+        </header>
+    </div>
+</article>
+ 
+            
+                <article class="archive-article archive-type-post">
+    <div class="archive-article-inner">
+        <div class="archive-article-thumbnail">
+            
+            <a href="/2017/06/bookdown-gitbook/" class="thumbnail">
+                <span class="thumbnail-image thumbnail-none"></span>
+            </a>
+            
+        </div>
+        <header class="archive-article-header">
+            <h1 itemprop="name">
+            <a class="archive-article-title" href="/2017/06/bookdown-gitbook/">Some things I learned about bookdown::gitbook</a>
+            </h1>
+            <div class="archive-article-date">
+                <i class="fa fa-calendar"></i>
+                <time datetime="2017-06-26 00:00:00 &#43;0000 UTC" itemprop="datePublished">26 June 2017</time>
+            </div>
+        </header>
+    </div>
+</article>
+ 
+            
+                <article class="archive-article archive-type-post">
+    <div class="archive-article-inner">
+        <div class="archive-article-thumbnail">
+            
+            <a href="/2017/06/analysing-data-from-bat-observations-along-transects/" class="thumbnail">
+                <span style="background-image:url(/images/2017-06-15-analysing-data-from-bat-observations-along-transects_thumb.png)" alt="Analysing data from bat observations along transects" class="thumbnail-image"></span>
+            </a>
+            
+        </div>
+        <header class="archive-article-header">
+            <h1 itemprop="name">
+            <a class="archive-article-title" href="/2017/06/analysing-data-from-bat-observations-along-transects/">Analysing data from bat observations along transects</a>
+            </h1>
+            <div class="archive-article-date">
+                <i class="fa fa-calendar"></i>
+                <time datetime="2017-06-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">15 June 2017</time>
+            </div>
+        </header>
+    </div>
+</article>
+ 
+            
+                <article class="archive-article archive-type-post">
+    <div class="archive-article-inner">
+        <div class="archive-article-thumbnail">
+            
+            <a href="/2017/06/peersonic/" class="thumbnail">
+                <span style="background-image:url(/images/peersonic/peersonic_rpa2_front.jpg)" alt="Review of the Peersonic RPA2 bat detector in the field" class="thumbnail-image"></span>
+            </a>
+            
+        </div>
+        <header class="archive-article-header">
+            <h1 itemprop="name">
+            <a class="archive-article-title" href="/2017/06/peersonic/">Review of the Peersonic RPA2 bat detector in the field</a>
+            </h1>
+            <div class="archive-article-date">
+                <i class="fa fa-calendar"></i>
+                <time datetime="2017-06-11 00:00:00 &#43;0000 UTC" itemprop="datePublished">11 June 2017</time>
+            </div>
+        </header>
+    </div>
+</article>
+ 
+            
+                <article class="archive-article archive-type-post">
+    <div class="archive-article-inner">
+        <div class="archive-article-thumbnail">
+            
+            <a href="/2017/06/introduction/" class="thumbnail">
+                <span class="thumbnail-image thumbnail-none"></span>
+            </a>
+            
+        </div>
+        <header class="archive-article-header">
+            <h1 itemprop="name">
+            <a class="archive-article-title" href="/2017/06/introduction/">Introduction</a>
+            </h1>
+            <div class="archive-article-date">
+                <i class="fa fa-calendar"></i>
+                <time datetime="2017-06-10 00:00:00 &#43;0000 UTC" itemprop="datePublished">10 June 2017</time>
+            </div>
+        </header>
+    </div>
+</article>
+ 
+            
+        </div>
+    </section>
+    <nav id="page-nav">
 
     
-<nav id="article-nav">
+        <a class="extend prev" rel="prev" href="/post/">
+            « Prev
+        </a>
     
-    <a href="/2017/08/fixed-and-random/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">
-          Older
-      </strong>
-      <div class="article-nav-title">Using a variable both as fixed and random effect</div>
-    </a>
     
 
-    
-    <a href="/2017/09/readrpa/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">
-          Newer
-      </strong>
-      <div class="article-nav-title">Review of the ReadRPA software</div>
-    </a>
-    
 </nav>
 
-
-</article>
-
-
-<section id="comments">
-    <div id="disqus_thread">
-        <div id="disqus_thread"></div>
-<script>
-    var disqus_config = function () {
     
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "stats-bats" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    </div>
-</section>
-
 
     </section>
 
