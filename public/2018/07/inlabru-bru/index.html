@@ -2,7 +2,7 @@
 <html lang="en-us">
 <head>
     <title>Comparing inlabru with INLA &middot; Stats &amp; bats</title>
-    <meta name="generator" content="Hugo 0.30" />
+    <meta name="generator" content="Hugo 0.48" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -23,24 +23,8 @@
     <meta property="og:title" content="Comparing inlabru with INLA" />
 <meta property="og:description" content="inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2018/07/inlabru-bru/" />
-
-
-
-<meta property="article:published_time" content="2018-07-12T00:00:00&#43;00:00"/>
-
+<meta property="og:url" content="/2018/07/inlabru-bru/" /><meta property="article:published_time" content="2018-07-12T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2018-07-12T00:00:00&#43;00:00"/>
-
-
-
-
-
-
-
-
-
-
-
     
     
 <meta itemprop="name" content="Comparing inlabru with INLA">
@@ -49,13 +33,14 @@
 
 <meta itemprop="datePublished" content="2018-07-12T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2018-07-12T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="5268">
+<meta itemprop="wordCount" content="5208">
 
 
 
 <meta itemprop="keywords" content="inla,inlabru," />
 
-    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Comparing inlabru with INLA"/>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Comparing inlabru with INLA"/>
 <meta name="twitter:description" content="inlabru is an R package which builds on top of the INLA package. I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop ISEC2018 in St Andrews. This was a five day workshop condensed into a single day, hence the pace was very high. It gave us a good overview of the possibilities of inlabru but no time to try it on our own data."/>
 
     
@@ -281,7 +266,7 @@
             <i class="fa fa-calendar"></i>
             <time datetime="2018-07-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">12 July 2018</time>
             &middot;
-            5268
+            5208
             words
             &middot;
             25
@@ -398,7 +383,7 @@ m0_inlabru &lt;- bru(count ~ cyear, data = goose, family = &quot;nbinomial&quot;
 ## 
 ## Time used:
 ##  Pre-processing    Running inla Post-processing           Total 
-##          1.3473          1.1578          0.4575          2.9625 
+##          0.5924          0.7867          0.3326          1.7117 
 ## 
 ## Fixed effects:
 ##               mean     sd 0.025quant 0.5quant 0.975quant   mode kld
@@ -431,7 +416,6 @@ m0_inlabru &lt;- bru(count ~ cyear, data = goose, family = &quot;nbinomial&quot;
 <pre><code>## 
 ## --- Likelihoods ----------------------------------------------------------------------------------
 ## 
-## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
 ## 
 ## --- Criteria -------------------------------------------------------------------------------------
 ## 
@@ -482,7 +466,7 @@ m1_inlabru &lt;- bru(count ~ cyear + month, data = goose, family = &quot;nbinomi
 ## 
 ## Time used:
 ##  Pre-processing    Running inla Post-processing           Total 
-##          0.2309          1.2890          0.1244          1.6444 
+##          0.1413          0.8458          0.1224          1.1095 
 ## 
 ## Fixed effects:
 ##               mean     sd 0.025quant 0.5quant 0.975quant   mode kld
@@ -507,7 +491,7 @@ m1_inlabru &lt;- bru(count ~ cyear + month, data = goose, family = &quot;nbinomi
 ## 
 ## Deviance Information Criterion (DIC) ...............: 5870.20
 ## Deviance Information Criterion (DIC, saturated) ....: 828.46
-## Effective number of parameters .....................: 5.90
+## Effective number of parameters .....................: 5.899
 ## 
 ## Watanabe-Akaike information criterion (WAIC) ...: 5871.50
 ## Effective number of parameters .................: 6.628
@@ -518,7 +502,6 @@ m1_inlabru &lt;- bru(count ~ cyear + month, data = goose, family = &quot;nbinomi
 <pre><code>## 
 ## --- Likelihoods ----------------------------------------------------------------------------------
 ## 
-## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
 ## 
 ## --- Criteria -------------------------------------------------------------------------------------
 ## 
@@ -528,13 +511,13 @@ m1_inlabru &lt;- bru(count ~ cyear + month, data = goose, family = &quot;nbinomi
 ## --- Fixed effects -------------------------------------------------------------------------------- 
 ## 
 ##                    mean           sd    0.025quant      0.5quant
-## cyear      1.341631e-01 2.599659e-02  8.320148e-02  1.341299e-01
-## month     -7.062579e-10 4.917277e-09 -1.036055e-08 -7.064048e-10
-## Intercept  9.013846e-03 3.167856e+01 -6.218687e+01  8.066951e-03
+## cyear      1.341633e-01 2.599660e-02  8.320241e-02  1.341299e-01
+## month     -7.062757e-10 4.917028e-09 -1.036008e-08 -7.064223e-10
+## Intercept  8.905726e-03 3.167696e+01 -6.218384e+01  7.960600e-03
 ##             0.975quant          mode signif
-## cyear     1.852612e-01  1.340659e-01   TRUE
-## month     8.939993e-09 -7.062830e-10  FALSE
-## Intercept 6.215315e+01  8.848958e-03  FALSE
+## cyear     1.852621e-01  1.340655e-01   TRUE
+## month     8.939485e-09 -7.063001e-10  FALSE
+## Intercept 6.214988e+01  8.746028e-03  FALSE
 ## 
 ## --- Random effects ------------------------------------------------------------------------------- 
 ## 
@@ -542,18 +525,18 @@ m1_inlabru &lt;- bru(count ~ cyear + month, data = goose, family = &quot;nbinomi
 ## 
 ## --- All hyper parameters (internal representation) ----------------------------------------------- 
 ## 
-##                                                            mean
-## size for the nbinomial observations (1/overdispersion) 0.047412
+##                                                              mean
+## size for the nbinomial observations (1/overdispersion) 0.04741204
 ##                                                                 sd
-## size for the nbinomial observations (1/overdispersion) 0.002514906
+## size for the nbinomial observations (1/overdispersion) 0.002514955
 ##                                                        0.025quant
-## size for the nbinomial observations (1/overdispersion)  0.0426193
+## size for the nbinomial observations (1/overdispersion) 0.04261907
 ##                                                          0.5quant
-## size for the nbinomial observations (1/overdispersion) 0.04735661
+## size for the nbinomial observations (1/overdispersion) 0.04735675
 ##                                                        0.975quant
-## size for the nbinomial observations (1/overdispersion) 0.05250639
+## size for the nbinomial observations (1/overdispersion)  0.0525064
 ##                                                              mode
-## size for the nbinomial observations (1/overdispersion) 0.04724122</code></pre>
+## size for the nbinomial observations (1/overdispersion) 0.04724183</code></pre>
 <pre class="r"><code>goose %&gt;% 
   model.matrix(object = ~month) %&gt;%
   as.data.frame() %&gt;%
@@ -568,7 +551,6 @@ m1_inlabru &lt;- bru(
 <pre><code>## 
 ## --- Likelihoods ----------------------------------------------------------------------------------
 ## 
-## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
 ## 
 ## --- Criteria -------------------------------------------------------------------------------------
 ## 
@@ -599,7 +581,7 @@ m1_inlabru &lt;- bru(
 ##                                                              mean
 ## size for the nbinomial observations (1/overdispersion) 0.05094422
 ##                                                                 sd
-## size for the nbinomial observations (1/overdispersion) 0.002734078
+## size for the nbinomial observations (1/overdispersion) 0.002734077
 ##                                                        0.025quant
 ## size for the nbinomial observations (1/overdispersion) 0.04573965
 ##                                                          0.5quant
@@ -633,15 +615,15 @@ m2_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)
 ## 
 ## Time used:
 ##  Pre-processing    Running inla Post-processing           Total 
-##          0.2093          7.3347          0.1338          7.6777 
+##          0.1868          6.4482          0.1004          6.7354 
 ## 
 ## Fixed effects:
 ##               mean     sd 0.025quant 0.5quant 0.975quant   mode kld
-## (Intercept) 1.8759 0.4144     1.0703   1.8723     2.7011 1.8651   0
+## (Intercept) 1.8759 0.4146     1.0699   1.8723     2.7014 1.8651   0
 ## cyear       0.1778 0.0289     0.1213   0.1777     0.2348 0.1774   0
-## monthdec    1.6878 0.3535     0.9945   1.6874     2.3825 1.6867   0
-## monthjan    2.5849 0.3448     1.9096   2.5843     3.2631 2.5831   0
-## monthfeb    2.4972 0.3352     1.8383   2.4974     3.1544 2.4977   0
+## monthdec    1.6876 0.3536     0.9942   1.6872     2.3824 1.6865   0
+## monthjan    2.5849 0.3448     1.9094   2.5842     3.2632 2.5830   0
+## monthfeb    2.4972 0.3353     1.8382   2.4974     3.1545 2.4977   0
 ## 
 ## Random effects:
 ## Name   Model
@@ -650,20 +632,20 @@ m2_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)
 ## Model hyperparameters:
 ##                                                          mean     sd
 ## size for the nbinomial observations (1/overdispersion) 0.0619 0.0040
-## Precision for location_id                              0.4930 0.2784
+## Precision for location_id                              0.4934 0.2786
 ##                                                        0.025quant 0.5quant
-## size for the nbinomial observations (1/overdispersion)     0.0554   0.0614
-## Precision for location_id                                  0.2185   0.4117
+## size for the nbinomial observations (1/overdispersion)     0.0554   0.0613
+## Precision for location_id                                  0.2187   0.4121
 ##                                                        0.975quant   mode
 ## size for the nbinomial observations (1/overdispersion)      0.071 0.0597
-## Precision for location_id                                   1.236 0.2973
+## Precision for location_id                                   1.237 0.2975
 ## 
-## Expected number of effective parameters(std dev): 28.40(1.095)
+## Expected number of effective parameters(std dev): 28.40(1.096)
 ## Number of equivalent replicates : 52.88 
 ## 
 ## Deviance Information Criterion (DIC) ...............: 5748.39
-## Deviance Information Criterion (DIC, saturated) ....: 812.46
-## Effective number of parameters .....................: 28.07
+## Deviance Information Criterion (DIC, saturated) ....: 812.33
+## Effective number of parameters .....................: 28.08
 ## 
 ## Watanabe-Akaike information criterion (WAIC) ...: 5752.38
 ## Effective number of parameters .................: 26.70
@@ -674,7 +656,6 @@ m2_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)
 <pre><code>## 
 ## --- Likelihoods ----------------------------------------------------------------------------------
 ## 
-## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
 ## 
 ## --- Criteria -------------------------------------------------------------------------------------
 ## 
@@ -683,12 +664,12 @@ m2_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)
 ## 
 ## --- Fixed effects -------------------------------------------------------------------------------- 
 ## 
-##                mean         sd 0.025quant  0.5quant 0.975quant      mode
-## cyear     0.1777796 0.02895694  0.1212401 0.1776657  0.2348994 0.1774421
-## monthdec  1.6876418 0.35388295  0.9936412 1.6872820  2.3830234 1.6865978
-## monthjan  2.5849939 0.34512605  1.9089496 2.5843746  3.2638607 2.5831711
-## monthfeb  2.4973263 0.33554493  1.8377961 2.4975026  3.1552316 2.4978801
-## Intercept 1.8757879 0.41521641  1.0684759 1.8721790  2.7027628 1.8648557
+##                mean        sd 0.025quant  0.5quant 0.975quant      mode
+## cyear     0.1777797 0.0289570  0.1212401 0.1776658  0.2348996 0.1774423
+## monthdec  1.6876355 0.3538854  0.9936300 1.6872757  2.3830218 1.6865916
+## monthjan  2.5849825 0.3451282  1.9089292 2.5843648  3.2638495 2.5831648
+## monthfeb  2.4973133 0.3355461  1.8377799 2.4974899  3.1552202 2.4978677
+## Intercept 1.8758031 0.4152104  1.0685032 1.8721941  2.7027666 1.8648704
 ##           signif
 ## cyear       TRUE
 ## monthdec    TRUE
@@ -698,7 +679,7 @@ m2_inlabru &lt;- bru(comp_inlabru, data = goose, family = &quot;nbinomial&quot;)
 ## 
 ## --- Random effects ------------------------------------------------------------------------------- 
 ## 
-## site ranges: mean = [-3.41182, 2.5789], sd = [0.538816, 1.00714], quantiles = [-4.7595 : 3.71755]
+## site ranges: mean = [-3.41177, 2.57881], sd = [0.538816, 1.0072], quantiles = [-4.75947 : 3.71737]
 ## 
 ## --- All hyper parameters (internal representation) ----------------------------------------------- 
 ## 
@@ -746,7 +727,6 @@ m3_inlabru2 &lt;- bru(comp_inlabru, data = goose2, family = &quot;nbinomial&quot
 <pre><code>## 
 ## --- Likelihoods ----------------------------------------------------------------------------------
 ## 
-## Name: &#39;default&#39;, family: &#39;nbinomial&#39;, data class: &#39;data.frame&#39;,   formula: &#39;. ~ .&#39; 
 ## 
 ## --- Criteria -------------------------------------------------------------------------------------
 ## 
@@ -817,7 +797,7 @@ m3_inlabru2 &lt;- bru(comp_inlabru, data = goose2, family = &quot;nbinomial&quot
 library(rgdal)
 readOGR(&quot;../../data/20180712/vlaanderen.shp&quot;) -&gt; flanders</code></pre>
 <pre><code>## OGR data source with driver: ESRI Shapefile 
-## Source: &quot;/home/thierry_onkelinx/thierryo_github/my_blog/data/20180712/vlaanderen.shp&quot;, layer: &quot;vlaanderen&quot;
+## Source: &quot;/home/thierry_onkelinx/github/thierryo/my_blog/data/20180712/vlaanderen.shp&quot;, layer: &quot;vlaanderen&quot;
 ## with 1 features
 ## It has 9 fields</code></pre>
 <pre class="r"><code>as.inla.mesh.segment(flanders) -&gt; flanders_segment
@@ -988,15 +968,15 @@ glimpse(pred_trend_log)</code></pre>
 ## Variables: 11
 ## $ year   &lt;int&gt; 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2...
 ## $ iyear  &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
-## $ mean   &lt;dbl&gt; -1.2053137, -1.0649852, -0.6761556, -0.1144928, -0.3410...
-## $ sd     &lt;dbl&gt; 0.4192508, 0.3815485, 0.3182013, 0.3782434, 0.2817528, ...
-## $ q0.025 &lt;dbl&gt; -2.0698176, -1.7840445, -1.3935641, -0.7087731, -0.8920...
-## $ median &lt;dbl&gt; -1.1942671, -1.1124339, -0.6731860, -0.1182653, -0.3086...
-## $ q0.975 &lt;dbl&gt; -0.42825508, -0.33270611, -0.11662306, 0.70273140, 0.15...
-## $ smin   &lt;dbl&gt; -2.30570024, -1.92673791, -1.44083137, -0.94309669, -1....
-## $ smax   &lt;dbl&gt; -0.28486439, -0.25616510, 0.03060956, 0.96897807, 0.447...
-## $ cv     &lt;dbl&gt; -0.3478354, -0.3582665, -0.4706037, -3.3036442, -0.8260...
-## $ var    &lt;dbl&gt; 0.17577125, 0.14557928, 0.10125210, 0.14306808, 0.07938...</code></pre>
+## $ mean   &lt;dbl&gt; -1.22343049, -1.04753460, -0.72734249, -0.09224024, -0....
+## $ sd     &lt;dbl&gt; 0.4566077, 0.4044771, 0.3259970, 0.2886593, 0.3243531, ...
+## $ q0.025 &lt;dbl&gt; -2.1610144, -1.8472996, -1.3169395, -0.6024710, -0.8556...
+## $ median &lt;dbl&gt; -1.20672024, -1.01360101, -0.71046203, -0.08358832, -0....
+## $ q0.975 &lt;dbl&gt; -0.31604631, -0.18830392, -0.13210566, 0.43731258, 0.38...
+## $ smin   &lt;dbl&gt; -2.38048038, -2.35705049, -1.65420097, -0.74471203, -0....
+## $ smax   &lt;dbl&gt; -0.14203637, 0.19557296, -0.03042042, 0.58233887, 0.827...
+## $ cv     &lt;dbl&gt; -0.3732192, -0.3861229, -0.4482029, -3.1294295, -1.0660...
+## $ var    &lt;dbl&gt; 0.20849063, 0.16360176, 0.10627405, 0.08332421, 0.10520...</code></pre>
 <pre class="r"><code># fitted value from INLA
 glimpse(m5_inla$summary.fitted.values)</code></pre>
 <pre><code>## Observations: 1,502
@@ -1131,15 +1111,15 @@ goose %&gt;%
 glimpse(pred_total)</code></pre>
 <pre><code>## Observations: 1
 ## Variables: 9
-## $ mean   &lt;dbl&gt; 9205.155
-## $ sd     &lt;dbl&gt; 4695.403
-## $ q0.025 &lt;dbl&gt; 3660.104
-## $ median &lt;dbl&gt; 8332.972
-## $ q0.975 &lt;dbl&gt; 18290.23
-## $ smin   &lt;dbl&gt; 2118.435
-## $ smax   &lt;dbl&gt; 35651.93
-## $ cv     &lt;dbl&gt; 0.5100841
-## $ var    &lt;dbl&gt; 22046809</code></pre>
+## $ mean   &lt;dbl&gt; 9090.971
+## $ sd     &lt;dbl&gt; 5216.638
+## $ q0.025 &lt;dbl&gt; 3446.659
+## $ median &lt;dbl&gt; 7722.32
+## $ q0.975 &lt;dbl&gt; 21969.69
+## $ smin   &lt;dbl&gt; 2913.14
+## $ smax   &lt;dbl&gt; 30659.7
+## $ cv     &lt;dbl&gt; 0.5738263
+## $ var    &lt;dbl&gt; 27213316</code></pre>
 <pre class="r"><code># distribution of total counts
 low &lt;- qnbinom(0.001, mu = pred_total$q0.025, size = size)
 high &lt;- qnbinom(0.999, mu = pred_total$q0.975, size = size)
@@ -1311,7 +1291,7 @@ Figure 18: Relative effect of the spatial field of the sites.
 <section id="comments">
     <div id="disqus_thread">
         <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -1887,14 +1867,17 @@ Figure 18: Relative effect of the spatial field of the sites.
 </footer>
 
 
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-66337116-4', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-66337116-4', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 <script src="/fancybox/jquery.fancybox.pack.js"></script>

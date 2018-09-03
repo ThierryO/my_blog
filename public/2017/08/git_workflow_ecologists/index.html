@@ -2,7 +2,7 @@
 <html lang="en-us">
 <head>
     <title>A git workflow for ecologists &middot; Stats &amp; bats</title>
-    <meta name="generator" content="Hugo 0.30" />
+    <meta name="generator" content="Hugo 0.48" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -23,24 +23,8 @@
     <meta property="og:title" content="A git workflow for ecologists" />
 <meta property="og:description" content="Git Target audience for this workflow Basic workflow Use case Principle  Branching workflow with pull requests Use case Principle Branch Pull request Conflicts  Flowcharts Rules for collaboration Exceptions    Git For those how don’t know git, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this blog." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2017/08/git_workflow_ecologists/" />
-
-
-
-<meta property="article:published_time" content="2017-08-23T00:00:00&#43;00:00"/>
-
+<meta property="og:url" content="/2017/08/git_workflow_ecologists/" /><meta property="article:published_time" content="2017-08-23T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2017-08-23T00:00:00&#43;00:00"/>
-
-
-
-
-
-
-
-
-
-
-
     
     
 <meta itemprop="name" content="A git workflow for ecologists">
@@ -55,7 +39,8 @@
 
 <meta itemprop="keywords" content="git," />
 
-    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="A git workflow for ecologists"/>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="A git workflow for ecologists"/>
 <meta name="twitter:description" content="Git Target audience for this workflow Basic workflow Use case Principle  Branching workflow with pull requests Use case Principle Branch Pull request Conflicts  Flowcharts Rules for collaboration Exceptions    Git For those how don’t know git, it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. I use git daily, including for this blog."/>
 
     
@@ -372,7 +357,7 @@
 <p>The basic workflow is just a simple linear history. The user makes a set of changes and commits those changes. This is repeated over and over until the project is finished. The resulting history will look like fig. <a href="#fig:basic">1</a>.</p>
 <p>One extra step is at least a daily <code>push</code> to another machine. This creates (or updates) a copy of the entire project history to that other machine. And thus serves as a backup copy. Therefore this should be done at least daily. The easiest way is to use an on-line service like <a href="https://github.com">GitHub</a>, <a href="https://bitbucket.com">Bitbucket</a>, <a href="https://gitlab.com">GitLab</a>, … GitHub is free for public repositories and is popular for freeware open source projects. Bitbucket offers free private repositories but only for small teams (max. 5 users). Having the repository on an on-line platform has another benefit: it is easy to share your work and collaborate.</p>
 <div class="figure"><span id="fig:basic"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/basic-1.png" alt="An example of the history of a basic workflow" width="576" />
+<img src="/post/2017-08-23-a-git-workflow-for-ecologists_files/figure-html/basic-1.png" alt="An example of the history of a basic workflow" width="576" />
 <p class="caption">
 Figure 1: An example of the history of a basic workflow
 </p>
@@ -399,7 +384,7 @@ Figure 1: An example of the history of a basic workflow
 <h2>Branch</h2>
 <p>The <a href="#basic-workflow">basic workflow</a> has a single <code>branch</code> which is called <code>master</code>. Git makes it easy to create new <code>branches</code>. A <code>branch</code> starts from a specific commit. Each user should create a new <code>branch</code> when he starts working on a new feature in the repository. Because each user works in his own branch, he is the only one writing to this part of the history. This avoids a lot of conflicts. Fig. <a href="#fig:branching">2</a> illustrates how the history looks like when a few branches are created.</p>
 <div class="figure"><span id="fig:branching"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/branching-1.png" alt="An example of a history with a few feature branches" width="576" />
+<img src="/post/2017-08-23-a-git-workflow-for-ecologists_files/figure-html/branching-1.png" alt="An example of a history with a few feature branches" width="576" />
 <p class="caption">
 Figure 2: An example of a history with a few feature branches
 </p>
@@ -409,7 +394,7 @@ Figure 2: An example of a history with a few feature branches
 <h2>Pull request</h2>
 <p>Creating branches is fine, but they diverge the history of the repository. So we need a mechanism to <code>merge</code> branches together. In this workflow we will work on a feature branch until it is finished. Then we merge it into the master branch. Fig. <a href="#fig:pull-request">3</a> illustrates the resulting history. This can be done locally using a <code>merge</code>, but it is safer to do it on-line via a <code>pull request</code>.</p>
 <div class="figure"><span id="fig:pull-request"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/pull-request-1.png" alt="An example of a history after two pull requests" width="576" />
+<img src="/post/2017-08-23-a-git-workflow-for-ecologists_files/figure-html/pull-request-1.png" alt="An example of a history after two pull requests" width="576" />
 <p class="caption">
 Figure 3: An example of a history after two pull requests
 </p>
@@ -434,19 +419,19 @@ Figure 3: An example of a history after two pull requests
 <h1>Flowcharts</h1>
 <p>Here a a few flowcharts that illustrate several components of the branching workflow with pull requests. Fig. <a href="#fig:prepare-repo">4</a> illustrates the steps you need when you want to start working on a project. Once you have a local <code>clone</code> of the repository you can <code>check out</code> the required feature branch (fig. <a href="#fig:create-branch">5</a>). The last flowchart handles working in a feature branch and merge it when finished (fig. <a href="#fig:commit">6</a>).</p>
 <div class="figure"><span id="fig:prepare-repo"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/prepare-repo-1.png" alt="Flowchart for preparing a repository." width="576" />
+<img src="/post/2017-08-23-a-git-workflow-for-ecologists_files/figure-html/prepare-repo-1.png" alt="Flowchart for preparing a repository." width="576" />
 <p class="caption">
 Figure 4: Flowchart for preparing a repository.
 </p>
 </div>
 <div class="figure"><span id="fig:create-branch"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/create-branch-1.png" alt="Flowchart for changing to a feature branch." width="576" />
+<img src="/post/2017-08-23-a-git-workflow-for-ecologists_files/figure-html/create-branch-1.png" alt="Flowchart for changing to a feature branch." width="576" />
 <p class="caption">
 Figure 5: Flowchart for changing to a feature branch.
 </p>
 </div>
 <div class="figure"><span id="fig:commit"></span>
-<img src="2017-08-23-a-git-workflow-for-ecologists_files/figure-html/commit-1.png" alt="Flowchart for applying changes in a feature branch." width="576" />
+<img src="/post/2017-08-23-a-git-workflow-for-ecologists_files/figure-html/commit-1.png" alt="Flowchart for applying changes in a feature branch." width="576" />
 <p class="caption">
 Figure 6: Flowchart for applying changes in a feature branch.
 </p>
@@ -593,7 +578,7 @@ Figure 6: Flowchart for applying changes in a feature branch.
 <section id="comments">
     <div id="disqus_thread">
         <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -1169,14 +1154,17 @@ Figure 6: Flowchart for applying changes in a feature branch.
 </footer>
 
 
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-66337116-4', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-66337116-4', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 <script src="/fancybox/jquery.fancybox.pack.js"></script>

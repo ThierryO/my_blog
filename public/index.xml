@@ -6,7 +6,6 @@
     <description>Recent content on Stats &amp; bats</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
     <lastBuildDate>Thu, 12 Jul 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
@@ -166,15 +165,6 @@ The survey The principle of the survey is quite simple: walk around with a bat d
       <guid>/2017/06/introduction/</guid>
       <description>I have no idea where this blog will lead. Current plans are a review of the PeerSonic BatDetector, some examples of how bat detector observations can be analysed and some questions that I get repeatedly while giving statistical consultancy to ecologists and other scientists.
 Another goal is more technical: learn to create a website with blogdown. The easy road would be to render the sources files locally in to a complete website and upload that.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>/kermit/kermit/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/kermit/kermit/</guid>
-      <description>Classification of bat calls            code{white-space: pre;} pre:not([class]) { background-color: white; }  if (window.hljs) { hljs.configure({languages: []}); hljs.initHighlightingOnLoad(); if (document.readyState &amp;&amp; document.readyState === &#34;complete&#34;) { window.setTimeout(function() { hljs.initHighlighting(); }, 0); } }  h1 { font-size: 34px; } h1.title { font-size: 38px; } h2 { font-size: 30px; } h3 { font-size: 24px; } h4 { font-size: 18px; } h5 { font-size: 16px; } h6 { font-size: 12px; } .</description>
     </item>
     
   </channel>

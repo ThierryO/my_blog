@@ -2,7 +2,7 @@
 <html lang="en-us">
 <head>
     <title>Highly correlated random effects &middot; Stats &amp; bats</title>
-    <meta name="generator" content="Hugo 0.30" />
+    <meta name="generator" content="Hugo 0.48" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -24,24 +24,8 @@
 <meta property="og:description" content="Recently, I got a question on a mixed model with highly correlated random slopes. I requested a copy of the data because it is much easier to diagnose the problem when you have the actual data. The data owner gave permission to use an anonymised version of the data for this blog post. In this blog post, I will discuss how I’d tackle this problem.
 Data exploration Every data analysis should start with some data exploration." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2018/02/highly-correlated-random-effects/" />
-
-
-
-<meta property="article:published_time" content="2018-02-16T00:00:00&#43;00:00"/>
-
+<meta property="og:url" content="/2018/02/highly-correlated-random-effects/" /><meta property="article:published_time" content="2018-02-16T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2018-02-16T00:00:00&#43;00:00"/>
-
-
-
-
-
-
-
-
-
-
-
     
     
 <meta itemprop="name" content="Highly correlated random effects">
@@ -57,7 +41,8 @@ Data exploration Every data analysis should start with some data exploration.">
 
 <meta itemprop="keywords" content="lme4,random-effect," />
 
-    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Highly correlated random effects"/>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Highly correlated random effects"/>
 <meta name="twitter:description" content="Recently, I got a question on a mixed model with highly correlated random slopes. I requested a copy of the data because it is much easier to diagnose the problem when you have the actual data. The data owner gave permission to use an anonymised version of the data for this blog post. In this blog post, I will discuss how I’d tackle this problem.
 Data exploration Every data analysis should start with some data exploration."/>
 
@@ -846,7 +831,7 @@ Figure 13: Predictions for the fixed effect of the quadratic model on <span clas
 <section id="comments">
     <div id="disqus_thread">
         <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -1422,14 +1407,17 @@ Figure 13: Predictions for the fixed effect of the quadratic model on <span clas
 </footer>
 
 
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-66337116-4', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-66337116-4', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 <script src="/fancybox/jquery.fancybox.pack.js"></script>
