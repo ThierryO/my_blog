@@ -1,0 +1,158 @@
+---
+title: Required number of levels for a random effects
+author: ~
+date: '2018-09-03'
+slug: number-random-effect-levels
+categories: ["statistics", "mixed-models"]
+tags: ["lme4", "inla"]
+banner: ''
+description: ''
+images: []
+menu: ''
+---
+
+When we analyse a mixed models, the question often arises whether a covariate should be used as a random effect or as a fixed effects. Let's assume a simple design. Two types of fertilizer are tested on a number of fields ($n_s$). Each field is split in two and the fertilizers are assigned at random to these halves while making sure that each field has both treatments. From a conceptual point of view, we are only interested in the effect of the fertilizers. However, we need to take the potential effect of the field into account. Hence we use `fertiliser` as a fixed effect and `field` as a random effect.
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(knitr)
+opts_chunk$set(echo = FALSE)
+set.seed(20180903)
+```
+
+```{r}
+expand.grid(field = 1:10, part = c("Part 1", "Part2")) %>%
+  group_by(field) %>%
+  mutate(fertiliser = sample(c("A", "B"))) %>%
+  spread(part, fertiliser) %>%
+  kable(caption = "Example design")
+```
+
+While this makes conceptually sense, we might run into computational problems. Instead of estimating each individual field effect, we want to estimate the variability due to field effect. This is the variance of the random effect, rather than the estimates for the individual random effect levels. But how precise is the estimate of this random effect variance? The sample variance $s^2$ follows a [scaled $\chi^2$ distribution](https://en.wikipedia.org/wiki/Variance#Distribution_of_the_sample_variance).
+
+$$(n_s - 1)\frac{s^2}{\sigma^2} \sim \chi^2_{n_s-1}$$
+
+This equation makes it straightforward to calculate the distribution of the $r = \sigma^2/s^2$ ratio for a given $n_s$. We can rewrite this as $\sigma^2=rs^2$ or the true variance is a multiple $r$ of the estimated variance $s^2$. The distribution of $r$ is derived below.
+
+$$(n_s - 1)\frac{s^2}{\sigma^2} \sim \chi^2_{n_s-1}$$
+
+$$\frac{s^2}{\sigma^2} \sim \frac{\chi^2_{n_s-1}}{(n_s - 1)}$$
+
+$$r = \frac{\sigma^2}{s^2} \sim \frac{(n_s - 1)}{\chi^2_{n_s-1}}$$
+
+```{r}
+r_interval <- function(n_s = 1000, probs = 0.975) {
+  quant <- (n_s - 1) / qchisq(sort(probs, decreasing = TRUE), n_s - 1)
+  sprintf("%0.3f", quant)
+}
+```
+
+
+Even when with a large number of levels ($n_s = 1000$), there still is a reasonable amount of uncertainty around $\sigma^2$ since the 95% interval of $r$ ranges from `r r_interval(1000, 0.975)` to  `r r_interval(1000, 0.025)`. The full distribution for $r$ when $n_s = 1000$ is shown in the figure below.
+
+```{r fig.cap = "Distribution of the relative true variance ($\\frac{\\sigma^2}{s^2}$) when $n_s = 1000$. Dashed line: $\\frac{\\sigma^2}{s^2} = 1$ Dotted lines: 2.5% and 97.5% quantiles of $\\frac{\\sigma^2}{s^2}$. Dash-dotted line: median of $\\frac{\\sigma^2}{s^2}$."}
+n <- 1000
+data.frame(
+  rel_var = exp(seq(
+    log((n - 1) / qchisq(0.001, n - 1)), 
+    log((n - 1) / qchisq(0.999, n - 1)), 
+    length = 1001
+  ))
+) %>%
+  mutate(
+    density = dchisq((n - 1) / rel_var, n - 1)
+  ) %>%
+  ggplot(aes(x = rel_var, y = density)) +
+  geom_line() +
+  geom_vline(
+    xintercept = c(1, (n - 1) / qchisq(c(0.5, 0.025, 0.975), n - 1)), 
+    linetype = c(2, 4, 3, 3)
+  ) +
+  scale_x_continuous("Relative true variance r")
+```
+
+A thousand random effect levels is not always feasible. So what will happen if we use a more realistic number of random effect levels, e.g. $n_s = 20$. The distribution of $r$ will be wider as $n_s$ decreases. At $n_s = 20$, the 95% interval of $r$ will range from `r r_interval(20, 0.975)` to  `r r_interval(20, 0.025)`.
+
+```{r fig.cap = "Distribution of the relative true variance ($\\frac{\\sigma^2}{s^2}$) when $n_s = 20$. Dashed line: $\\frac{\\sigma^2}{s^2} = 1$ Dotted lines: 2.5% and 97.5% quantiles of $\\frac{\\sigma^2}{s^2}$. Dash-dotted line: median of $\\frac{\\sigma^2}{s^2}$."}
+n <- 20
+data.frame(
+  rel_var = exp(seq(
+    log((n - 1) / qchisq(0.001, n - 1)), 
+    log((n - 1) / qchisq(0.999, n - 1)), 
+    length = 1001
+  ))
+) %>%
+  mutate(
+    density = dchisq((n - 1) / rel_var, n - 1)
+  ) %>%
+  ggplot(aes(x = rel_var, y = density)) +
+  geom_line() +
+  geom_vline(
+    xintercept = c(1, (n - 1) / qchisq(c(0.5, 0.025, 0.975), n - 1)), 
+    linetype = c(2, 4, 3, 3)
+  ) +
+  scale_x_continuous("Relative true variance r")
+```
+
+How low can we go? The figure below depicts the density of $r$ when $n_s = 4$. The 95% interval of $r$ ranges from `r r_interval(4, 0.975)` to  `r r_interval(4, 0.025)`, so we can hardly do any inference on the estimated variance.
+
+```{r fig.cap = "Distribution of the relative true variance ($\\frac{\\sigma^2}{s^2}$) when $n_s = 4$. Dashed line: $\\frac{\\sigma^2}{s^2} = 1$ Dotted lines: 2.5% and 97.5% quantiles of $\\frac{\\sigma^2}{s^2}$. Dash-dotted line: median of $\\frac{\\sigma^2}{s^2}$."}
+n <- 4
+data.frame(
+  rel_var = exp(seq(
+    log((n - 1) / qchisq(0.0005, n - 1)), 
+    log((n - 1) / qchisq(0.999, n - 1)), 
+    length = 1001
+  ))
+) %>%
+  mutate(
+    density = dchisq((n - 1) / rel_var, n - 1)
+  ) %>%
+  ggplot(aes(x = sqrt(rel_var), y = density)) +
+  geom_line() +
+  geom_vline(
+    xintercept = c(1, (n - 1) / qchisq(c(0.5, 0.025, 0.975), n - 1)), 
+    linetype = c(2, 4, 3, 3)
+  ) +
+  scale_x_continuous("Relative true variance r")
+```
+
+## Recommendations
+
+We see that the number of random effect levels has a strong impact on the uncertainty of the estimate variance. The figure below displays the 97.5% quantile of $r$ for a large range of $n_s$ values. Since the right tail of $r$ is heavier than the left tail, it is a good idea to focus on the 97.5% quantile. Based on this figure we can give the following recommendations:
+
+- get $n_s > 1000$ levels when an accurate estimate of the random effect variance is crucial. E.g. when a single number will be use for power calculations.
+- get $n_s > 100$ levels when a reasonable estimate of the random effect variance is sufficient. E.g. power calculations with sensitivity analysis of the random effect variance.
+- get $n_s > 20$ levels for an experimental study
+- in case $10 < n_s < 20$ you should validate the model very cautious before using the output
+- in case $n_s < 10$ it is safer to use the variable as a fixed effect.
+
+```{r}
+data.frame(
+  n = 4:1e4
+) %>%
+  mutate(
+    ratio = (n - 1) / qchisq(0.025, n - 1),
+    cut = cut(ratio, breaks = c(1, 1.1, 1.2, 1.5, 2, 3))
+  ) -> ratios
+ratios %>%
+  group_by(cut) %>%
+  slice(1) %>%
+  filter(!is.na(cut)) -> ratio_breaks
+ggplot(ratios, aes(x = n, y = ratio)) +
+  geom_line() +
+  geom_vline(xintercept = ratio_breaks$n, linetype = 3) +
+  geom_hline(yintercept = ratio_breaks$ratio, linetype = 3) +
+  geom_hline(yintercept = 1, linetype = 2) +
+  scale_x_log10(
+    "number of random effect levels",
+    breaks = c(1, 10, 100, 1000, 10000, ratio_breaks$n)
+  ) +
+  scale_y_log10(
+    "97.5% quantile of r",
+    breaks = c(1, round(ratio_breaks$ratio, 1), 5, 10, 20, 30)
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 90)
+  )
+```
