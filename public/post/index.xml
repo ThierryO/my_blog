@@ -6,11 +6,28 @@
     <description>Recent content in Posts on Stats &amp; bats</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
-    <lastBuildDate>Thu, 12 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 01 Nov 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>To intercept or not to intercept? Is that a question when calculating indices?</title>
+      <link>/2018/11/intercept_index/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/11/intercept_index/</guid>
+      <description>Indices Long-term trends in the abundance of species are often communicated as indices. The abundance at some reference point in time is set at 100%. Sometimes this point in time is a range of years, often it is a single year. The reference point in time is something meaningful for the data: some special date (e.g. new legislation) or the start of the monitoring campaign. Although, seldom used, one could use the last year in the data as well.</description>
+    </item>
+    
+    <item>
+      <title>Required number of levels for a random effects</title>
+      <link>/2018/09/number-random-effect-levels/</link>
+      <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/09/number-random-effect-levels/</guid>
+      <description>When we analyse a mixed models, the question often arises whether a covariate should be used as a random effect or as a fixed effects. Let’s assume a simple design. Two types of fertilizer are tested on a number of fields (\(n_s\)). Each field is split in two and the fertilizers are assigned at random to these halves while making sure that each field has both treatments. From a conceptual point of view, we are only interested in the effect of the fertilizers.</description>
+    </item>
     
     <item>
       <title>Comparing inlabru with INLA</title>

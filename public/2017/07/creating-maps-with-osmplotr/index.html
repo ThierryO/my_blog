@@ -2,7 +2,7 @@
 <html lang="en-us">
 <head>
     <title>Creating continuous coloured maps with osmplotr &middot; Stats &amp; bats</title>
-    <meta name="generator" content="Hugo 0.30" />
+    <meta name="generator" content="Hugo 0.48" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
@@ -25,24 +25,8 @@
 Let’s start by loading all required packages.
 library(sp) library(MASS) library(dplyr) library(ggmap) library(osmplotr) I rearranged the code from the previous blog post in two chunks. The first chunk calculate the density and is required for both the ggmap and the osmplotr solution." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/2017/07/creating-maps-with-osmplotr/" />
-
-
-
-<meta property="article:published_time" content="2017-07-17T00:00:00&#43;00:00"/>
-
+<meta property="og:url" content="/2017/07/creating-maps-with-osmplotr/" /><meta property="article:published_time" content="2017-07-17T00:00:00&#43;00:00"/>
 <meta property="article:modified_time" content="2017-07-17T00:00:00&#43;00:00"/>
-
-
-
-
-
-
-
-
-
-
-
     
     
 <meta itemprop="name" content="Creating continuous coloured maps with osmplotr">
@@ -59,7 +43,8 @@ library(sp) library(MASS) library(dplyr) library(ggmap) library(osmplotr) I rear
 
 <meta itemprop="keywords" content="maps,osm,openstreetmap," />
 
-    <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Creating continuous coloured maps with osmplotr"/>
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Creating continuous coloured maps with osmplotr"/>
 <meta name="twitter:description" content="During useR!2017 I attended a talk by Mark Padgham titled Maps are data, so why no plot data on a map. In this blog post I will recreate the map from an earlier blogpost on estimating densities from a point pattern.
 Let’s start by loading all required packages.
 library(sp) library(MASS) library(dplyr) library(ggmap) library(osmplotr) I rearranged the code from the previous blog post in two chunks. The first chunk calculate the density and is required for both the ggmap and the osmplotr solution."/>
@@ -184,12 +169,12 @@ library(sp) library(MASS) library(dplyr) library(ggmap) library(osmplotr) I rear
     </div>
     <div class="article-info profile-block">
       <div class="article-info-block">
-        16
+        18
         <span>Posts</span>
       </div>
       <div class="article-info-block">
         
-          23
+          26
         
         <span>
             Tags
@@ -429,7 +414,7 @@ summary(dens_wgs)</code></pre>
     limits = c(0, NA)
   )</code></pre>
 <div class="figure"><span id="fig:ggmap"></span>
-<img src="2017-07-17-creating-maps-with-osmplotr_files/figure-html/ggmap-1.png" alt="`ggmap` image of density" width="672" />
+<img src="/post/2017-07-17-creating-maps-with-osmplotr_files/figure-html/ggmap-1.png" alt="`ggmap` image of density" width="672" />
 <p class="caption">
 Figure 1: <code>ggmap</code> image of density
 </p>
@@ -465,7 +450,7 @@ buildings &lt;- extract_osm_objects(key = &#39;building&#39;, bbox = bb)</code><
   ) %&gt;%
   add_axes()</code></pre>
 <div class="figure"><span id="fig:osmplotr"></span>
-<img src="2017-07-17-creating-maps-with-osmplotr_files/figure-html/osmplotr-1.png" alt="`osmplotr` image of density" width="672" />
+<img src="/post/2017-07-17-creating-maps-with-osmplotr_files/figure-html/osmplotr-1.png" alt="`osmplotr` image of density" width="672" />
 <p class="caption">
 Figure 2: <code>osmplotr</code> image of density
 </p>
@@ -585,7 +570,7 @@ Figure 2: <code>osmplotr</code> image of density
 <section id="comments">
     <div id="disqus_thread">
         <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -619,6 +604,58 @@ Figure 2: <code>osmplotr</code> image of density
     </h3>
     <div class="widget">
         <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/11/intercept_index/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/11/intercept_index/" class="title">To intercept or not to intercept? Is that a question when calculating indices?</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-11-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">1 November 2018</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/09/number-random-effect-levels/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/09/number-random-effect-levels/" class="title">Required number of levels for a random effects</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-09-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">3 September 2018</time>
+                    </p>
+                </div>
+            </li>
             
             <li>
                 <div class="item-thumbnail">
@@ -698,58 +735,6 @@ Figure 2: <code>osmplotr</code> image of density
                 </div>
             </li>
             
-            <li>
-                <div class="item-thumbnail">
-                    <a href="/2018/02/highly-correlated-random-effects/" class="thumbnail">
-                    
-                        <span class="thumbnail-image thumbnail-none"></span>
-                    
-                    </a>
-                </div>
-                <div class="item-inner">
-                    
-                    
-                    <p class="item-category">
-                        
-                        <a class="article-category-link" href="/categories/statistics">
-                        statistics
-                        </a>
-                    </p>
-                    
-                    
-                    <p class="item-title"><a href="/2018/02/highly-correlated-random-effects/" class="title">Highly correlated random effects</a></p>
-                    <p class="item-date">
-                        <time datetime="2018-02-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">16 February 2018</time>
-                    </p>
-                </div>
-            </li>
-            
-            <li>
-                <div class="item-thumbnail">
-                    <a href="/2017/09/readrpa/" class="thumbnail">
-                    
-                        <span class="thumbnail-image thumbnail-none"></span>
-                    
-                    </a>
-                </div>
-                <div class="item-inner">
-                    
-                    
-                    <p class="item-category">
-                        
-                        <a class="article-category-link" href="/categories/bats">
-                        bats
-                        </a>
-                    </p>
-                    
-                    
-                    <p class="item-title"><a href="/2017/09/readrpa/" class="title">Review of the ReadRPA software</a></p>
-                    <p class="item-date">
-                        <time datetime="2017-09-26 00:00:00 &#43;0000 UTC" itemprop="datePublished">26 September 2017</time>
-                    </p>
-                </div>
-            </li>
-            
         </ul>
     </div>
 </div>
@@ -800,7 +785,7 @@ Figure 2: <code>osmplotr</code> image of density
                 <a class="category-list-link" href="/categories/mixed-models">
                     mixed-models
                 </a>
-                <span class="category-list-count">5</span>
+                <span class="category-list-count">6</span>
             </li>
             
             <li class="category-list-item">
@@ -824,7 +809,7 @@ Figure 2: <code>osmplotr</code> image of density
                 <a class="category-list-link" href="/categories/statistics">
                     statistics
                 </a>
-                <span class="category-list-count">6</span>
+                <span class="category-list-count">8</span>
             </li>
             
             <li class="category-list-item">
@@ -867,6 +852,14 @@ Figure 2: <code>osmplotr</code> image of density
     </h3>
     <div class="widget">
         <ul class="category-list">
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/abundance">
+                    abundance
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
             
             <li class="category-list-item">
                 
@@ -918,10 +911,18 @@ Figure 2: <code>osmplotr</code> image of density
             
             <li class="category-list-item">
                 
+                <a class="category-list-link" href="/tags/index">
+                    index
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
                 <a class="category-list-link" href="/tags/inla">
                     inla
                 </a>
-                <span class="category-list-count">3</span>
+                <span class="category-list-count">4</span>
             </li>
             
             <li class="category-list-item">
@@ -961,7 +962,7 @@ Figure 2: <code>osmplotr</code> image of density
                 <a class="category-list-link" href="/tags/lme4">
                     lme4
                 </a>
-                <span class="category-list-count">3</span>
+                <span class="category-list-count">4</span>
             </li>
             
             <li class="category-list-item">
@@ -1052,6 +1053,14 @@ Figure 2: <code>osmplotr</code> image of density
                 <span class="category-list-count">1</span>
             </li>
             
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/trend">
+                    trend
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
         </ul>
     </div>
 </div>
@@ -1067,6 +1076,9 @@ Figure 2: <code>osmplotr</code> image of density
         Tag cloud
     </h3>
     <div class="widget tagcloud">
+        
+        
+        <a href="/tags/abundance" style="font-size: 12px;">abundance</a>
         
         
         <a href="/tags/bat-detector" style="font-size: 12px;">bat-detector</a>
@@ -1085,6 +1097,9 @@ Figure 2: <code>osmplotr</code> image of density
         
         
         <a href="/tags/gitbook" style="font-size: 12px;">gitbook</a>
+        
+        
+        <a href="/tags/index" style="font-size: 12px;">index</a>
         
         
         <a href="/tags/inla" style="font-size: 12px;">inla</a>
@@ -1137,6 +1152,9 @@ Figure 2: <code>osmplotr</code> image of density
         
         <a href="/tags/spatial-point-process" style="font-size: 12px;">spatial-point-process</a>
         
+        
+        <a href="/tags/trend" style="font-size: 12px;">trend</a>
+        
     </div>
 </div>
 
@@ -1161,14 +1179,17 @@ Figure 2: <code>osmplotr</code> image of density
 </footer>
 
 
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-66337116-4', 'auto');
-ga('send', 'pageview');
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-66337116-4', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
 
 <script src="/fancybox/jquery.fancybox.pack.js"></script>

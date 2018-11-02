@@ -6,11 +6,19 @@
     <description>Recent content in Inla on Stats &amp; bats</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
-    <lastBuildDate>Thu, 12 Jul 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 03 Sep 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/inla/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Required number of levels for a random effects</title>
+      <link>/2018/09/number-random-effect-levels/</link>
+      <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/09/number-random-effect-levels/</guid>
+      <description>When we analyse a mixed models, the question often arises whether a covariate should be used as a random effect or as a fixed effects. Let’s assume a simple design. Two types of fertilizer are tested on a number of fields (\(n_s\)). Each field is split in two and the fertilizers are assigned at random to these halves while making sure that each field has both treatments. From a conceptual point of view, we are only interested in the effect of the fertilizers.</description>
+    </item>
     
     <item>
       <title>Comparing inlabru with INLA</title>

@@ -1,0 +1,357 @@
+---
+title: To intercept or not to intercept? Is that a question when calculating indices?
+date: '2018-11-01'
+slug: intercept_index
+categories: ["statistics"]
+tags: ["index", "abundance", "trend"]
+banner: ''
+description: ''
+images: []
+menu: ''
+---
+
+# Indices
+
+Long-term trends in the abundance of species are often communicated as indices. The abundance at some reference point in time is set at 100%. Sometimes this point in time is a range of years, often it is a single year. The reference point in time is something meaningful for the data: some special date (e.g. new legislation) or the start of the monitoring campaign. Although, seldom used, one could use the last year in the data as well.
+
+Once the reference is set, the abundance at the other points in time (mostly years) is expressed as a ratio of the abundance at the reference point in time. An index value of 120% at time point X implies that the abundance at time point X is 1.2 times higher than the abundance at the reference point in time.
+
+For the sake of simplicity, we will assume that each point in time refers to a specific year. Hence when we mention "year", think of the more general "point in time".
+
+# Estimating abundance
+
+In order to calculate the indices, we need to have an abundance estimate for each year. This is done by applying some statistical model to the data. Let us keep things somewhat simple and assume that the data consist of a number of independent Poisson count spanning several years. The data has multiple observations within each year. The observed counts $Y_{ij}$ depend only on a latent variable $\eta_i$ which only depends on the year $i$.
+
+$$Y_{ij} \sim \mbox{Pois}(\lambda_i) \\
+\log(\lambda_i) = \eta_i$$
+
+Let assume two basic models: a linear trend $\eta_i = \beta_0 + \beta_1 x_i$ and a factor trend $\eta_i = \alpha_0 + \alpha_2I_2 + \dots + \alpha_iI_i$. $I_k$ is a dummy variable where $I_k = 1$ if $i = k$, otherwise $I_k = 0$. We use $\alpha$ for the parameters of the factor trend and $\beta$ for those of the linear trend.
+
+# Calculating an index based on the model parameters
+
+The intercept of a model is the estimated value at the reference state of the data. In case of a continuous covariate, the covariate $x_i = 0$. In case of a categorical variable, all of the associated dummy variables are $I_k = 0$. So if we choose the covariates carefully, we can directly use the intercept to estimate the abundance at the reference year. We obtain this for the linear trend by setting $x_i$ to the number of years since the reference year. At the reference year we get $x_i = 0$, two year after the reference year we get $x_i = 2$, $x_i = -5$ refers to 5 years before the reference year. In case of the factor trend, we make sure that the reference year is used as the reference level of the factor.
+
+Note that since we use a model with a log-link, we need to exponentiate the intercept in order to get an estimate of the abundance. So the estimates at the reference year are $e^{\beta_0}$ for the linear trend and $e^{\alpha_0}$ for the factor trend.
+
+The definition of $\alpha_k$ in the factor model is the difference between the reference status and the state indicated by the dummy variable $I_k$. Hence $e^{\alpha_k}$ is a direct estimate of the value of the index. Likewise, $e^{\beta_1x_i}$ is a direct estimate of the index for the linear trend. Since we are statistician, we like a confidence interval around the estimates. A straightforward option is to use the standard error of the parameter estimates. So the interval for the index with the factor trend becomes $e^{alpha_k \pm 1.96 \sigma_k}$. For the linear trend we get $e^{(\beta_1\pm1.96\sigma_1)x_i}$.
+
+## Example
+
+```{r message = FALSE}
+library(tidyverse)
+set.seed(20181101)
+n_year <- 10
+effort <- 10
+intercept <- 20
+trend <- 1.05
+sigma_year <- 0.3
+```
+
+We create an example data with the parameters set above. The data consists of `r n_year` of data. The number of observations in each year is `r effort` times the number of the year. So the first year has `r effort` observation while the last year has `r effort * n_year` observations. This reflects an increasing effort during the monitoring. A change in monitoring effort is often present in monitoring schemes. The trend in the latent variable $\eta$ has both a linear component and a first order random walk component.
+
+```{r}
+rw_year <- cumsum(rnorm(n_year, mean = 0, sd = sigma_year))
+tibble(
+  year = rep(seq_len(n_year), effort * seq_len(n_year))
+) %>%
+  mutate(
+    eta = log(intercept) + log(trend) * year + rw_year[year],
+    count = rpois(n(), lambda = exp(eta))
+  ) -> ds
+```
+
+```{r echo = FALSE, fig.cap = "Simulated data. The points represent the observed counts, the line the true latent variable $\\lambda$."}
+ggplot(ds, aes(x = year, y = count)) +
+  geom_point(alpha = 0.1) +
+  geom_line(aes(y = exp(eta)))
+```
+
+Once we have the data, we can fit both models. We create two new variables: `start` is a continuous variable centered as the first year, `fstart` is a factor with the first year as reference level.
+
+```{r}
+ds %>%
+  mutate(
+    start = year - min(year),
+    fstart = factor(start)
+  ) -> ds
+m1_t <- glm(count ~ start, family = poisson, data = ds)
+m1_f <- glm(count ~ fstart, family = poisson, data = ds)
+summary(m1_f)
+```
+
+This leaves us with the task of calculating the indices based on the trend parameters. The first task is the extract the parameters estimates and their standard errors from the model object and keep only the relevant parameters. And then we can calculate the indices and their confidence intervals.
+
+```{r}
+summary(m1_t) %>%
+  coefficients() %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  filter(parameter != "(Intercept)") %>%
+  merge(
+    distinct(ds, start, year)
+  ) %>%
+  mutate(
+    index = exp(start * Estimate),
+    lcl = exp(start * (Estimate - 1.96 * `Std. Error`)),
+    ucl = exp(start * (Estimate + 1.96 * `Std. Error`)),
+    model = "linear"
+  ) -> m1_t_index
+summary(m1_f) %>%
+  coefficients() %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  filter(parameter != "(Intercept)") %>%
+  mutate(
+    year = gsub("fstart", "", parameter) %>%
+      as.integer() + 1,
+    index = exp(Estimate),
+    lcl = exp(Estimate - 1.96 * `Std. Error`),
+    ucl = exp(Estimate + 1.96 * `Std. Error`),
+    model = "factor"
+  ) -> m1_f_index
+```
+
+Notice that the factor model has no index for the reference year 1. Why? Because we have no trend parameter for the reference year. We can argue that there is no change in the reference year and hence the index and its confidence interval should be set at 100%.
+
+```{r echo = FALSE, message = FALSE, fig.cap = "Indices based on the trend parameters when the first year is used as reference."}
+library(scales)
+bind_rows(m1_t_index, m1_f_index) %>%
+  ggplot(aes(x = year, y = index, ymin = lcl, ymax = ucl)) +
+  geom_hline(yintercept = 1, linetype = 2) +
+  geom_ribbon(aes(fill = model), alpha = 0.2) +
+  geom_line(aes(colour = model)) +
+  scale_x_continuous(breaks = seq_len(n_year)) +
+  scale_y_continuous("Index", labels = percent)
+```
+
+# Changing the reference year
+
+What happens if we choose another year as reference year? Suppose we want to use the tenth year of the data as reference. In case of the linear trend we define a new variable $y_i = x_i + 9$, were $x_i$ was the variable with the first year as reference. The form of the model doesn't change and neither do the fitted values change. Hence we get
+
+$$\eta_i = \beta_0 + \beta_1x_i = \gamma_0 + \gamma_1y_i$$
+When $y_i = 0$, $x_i = 9$ and then $\beta_0 + 9 \beta_1 = \gamma_0$. Next we set $x_i = 0$, $y_i = -9$ and then $\beta_0 = \gamma_0 + -9 \gamma_1$. We can fill in $\gamma_0$ from the previous result so $\beta_0 = \beta_0 + 9 \beta_1 + -9 \gamma_1$ which leads to $\beta_1 = \gamma_1$. Hence changing the reference year for the linear trend has no effect on the slope. Of course the intercept must change.
+
+Something similar happens with the factor model. We now use another indicator variable $J_k$ which is always zero at the new reference year. In the first equation $k = 1$ is used as reference, in the second $k = i$.
+
+$$\eta_i = \alpha_0 + \alpha_2I_2 + \dots + \alpha_iI_i = \tau_0 + \tau_1J_1 + \tau_2J_2 + \dots + \tau_{i-1}J_{i-1}$$
+
+When $k = j$ and $j \ne i$ and $j \ne 1$, we get $alpha_0 + \alpha_j = \tau_0 + \tau_j$. $k = i$, yields $\alpha_0 + \alpha_i = \tau_0$ which we can substitute in the first equation $alpha_0 + \alpha_j = \alpha_0 + \alpha_i + \tau_j$ or $\alpha_j - \alpha_i = \tau_j$. So basically the new intercept $\tau_0$ is the old intercept $\alpha_0$ plus the difference between the estimate for the old reference year and the new reference year $\alpha_i$. All change parameter compensate this by adding $-\alpha_i$.
+
+## Example
+
+In the example we create two new reference variables `end` and `fend`. After fitted the new models we ensure that the model fits are identical to the models fit on `start` and `fstart`.
+
+```{r}
+ds %>%
+  mutate(
+    end = year - max(year),
+    fend = fct_rev(fstart)
+  ) -> ds
+m2_t <- glm(count ~ end, family = poisson, data = ds)
+m2_f <- glm(count ~ fend, family = poisson, data = ds)
+all.equal(fitted(m1_t), fitted(m2_t))
+all.equal(fitted(m1_f), fitted(m2_f))
+summary(m2_f)
+```
+
+Next we use nearly the same code to calculate the indices.
+
+```{r}
+summary(m2_t) %>%
+  coefficients() %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  filter(parameter != "(Intercept)") %>%
+  merge(
+    distinct(ds, end, year)
+  ) %>%
+  mutate(
+    index = exp(end * Estimate),
+    lcl = exp(end * (Estimate - 1.96 * `Std. Error`)),
+    ucl = exp(end * (Estimate + 1.96 * `Std. Error`)),
+    model = "linear"
+  ) -> m2_t_index
+summary(m2_f) %>%
+  coefficients() %>%
+  as.data.frame() %>%
+  rownames_to_column("parameter") %>%
+  filter(parameter != "(Intercept)") %>%
+  mutate(
+    year = gsub("fend", "", parameter) %>%
+      as.integer() + 1,
+    index = exp(Estimate),
+    lcl = exp(Estimate - 1.96 * `Std. Error`),
+    ucl = exp(Estimate + 1.96 * `Std. Error`),
+    model = "factor"
+  ) -> m2_f_index
+```
+
+The figure below illustrates the new trend. Of course, the indices are shifted so that the last year now equals 100%. Something more important is that change in the confidence intervals.
+
+```{r echo = FALSE, message = FALSE, fig.cap = "Indices based on the trend parameters when the last year is used as reference."}
+bind_rows(m2_t_index, m2_f_index) %>%
+  ggplot(aes(x = year, y = index, ymin = lcl, ymax = ucl)) +
+  geom_hline(yintercept = 1, linetype = 2) +
+  geom_ribbon(aes(fill = model), alpha = 0.2) +
+  geom_line(aes(colour = model)) +
+  scale_x_continuous(breaks = seq_len(n_year)) +
+  scale_y_continuous("Index", labels = percent)
+```
+
+In order to highlight the differences we scaled to indices with the last year as reference so that the first year equals 100%. The estimates for the indices are now identical. However, it is now very clear that the confidence intervals of the linear trend are always narrow near the reference year and become wider when we go further away from the reference year. 
+
+The factor trend has, in this case, wider intervals when the first year is used as a reference. Recall that the number of observations in the data was low in the earlier years and steadily increases to a maximum in the last year. As a result the standard error of the intercept in the first factor model is larger than the standard error of the second factor model. As a result, the trend parameters also have larger standard errors.
+
+```{r echo = FALSE, fig.cap = "Indices using both reference years but rescaled so that the first year equals 100%."}
+bind_rows(m1_t_index, m1_f_index) %>%
+  mutate(reference = "start") -> index_start
+index_start %>%
+  filter(year == 10) %>%
+  select(model, reference = index) %>%
+  inner_join(
+    bind_rows(m2_t_index, m2_f_index),
+    by = "model"
+  ) %>%
+  mutate(
+    index = index * reference,
+    lcl = lcl * reference,
+    ucl = ucl * reference,
+    reference = "last"
+  ) %>%
+  bind_rows(index_start) %>%
+  ggplot(aes(x = year, y = index, ymin = lcl , ymax = ucl)) +
+  geom_hline(yintercept = 1, linetype = 2) +
+  geom_ribbon(aes(fill = reference), alpha = 0.2) +
+  geom_line(aes(colour = reference)) +
+  scale_x_continuous(breaks = seq_len(n_year)) +
+  scale_y_continuous("Index", labels = percent) +
+  facet_wrap(~model)
+```
+
+IMHO, changing the reference year should not impact the uncertainty associated with the index. Furthermore, the index of the reference year should have some uncertainty attached to it since the abundance in the reference year is estimated from the data just like the abundance in any other year.
+
+# Solution: estimate the abundance in each year and then rescale
+
+Estimating the abundance is straightforward, we just need to get a prediction (and its standard error) for each year. 
+
+```{r}
+nd <- distinct(ds, year, start, fstart, end, fend)
+fit_1t <- predict(m1_t, newdata = nd, se.fit = TRUE)
+fit_2t <- predict(m2_t, newdata = nd, se.fit = TRUE)
+fit_1f <- predict(m1_f, newdata = nd, se.fit = TRUE)
+fit_2f <- predict(m2_f, newdata = nd, se.fit = TRUE)
+```
+
+Once we have the predictions we can calculate the abundance and its confidence interval.
+
+```{r}
+nd %>%
+  mutate(
+    model = "linear",
+    reference = "start",
+    abundance = exp(fit_1t$fit),
+    abundance_lcl = exp(fit_1t$fit - 1.96 * fit_1t$se.fit),
+    abundance_ucl = exp(fit_1t$fit + 1.96 * fit_1t$se.fit)
+  ) -> abundance_1t
+nd %>%
+  mutate(
+    model = "linear",
+    reference = "end",
+    abundance = exp(fit_2t$fit),
+    abundance_lcl = exp(fit_2t$fit - 1.96 * fit_2t$se.fit),
+    abundance_ucl = exp(fit_2t$fit + 1.96 * fit_2t$se.fit)
+  ) -> abundance_2t
+nd %>%
+  mutate(
+    model = "factor",
+    reference = "start",
+    abundance = exp(fit_1f$fit),
+    abundance_lcl = exp(fit_1f$fit - 1.96 * fit_1f$se.fit),
+    abundance_ucl = exp(fit_1f$fit + 1.96 * fit_1f$se.fit)
+  ) -> abundance_1f
+nd %>%
+  mutate(
+    model = "factor",
+    reference = "end",
+    abundance = exp(fit_2f$fit),
+    abundance_lcl = exp(fit_2f$fit - 1.96 * fit_2f$se.fit),
+    abundance_ucl = exp(fit_2f$fit + 1.96 * fit_2f$se.fit)
+  ) -> abundance_2f
+```
+
+Notice in the figure below that the estimated abundance and its confidence interval does not depend on the reference year.
+
+```{r echo = FALSE, fig.cap = "Estimated abundance from the different models"}
+bind_rows(abundance_1f, abundance_1t, abundance_2f, abundance_2t) %>%
+  ggplot(
+    aes(x = year, y = abundance, ymin = abundance_lcl, ymax = abundance_ucl)
+  ) +
+  geom_ribbon(aes(fill = reference), alpha = 0.2) +
+  geom_line(aes(colour = reference)) +
+  scale_x_continuous(breaks = seq_len(n_year)) +
+  facet_wrap(~model)
+```
+
+Now the only thing left to do is to rescale the abundance so that the index at the reference year becomes 100%. This is very easy: find the estimated abundance at the reference year and divided all abundance estimated and their confidence intervals with this single value.
+
+```{r}
+abundance_1t %>%
+  filter(year == 1) %>%
+  select(model, base = abundance) %>%
+  inner_join(abundance_1t, by = "model") %>%
+  mutate(
+    index = abundance / base,
+    lcl = abundance_lcl / base,
+    ucl = abundance_ucl / base
+  ) -> m1_t_index_good
+abundance_1f %>%
+  filter(year == 1) %>%
+  select(model, base = abundance) %>%
+  inner_join(abundance_1f, by = "model") %>%
+  mutate(
+    index = abundance / base,
+    lcl = abundance_lcl / base,
+    ucl = abundance_ucl / base
+  ) -> m1_f_index_good
+abundance_2t %>%
+  filter(year == 10) %>%
+  select(model, base = abundance) %>%
+  inner_join(abundance_2t, by = "model") %>%
+  mutate(
+    index = abundance / base,
+    lcl = abundance_lcl / base,
+    ucl = abundance_ucl / base
+  ) -> m2_t_index_good
+abundance_2f %>%
+  filter(year == 10) %>%
+  select(model, base = abundance) %>%
+  inner_join(abundance_2f, by = "model") %>%
+  mutate(
+    index = abundance / base,
+    lcl = abundance_lcl / base,
+    ucl = abundance_ucl / base
+  ) -> m2_f_index_good
+```
+
+```{r echo = FALSE, fig.cap = "Indices based on rescaled abundance."}
+bind_rows(
+  m1_t_index_good, m2_t_index_good, m1_f_index_good, m2_f_index_good
+) %>%
+  ggplot(aes(x = year, y = index, ymin = lcl, ymax = ucl)) +
+  geom_hline(yintercept = 1, linetype = 2) +
+  geom_ribbon(aes(fill = model), alpha = 0.2) +
+  geom_line(aes(colour = model)) +
+  facet_wrap(~reference, scales = "free_y") +
+  scale_x_continuous(breaks = seq_len(n_year)) +
+  scale_y_continuous("Index", labels = percent)
+```
+
+# Conclusion
+
+Using rescaled abundances as indices, yields correct confidence intervals for the indices and they don't depend on the choice of the reference year. An added bonus is that this workflow yields a correct confidence interval for the index at the reference year.
+
+Using the predicted abundances has a few more nice features:
+
+1. You don't need tweak the year covariate so that the trend parameters are relative to the reference year. 
+2. You can rescale the index afterward to any other reference year within the data, without the need to refit the model with an appropriately tweaked year covariate. 
+3. You can use more complex models. E.g. a model with a separate intercept and trend for each stratum. The predicted abundance could be some weighted average over the strata.

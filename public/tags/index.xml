@@ -6,11 +6,19 @@
     <description>Recent content in Tags on Stats &amp; bats</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <copyright>Thierry Onkelinx. [GPL 3.0&#43;](https://www.gnu.org/licenses/gpl-3.0.en.html). Source code available at [GitHub](http://github.com/thierryo/my_blog).</copyright>
-    <lastBuildDate>Tue, 26 Sep 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 01 Nov 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Abundance</title>
+      <link>/tags/abundance/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/abundance/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Bat Detector</title>
@@ -67,9 +75,18 @@
     </item>
     
     <item>
+      <title>Index</title>
+      <link>/tags/index/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/index/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Inla</title>
       <link>/tags/inla/</link>
-      <pubDate>Thu, 12 Jul 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/inla/</guid>
       <description></description>
@@ -114,7 +131,7 @@
     <item>
       <title>Lme4</title>
       <link>/tags/lme4/</link>
-      <pubDate>Fri, 16 Feb 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 03 Sep 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/lme4/</guid>
       <description></description>
@@ -216,6 +233,15 @@
       <pubDate>Thu, 15 Jun 2017 00:00:00 +0000</pubDate>
       
       <guid>/tags/spatial-point-process/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Trend</title>
+      <link>/tags/trend/</link>
+      <pubDate>Thu, 01 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/trend/</guid>
       <description></description>
     </item>
     

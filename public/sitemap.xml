@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/2018/11/intercept_index/</loc>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/2018/09/number-random-effect-levels/</loc>
+    <lastmod>2018-09-03T00:00:00+00:00</lastmod>
+  </url>
   
   <url>
     <loc>/2018/07/inlabru-bru/</loc>
@@ -82,12 +93,14 @@
   </url>
   
   <url>
-    <loc>/kermit/kermit/</loc>
+    <loc>/categories/about/</loc>
+    <lastmod>2017-06-10T00:00:00+00:00</lastmod>
+    <priority>0</priority>
   </url>
   
   <url>
-    <loc>/categories/about/</loc>
-    <lastmod>2017-06-10T00:00:00+00:00</lastmod>
+    <loc>/tags/abundance/</loc>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -146,8 +159,14 @@
   </url>
   
   <url>
+    <loc>/tags/index/</loc>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>/tags/inla/</loc>
-    <lastmod>2018-07-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-09-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -160,11 +179,6 @@
   <url>
     <loc>/tags/introduction/</loc>
     <lastmod>2017-06-10T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>/kermit/</loc>
     <priority>0</priority>
   </url>
   
@@ -182,7 +196,7 @@
   
   <url>
     <loc>/tags/lme4/</loc>
-    <lastmod>2018-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2018-09-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -200,7 +214,7 @@
   
   <url>
     <loc>/categories/mixed-models/</loc>
-    <lastmod>2018-07-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-09-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -236,7 +250,7 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2018-07-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -284,19 +298,19 @@
   
   <url>
     <loc>/categories/statistics/</loc>
-    <lastmod>2018-07-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-07-12T00:00:00+00:00</lastmod>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/</loc>
-    <lastmod>2017-09-26T00:00:00+00:00</lastmod>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -309,6 +323,12 @@
   <url>
     <loc>/categories/tool-review/</loc>
     <lastmod>2017-09-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/trend/</loc>
+    <lastmod>2018-11-01T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
