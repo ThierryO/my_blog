@@ -27,7 +27,7 @@
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="/" />
-<meta property="og:updated_time" content="2018-09-03T00:00:00&#43;00:00"/>
+<meta property="og:updated_time" content="2018-11-01T00:00:00&#43;00:00"/>
     
     
 <meta itemprop="name" content="Stats &amp; bats">
@@ -158,12 +158,12 @@
     </div>
     <div class="article-info profile-block">
       <div class="article-info-block">
-        17
+        18
         <span>Posts</span>
       </div>
       <div class="article-info-block">
         
-          23
+          26
         
         <span>
             Tags
@@ -245,6 +245,159 @@
     <section id="main">
     
     
+
+<article class="article article-type-post" itemscope="" itemprop="blogPost">
+    <div class="article-inner">
+        
+        </a>
+
+        <header class="article-header">
+    <a href="/2018/11/intercept_index/">
+    <h1 class="article-title" itemprop="name">
+        To intercept or not to intercept? Is that a question when calculating indices?
+    </h1>
+    </a>
+    <div class="article-meta">
+
+        
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2018-11-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">1 November 2018</time>
+            &middot;
+            2689
+            words
+            &middot;
+            13
+            minute read
+        </div>
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                
+                <a class="article-category-link" href="/categories/statistics">statistics</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                
+                <a class="article-category-link" href="/tags/index">index</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/tags/abundance">abundance</a>
+                &middot;
+                
+                
+                <a class="article-category-link" href="/tags/trend">trend</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+        <div class="article-entry" itemprop="articleBody">
+            <p>
+                Indices Long-term trends in the abundance of species are often communicated as indices. The abundance at some reference point in time is set at 100%. Sometimes this point in time is a range of years, often it is a single year. The reference point in time is something meaningful for the data: some special date (e.g. new legislation) or the start of the monitoring campaign. Although, seldom used, one could use the last year in the data as well.
+            </p>
+            <p class="article-more-link">
+                <a href="/2018/11/intercept_index/">
+                    Read more
+                </a>
+            </p>
+        </div>
+        <footer class="article-footer">
+    <a data-url="/2018/11/intercept_index/" data-id="8417be27df09874d038b4fc0a419e57f" class="article-share-link">
+        <i class="fa fa-share"></i>
+        Share
+    </a>
+    
+    <a href="/2018/11/intercept_index/#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+
+    <script>
+    (function ($) {
+        
+        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
+            __SHARE_BUTTON_BINDED__ = true;
+        } else {
+            return;
+        }
+        $('body').on('click', function() {
+            $('.article-share-box.on').removeClass('on');
+        }).on('click', '.article-share-link', function(e) {
+            e.stopPropagation();
+
+            var $this = $(this),
+                url = $this.attr('data-url'),
+                encodedUrl = encodeURIComponent(url),
+                id = 'article-share-box-' + $this.attr('data-id'),
+                offset = $this.offset(),
+                box;
+
+            if ($('#' + id).length) {
+                box = $('#' + id);
+
+                if (box.hasClass('on')){
+                    box.removeClass('on');
+                    return;
+                }
+            } else {
+                var html = [
+                    '<div id="' + id + '" class="article-share-box">',
+                        '<input class="article-share-input" value="' + url + '">',
+                        '<div class="article-share-links">',
+                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
+                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
+                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
+                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
+                        '</div>',
+                    '</div>'
+                ].join('');
+
+              box = $(html);
+
+              $('body').append(box);
+            }
+
+            $('.article-share-box.on').hide();
+
+            box.css({
+                top: offset.top + 25,
+                left: offset.left
+            }).addClass('on');
+
+        }).on('click', '.article-share-box', function (e) {
+            e.stopPropagation();
+        }).on('click', '.article-share-box-input', function () {
+            $(this).select();
+        }).on('click', '.article-share-box-link', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
+        });
+    })(jQuery);
+    </script>
+</footer>
+
+    </div>
+</article>
 
 <article class="article article-type-post" itemscope="" itemprop="blogPost">
     <div class="article-inner">
@@ -1625,163 +1778,6 @@ The differences The most obvious difference between both versions is their enclo
     </div>
 </article>
 
-<article class="article article-type-post" itemscope="" itemprop="blogPost">
-    <div class="article-inner">
-        
-        <a href="/2017/07/lme4-random-effects/" itemprop="url">
-            <img src="/post/2017-07-18-nested-and-crossed-random-effects-in-lme4_files/figure-html/school-design-1.png" class="article-banner">
-        
-        </a>
-
-        <header class="article-header">
-    <a href="/2017/07/lme4-random-effects/">
-    <h1 class="article-title" itemprop="name">
-        Nested and crossed random effects in &#34;lme4&#34;
-    </h1>
-    </a>
-    <div class="article-meta">
-
-        
-        <div class="article-date">
-            <i class="fa fa-calendar"></i>
-            <time datetime="2017-07-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">18 July 2017</time>
-            &middot;
-            1429
-            words
-            &middot;
-            7
-            minute read
-        </div>
-        
-        
-            
-            
-            <div class="article-category">
-                <i class="fa fa-folder"></i>
-                
-                
-                <a class="article-category-link" href="/categories/statistics">statistics</a>
-                &middot;
-                
-                
-                <a class="article-category-link" href="/categories/mixed-models">mixed models</a>
-                
-                
-            </div>
-            
-        
-
-        
-            
-            
-            <div class="article-category">
-                <i class="fa fa-tags"></i>
-                
-                
-                <a class="article-category-link" href="/tags/lme4">lme4</a>
-                &middot;
-                
-                
-                <a class="article-category-link" href="/tags/random-effect">random effect</a>
-                
-                
-            </div>
-            
-        
-    </div>
-</header>
-
-        <div class="article-entry" itemprop="articleBody">
-            <p>
-                People often get confused on how to code nested and crossed random effects in the lme4 package. I will try to make this more clear using some artificial data sets.
-Nested random effects Nested random effects assume that there is some kind of hierarchy in the grouping of the observations. E.g. schools and classes. A class groups a number of students and a school groups a number of classes.
-            </p>
-            <p class="article-more-link">
-                <a href="/2017/07/lme4-random-effects/">
-                    Read more
-                </a>
-            </p>
-        </div>
-        <footer class="article-footer">
-    <a data-url="/2017/07/lme4-random-effects/" data-id="ad7bbd68ad8f0cdb59290077b7e301f5" class="article-share-link">
-        <i class="fa fa-share"></i>
-        Share
-    </a>
-    
-    <a href="/2017/07/lme4-random-effects/#disqus_thread" class="article-comment-link">
-        Comments
-    </a>
-    
-
-    <script>
-    (function ($) {
-        
-        if (typeof(__SHARE_BUTTON_BINDED__) === 'undefined' || !__SHARE_BUTTON_BINDED__) {
-            __SHARE_BUTTON_BINDED__ = true;
-        } else {
-            return;
-        }
-        $('body').on('click', function() {
-            $('.article-share-box.on').removeClass('on');
-        }).on('click', '.article-share-link', function(e) {
-            e.stopPropagation();
-
-            var $this = $(this),
-                url = $this.attr('data-url'),
-                encodedUrl = encodeURIComponent(url),
-                id = 'article-share-box-' + $this.attr('data-id'),
-                offset = $this.offset(),
-                box;
-
-            if ($('#' + id).length) {
-                box = $('#' + id);
-
-                if (box.hasClass('on')){
-                    box.removeClass('on');
-                    return;
-                }
-            } else {
-                var html = [
-                    '<div id="' + id + '" class="article-share-box">',
-                        '<input class="article-share-input" value="' + url + '">',
-                        '<div class="article-share-links">',
-                            '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="fa fa-twitter article-share-twitter" target="_blank" title="Twitter"></a>',
-                            '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="fa fa-facebook article-share-facebook" target="_blank" title="Facebook"></a>',
-                            '<a href="http://pinterest.com/pin/create/button/?url=' + encodedUrl + '" class="fa fa-pinterest article-share-pinterest" target="_blank" title="Pinterest"></a>',
-                            '<a href="https://plus.google.com/share?url=' + encodedUrl + '" class="fa fa-google article-share-google" target="_blank" title="Google+"></a>',
-                        '</div>',
-                    '</div>'
-                ].join('');
-
-              box = $(html);
-
-              $('body').append(box);
-            }
-
-            $('.article-share-box.on').hide();
-
-            box.css({
-                top: offset.top + 25,
-                left: offset.left
-            }).addClass('on');
-
-        }).on('click', '.article-share-box', function (e) {
-            e.stopPropagation();
-        }).on('click', '.article-share-box-input', function () {
-            $(this).select();
-        }).on('click', '.article-share-box-link', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            window.open(this.href, 'article-share-box-window-' + Date.now(), 'width=500,height=450');
-        });
-    })(jQuery);
-    </script>
-</footer>
-
-    </div>
-</article>
-
 
 <nav id="page-nav">
 
@@ -1806,6 +1802,32 @@ Nested random effects Nested random effects assume that there is some kind of hi
     </h3>
     <div class="widget">
         <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="/2018/11/intercept_index/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    
+                    <p class="item-category">
+                        
+                        <a class="article-category-link" href="/categories/statistics">
+                        statistics
+                        </a>
+                    </p>
+                    
+                    
+                    <p class="item-title"><a href="/2018/11/intercept_index/" class="title">To intercept or not to intercept? Is that a question when calculating indices?</a></p>
+                    <p class="item-date">
+                        <time datetime="2018-11-01 00:00:00 &#43;0000 UTC" itemprop="datePublished">1 November 2018</time>
+                    </p>
+                </div>
+            </li>
             
             <li>
                 <div class="item-thumbnail">
@@ -1911,32 +1933,6 @@ Nested random effects Nested random effects assume that there is some kind of hi
                 </div>
             </li>
             
-            <li>
-                <div class="item-thumbnail">
-                    <a href="/2018/02/highly-correlated-random-effects/" class="thumbnail">
-                    
-                        <span class="thumbnail-image thumbnail-none"></span>
-                    
-                    </a>
-                </div>
-                <div class="item-inner">
-                    
-                    
-                    <p class="item-category">
-                        
-                        <a class="article-category-link" href="/categories/statistics">
-                        statistics
-                        </a>
-                    </p>
-                    
-                    
-                    <p class="item-title"><a href="/2018/02/highly-correlated-random-effects/" class="title">Highly correlated random effects</a></p>
-                    <p class="item-date">
-                        <time datetime="2018-02-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">16 February 2018</time>
-                    </p>
-                </div>
-            </li>
-            
         </ul>
     </div>
 </div>
@@ -2011,7 +2007,7 @@ Nested random effects Nested random effects assume that there is some kind of hi
                 <a class="category-list-link" href="/categories/statistics">
                     statistics
                 </a>
-                <span class="category-list-count">7</span>
+                <span class="category-list-count">8</span>
             </li>
             
             <li class="category-list-item">
@@ -2057,6 +2053,14 @@ Nested random effects Nested random effects assume that there is some kind of hi
             
             <li class="category-list-item">
                 
+                <a class="category-list-link" href="/tags/abundance">
+                    abundance
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
                 <a class="category-list-link" href="/tags/bat-detector">
                     bat-detector
                 </a>
@@ -2099,6 +2103,14 @@ Nested random effects Nested random effects assume that there is some kind of hi
                 
                 <a class="category-list-link" href="/tags/gitbook">
                     gitbook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/index">
+                    index
                 </a>
                 <span class="category-list-count">1</span>
             </li>
@@ -2239,6 +2251,14 @@ Nested random effects Nested random effects assume that there is some kind of hi
                 <span class="category-list-count">1</span>
             </li>
             
+            <li class="category-list-item">
+                
+                <a class="category-list-link" href="/tags/trend">
+                    trend
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
         </ul>
     </div>
 </div>
@@ -2254,6 +2274,9 @@ Nested random effects Nested random effects assume that there is some kind of hi
         Tag cloud
     </h3>
     <div class="widget tagcloud">
+        
+        
+        <a href="/tags/abundance" style="font-size: 12px;">abundance</a>
         
         
         <a href="/tags/bat-detector" style="font-size: 12px;">bat-detector</a>
@@ -2272,6 +2295,9 @@ Nested random effects Nested random effects assume that there is some kind of hi
         
         
         <a href="/tags/gitbook" style="font-size: 12px;">gitbook</a>
+        
+        
+        <a href="/tags/index" style="font-size: 12px;">index</a>
         
         
         <a href="/tags/inla" style="font-size: 12px;">inla</a>
@@ -2323,6 +2349,9 @@ Nested random effects Nested random effects assume that there is some kind of hi
         
         
         <a href="/tags/spatial-point-process" style="font-size: 12px;">spatial-point-process</a>
+        
+        
+        <a href="/tags/trend" style="font-size: 12px;">trend</a>
         
     </div>
 </div>
