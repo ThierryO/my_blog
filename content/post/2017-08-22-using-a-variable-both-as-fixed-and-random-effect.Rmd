@@ -14,7 +14,7 @@ output:
     toc: TRUE
 ---
 
-One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn't make sense. Much will depend on the nature of the variable. Therefore to post is split into three sections: categorical, discrete and continuous. I will only display to most relevant parts of the code. The full code is available on [GitHub](https:/github.com/thierryo/my_blog).
+One of the questions to answer when using mixed models is whether to use a variable as a fixed effect or as a random effect. Sometimes it makes sense to use a variable both as fixed and random effect. In this post I will try to make clear in which cases it can make sense and what are the benefits of doing so. I will also handle cases in which it doesn't make sense. Much will depend on the nature of the variable. Therefore this post is split into three sections: categorical, discrete and continuous. I will only display the most relevant parts of the code. The full code is available on [GitHub](https:/github.com/thierryo/my_blog).
 
 # Categorical variable
 
@@ -273,7 +273,7 @@ dataset2 %>%
 
 # Continuous variable
 
-A continuous variable is a numeric variable were there is not fixed step size between two values. In practice the step size will be several magnitudes smaller than the measured values. Again let's clarify this with an example dataset. For the sake of simplicity we'll reuse the true model from the example with the discrete variable. Compare fig. \@ref(fig:continuous-dummy) with fig. \@ref(fig:discrete-dummy) and you'll see that fig. \@ref(fig:continuous-dummy) has no step size while fig. \@ref(fig:discrete-dummy) does.
+A continuous variable is a numeric variable where there is not fixed step size between two values. In practice the step size will be several magnitudes smaller than the measured values. Again let's clarify this with an example dataset. For the sake of simplicity we'll reuse the true model from the example with the discrete variable. Compare fig. \@ref(fig:continuous-dummy) with fig. \@ref(fig:discrete-dummy) and you'll see that fig. \@ref(fig:continuous-dummy) has no step size while fig. \@ref(fig:discrete-dummy) does.
 
 ```{r}
 n_x <- 25
