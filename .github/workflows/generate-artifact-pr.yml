@@ -14,13 +14,6 @@ jobs:
           submodules: true  # Fetch Hugo themes (true OR recursive)
           fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
 
-      - name: Checkout (theme)
-        uses: actions/checkout@v2
-        with:
-          repository: MunifTanjim/minimo
-          ref: v2.7.0
-          path: themes/minimo
-
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
@@ -30,17 +23,10 @@ jobs:
       - name: Build
         run: hugo
 
-      # Need to add post build for the search functionality...
-      - name: Install JS dependencies to build the index
-        run: npm install lunr glob
-
-      - name: Generate search index
-        run: node themes/minimo/scripts/generate-search-index-lunr.js
-
       - name: Archive built site to an artifact
         uses: actions/upload-artifact@v2
         with:
-          name: pr-${{ env.PR_NUMBER }}-inbo-tutorials-website
+          name: pr-${{ env.PR_NUMBER }}-blog-website
           path: public
         env:
           PR_NUMBER: ${{ github.event.number }}
