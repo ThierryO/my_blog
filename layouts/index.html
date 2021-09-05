@@ -10,7 +10,7 @@
                {{ with .Params.coverCaption }}hasCoverCaption{{ end }}">
         <section class="postShorten-group main-content-wrap">
           {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" site.Params.mainSections ) }}
-          {{ range $paginator.Pages }}
+          {{ range $paginator.Pages.ByDate.Reverse }}
             {{ .Render "summary" }}
           {{ end }}
           {{ partial "pagination.html" . }}

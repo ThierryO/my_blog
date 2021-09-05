@@ -11,7 +11,7 @@ enableEmoji = true
 [author]
   name = "Thierry Onkelinx"
   bio = "Statistician in daylight, chiropterologist after sunset. But often things get mixed up."
-  job = "Your job title"
+  job = "statistician and software research engineer"
   location = "Belgium"
   # Your Gravatar email. Overwrite `author.picture` everywhere in the blog
   # gravatarEmail = "thibaud.lepretre@gmail.com"
@@ -171,13 +171,13 @@ customJs = ["js/blog.js"]
   weight = 1
   identifier = "github"
   name = "GitHub"
-  pre = "<i class=\"sidebar-button-icon fa fa-lg fa-github\"></i>"
+  pre = "<i class=\"sidebar-button-icon fab fa-lg fa-github\" aria-hidden=\"true\"></i>"
   url = "https://github.com/ThierryO"
 [[menu.links]]
   weight = 1
   identifier = "linkedin"
   name = "Linkedin"
-  pre = "<i class=\"sidebar-button-icon fa fa-lg fa-linkedin\"></i>"
+  pre = "<i class=\"sidebar-button-icon fab fa-lg fa-linkedin\" aria-hidden=\"true\"></i>"
   url = "https://linkedin.com/in/thierryonkelinx"
 
 [[menu.misc]]
