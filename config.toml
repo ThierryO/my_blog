@@ -115,12 +115,12 @@ enableEmoji = true
   # Tranquilpeak configuration > Theme configuration > sharing-options
   [[params.sharingOptions]]
     name = "Facebook"
-    icon = "fa-facebook-official"
+    icon = "fab fa-facebook"
     url = "https://www.facebook.com/sharer/sharer.php?u=%s"
 
   [[params.sharingOptions]]
     name = "Twitter"
-    icon = "fa-twitter"
+    icon = "fab fa-twitter"
     url = "https://twitter.com/intent/tweet?text=%s"
 
   # Customize link of author avatar in sidebar
