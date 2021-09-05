@@ -1,0 +1,12 @@
+.content {
+  max-width: 60em;
+}
+img {
+  display: block;
+}
+.article-thumb {
+  width: 100%;
+  max-width: 200px;
+  float: left;
+  margin-right: 10px;
+}
