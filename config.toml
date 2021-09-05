@@ -123,23 +123,13 @@ enableEmoji = true
     icon = "fa-twitter"
     url = "https://twitter.com/intent/tweet?text=%s"
 
-  [[params.sharingOptions]]
-    name = "Google+"
-    icon = "fa-google-plus"
-    url = "https://plus.google.com/share?url=%s"
-
-#  [params.header.rightLink]
-#    class = ""
-#    icon = ""
-#    url = "/#about"
-
   # Customize link of author avatar in sidebar
   # [params.sidebar.profile]
   #   url = "/#about"
 
   # Customize copyright value "© 2017 <CUSTOMIZATION>. All Rights Reserved"
   [params.footer]
-    copyright = "<a href=\"https://github.com/ThierryO\">Thierry Onkelinx</a> <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/4.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"https://i.creativecommons.org/l/by-sa/4.0/88x31.png\" /></a><br />This work is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/4.0/\">Creative Commons Attribution-ShareAlike 4.0 International License</a>."
+    copyright = "<a href=\"https://github.com/ThierryO\">Thierry Onkelinx</a><a href=\"https://orcid.org/0000-0001-8804-4216\"><img alt=\"ORCID logo\" src=\"https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png\" width=\"16\" height=\"16\"></a><br><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/4.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"/images/by-sa.svg\" /></a><br />This work is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-sa/4.0/\">Creative Commons Attribution-ShareAlike 4.0 International License</a>"
 
 paginate = 7
 canonifyurls = true
