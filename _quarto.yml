@@ -14,11 +14,11 @@ website:
       - icon: linkedin
         href: https://www.linkedin.com/in/thierryonkelinx/
   image: image/androidify.png
-  cookie-consent: true
+  cookie-consent: false
 
 format:
   html:
-    theme: sketchy
+    theme: flatly
     css: styles.css
 
 editor: source

@@ -5,8 +5,6 @@ date: "2017-06-10"
 categories: [about]
 ---
 
-![](full_moon.jpg){fig-alt="Full moon (c) Thierry Onkelinx."}
-
 I have no idea where this blog will lead.
 Current plans are a review of the [PeerSonic  BatDetector](http://peersonic.co.uk/), some examples of how bat detector observations can be analysed and some questions that I get repeatedly while giving statistical consultancy to ecologists and other scientists.
 
@@ -14,6 +12,8 @@ Another goal is more technical: learn to create a website with [blogdown](https:
 The easy road would be to render the sources files locally in to a complete website and upload that.
 I will attempt to place only to strictly necessary source files under version control on [GitHub](https://www.github.com/thierryo/my_blog).
 Then use continuous integration using [Wercker](https://www.wercker.com) to render the site and deploy it to the website.
+
+![](full_moon.jpg){fig-alt="Full moon (c) Thierry Onkelinx."}
 
 ## Why version control?
 
