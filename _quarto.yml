@@ -1,0 +1,24 @@
+project:
+  type: website
+
+execute:
+  freeze: auto
+
+website:
+  title: "Stats & bats"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/ThierryO
+      - icon: linkedin
+        href: https://www.linkedin.com/in/thierryonkelinx/
+  image: image/androidify.png
+  cookie-consent: true
+
+format:
+  html:
+    theme: sketchy
+    css: styles.css
+
+editor: source

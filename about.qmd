@@ -1,0 +1,19 @@
+---
+title: "About"
+image: image/androidify.png
+about:
+  template: jolla
+  links:
+    - icon: github
+      text: Github
+      href: https://github.com/ThierryO
+    - icon: orcid
+      text: ORCiD
+      href: https://orcid.org/0000-0001-8804-4216
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/thierryonkelinx/
+---
+
+Statistician in daylight, chiropterologist after sunset.
+But often things get mixed up.
