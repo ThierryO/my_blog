@@ -1,12 +1,16 @@
 ---
 title: "Stats & bats"
 listing:
-  contents: posts
+  contents:
+    - bats
+    - generic
+    - reproducible-research
   sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
+  type: grid
+  image-placeholder: image/full-moon.jpg
+  categories: cloud
+  sort-ui: true
+  filter-ui: true
 page-layout: full
 title-block-banner: true
 ---

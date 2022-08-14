@@ -1,4 +1,5 @@
-/2017/6/introduction              /posts/introduction                  301
-/2017/6/peersonic                 /posts/peersonic/rpa2                301
-/categories/about/                /index.html#category=about           301
-/tags/*                           /index.html
+/2017/6/introduction                    /generic/index.html                  301
+/2017/6/peersonic                       /bats/peersonic/index.html           301
+/categories/about/                      /index.html#category=about           301
+2017/07/peersonic-and-low-frequencies/  /bats/peersonic/low-frequency.html   301
+/tags/*                                 /index.html
