@@ -5,6 +5,7 @@ listing:
     - bats
     - generic
     - reproducible-research
+    - statistics
   sort: "date desc"
   type: grid
   image-placeholder: image/full-moon.jpg
