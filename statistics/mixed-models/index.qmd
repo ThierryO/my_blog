@@ -3,8 +3,11 @@ title: Nested and crossed random effects in `lme4`
 author: Thierry Onkelinx
 date: "2017-07-18"
 categories: [statistics, mixed models]
-image: /statistics/mixed-models/index_files/figure-html/fig-school-design-1.png
+image: /statistics/mixed-models/index_files/figure-html/fig-school-design-1.svg
 bibliography: references.bib
+knitr:
+  opts_chunk: 
+    dev: "svg"
 ---
 
 People often get confused on how to code nested and crossed random effects in the [`lme4`](https://cran.r-project.org/package=lme4) package [@lme4].
@@ -205,7 +208,7 @@ lmer(y ~ (1|factory) + (1|product), data = factories)
 ## Recommendations
 
 - each level of a random effect should be defined by a single variable: e.g. `class2` and `student2` in `schools`; `factory`, `product` and `sample2` in `factories`
-- use explict nesting even when the data set would allow implicit nesting
+- use explicit nesting even when the data set would allow implicit nesting
 - don't use the shorthand nesting
 
 ## Session info

@@ -7,6 +7,7 @@ knitr:
   opts_chunk:
     echo: false
     message: false
+    dev: "svg"
 ---
 
 I've reviewed the [standard version](http://peersonic.co.uk) the Peersonic RPA2 bat-detector in an [earlier blog post](index.html).
