@@ -2,6 +2,7 @@
 title: Temporal autocorrelation in INLA
 author: Thierry Onkelinx
 date: "2018-03-05"
+image: temporal-autocorrelation-in-inla_files/figure-html/fig-fixed-1.png
 categories: [statistics, mixed-models]
 knitr:
   opts_chunk: 

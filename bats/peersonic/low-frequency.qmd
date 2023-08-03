@@ -3,6 +3,7 @@ title: Peersonic RPA2 bat detector and low frequencies
 author: Thierry Onkelinx
 date: "2017-07-14"
 categories: [bats, tool review]
+image: low-frequency_files/figure-html/truth-spec-1.png
 fixed: true
 ---
 

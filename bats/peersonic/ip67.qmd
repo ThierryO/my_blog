@@ -3,6 +3,7 @@ title: Peersonic bat-detector in waterproof IP67 enclosure
 author: Thierry Onkelinx
 date: "2017-07-29"
 categories: [bats, tool review]
+image: peersonic-ip67-open.jpg
 knitr:
   opts_chunk:
     echo: false

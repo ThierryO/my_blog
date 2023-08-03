@@ -2,6 +2,7 @@
 title: "Review of the Peersonic RPA2 bat detector in the field"
 author: "Thierry Onkelinx"
 date: "2017-06-11"
+image: peersonic-rpa2-front.jpg
 categories: [bats, tool review]
 ---
 
