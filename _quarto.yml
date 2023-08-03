@@ -11,6 +11,9 @@ website:
       - about.qmd
       - icon: github
         href: https://github.com/ThierryO
+      - icon: mastodon
+        href: https://fosstodon.org/@ThierryO
+        rel: me
       - icon: linkedin
         href: https://www.linkedin.com/in/thierryonkelinx/
   image: image/androidify.png
