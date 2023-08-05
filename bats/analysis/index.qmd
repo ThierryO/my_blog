@@ -5,6 +5,13 @@ date: "2017-07-02"
 categories: [bats, analysis]
 image: transect/prediction.png
 tags: ["spatial point process", "kml", "leaflet"]
+knitr: 
+  opts_chunk: 
+    echo: false
+    warning: false
+    message: false
+    fig.width: 6
+    dev: svg
 params:
   resolution: 100
   crs: 31370
@@ -15,7 +22,6 @@ params:
 #| label: setup
 #| include: false
 library(git2rdata)
-library(htmlwidgets)
 library(INLA)
 library(knitr)
 library(leaflet)
@@ -24,7 +30,6 @@ library(plotROC)
 library(scales)
 library(sf)
 library(tidyverse)
-opts_chunk$set(echo = FALSE, warning = FALSE)
 ```
 
 This post will handle observations of bats along a set of transects. It is a work in progress simply because I'm still collecting more data. So come back once and awhile to see potential updates.
@@ -326,6 +331,7 @@ m <- inla(
 ```
 
 ```{r}
+#| label: prediction
 grid_index <- inla.stack.index(stacks, "prediction")$data
 m$summary.fitted.values[grid_index, ] |>
   select(median = 4, lcl = 3, ucl = 5) |>
@@ -358,7 +364,7 @@ map
 ```{r}
 #| label: thumbnail
 #| results: hide
-junk <- mapshot(map,file = "transect/prediction.png")
+junk <- mapshot(map, file = "transect/prediction.png")
 ```
 
 ```{r}
