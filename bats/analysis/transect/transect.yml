@@ -1,0 +1,18 @@
+..generic:
+  git2rdata: 0.4.0
+  optimize: yes
+  NA string: NA
+  sorting:
+  - transect
+  - order
+  hash: c6d9871d88a20b34a90913aafa6c86e876c31049
+  data_hash: 841023cace3baebab0286cee855e0c07193fc6ff
+transect:
+  class: Date
+  origin: '1970-01-01'
+x:
+  class: numeric
+'y':
+  class: numeric
+order:
+  class: integer
