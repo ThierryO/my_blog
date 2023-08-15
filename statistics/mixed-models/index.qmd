@@ -4,7 +4,7 @@ author: Thierry Onkelinx
 date: "2017-07-18"
 categories: [statistics, mixed models]
 image: /statistics/mixed-models/index_files/figure-html/fig-school-design-1.svg
-bibliography: references.bib
+bibliography: ../../references.bib
 knitr:
   opts_chunk: 
     dev: "svg"
