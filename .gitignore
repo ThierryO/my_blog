@@ -3,6 +3,8 @@
 .RData
 .Ruserdata
 
+*.sav
+
 /.quarto/
 
 _site
