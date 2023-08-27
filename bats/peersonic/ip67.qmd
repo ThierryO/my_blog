@@ -154,7 +154,7 @@ This can be cumbersome when using the detector in a remote location.
 Simply swapping the SD cards would be much easier.
 
 Swapping the SD cards yields two problems.
-First of all, the SD cards are not in a standard FAT16 or FAT32 format, but in a BATFAT format.
+First of all, the SD cards are not in a standard FAT16 or FAT32 format, but in a `BATFAT` format.
 This is due to the limited code space on the processor.
 The result is that a computer can't read the SD cards.
 A second problem is access to the SD card.
@@ -163,7 +163,7 @@ The IP67 has somewhat better access: the SD card is visible when you open the en
 However, it still is somewhat hidden underneath the display.
 I can't reach it with my fingers.
 
-The BATFAT format has another limit: it can store a maximum of 3000 wav files.
+The `BATFAT` format has another limit: it can store a maximum of 3000 wav files.
 Therefore a 32 GB SD card is sufficient when recordings a not longer than 10 sec.
 3000 recordings of 10 sec is 8h20 in total, which should cover several nights.
 

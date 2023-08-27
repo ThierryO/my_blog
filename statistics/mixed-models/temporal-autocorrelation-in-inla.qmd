@@ -17,7 +17,9 @@ There are two major types of model, the first handles discrete time step, the la
 
 # Dummy data set
 
-This blog post was inspired by a post on the [R-Sig-Mixed models](https://stat.ethz.ch/pipermail/r-sig-mixed-models/2018q1/026481.html) mailing list.
+This blog post was inspired by a post on the [
+R-Sig-Mixed<!-- spell-check: ignore -->
+models](https://stat.ethz.ch/pipermail/r-sig-mixed-models/2018q1/026481.html) mailing list.
 Therefore I created some example data relevant for that post.
 The set-up were 34 participants received five random prompts per day for six weeks, asking them whether they were craving a particular drug.
 
@@ -82,21 +84,21 @@ ggplotly(p)
 
 ## Some temporal models
 
-- **ar1**
+- `ar1`
     - the current value is $\rho$ times the previous value + a noise term $\varepsilon_{ij}$
     - $x_i = \rho x_{i-1} + \varepsilon_{ij}$
     - restrictions
         - $|\rho|<1$
         - $\varepsilon_{ij} \sim \mathcal{N}(0, \tau^{-1})$
-- **rw1**
+- `rw1`
     - the current value is the previous value plus an increment $\Delta x_i$
     - $x_i = x_{i - 1} + \Delta x_i$
     - restrictions
         - $\Delta x_i \sim \mathcal{N}(0, \tau^{-1})$
         - $\sum \Delta x_i = 0$
-- **rw2**
-    - while **rw1** models the difference between two time points, **rw2** models the difference between the two consecutive differences.
-    - think of **rw1** as the first derivative and **rw2** as the second derivative
+- `rw2`
+    - while `rw1` models the difference between two time points, `rw2` models the difference between the two consecutive differences.
+    - think of `rw1` as the first derivative and `rw2` as the second derivative
     - $\Delta ^2 x_i = (x_{i + 1} - x_i) - (x_i - x_{i - 1})$
     - $x_i = \frac{x_{i + 1} + x_{i - 1}}{2} - \frac{\Delta ^2 x_i}{2}$
     - So the current value is the average of the next and the previous value minus half of $\Delta ^2 x_i$
@@ -255,23 +257,25 @@ sort(c(
 
 ## Some temporal models
 
-- **crw2**
-    - the equivalent of **rw2** for irregular locations
+- `crw2`
+    - the equivalent of `rw2` for irregular locations
     - might required some grouping when the distance between some locations is small
     - no equation provided in the [online helpfile](https://www.math.ntnu.no/inla/r-inla.org/doc/latent/crw2.pdf)
     - restrictions
         - $\sum \Delta x_i = 0$
-- **ou**
-    - Stands for the Ornstein-Uhlenbeck process
+- `ou`
+    - Stands for the
+      Ornstein-Uhlenbeck<!-- spell-check: ignore -->
+      process
     - continuous time analogue to the discrete time `ar1`
     - $dx_t = -\phi x_t + \sigma dW_t$
-- **rw1**
+- `rw1`
     - binning the continuous time stamps in a large number of equally spaces bins allows to apply `rw1` (also `ar1` and `rw2`)
 
 ## Fitting the models
 
 The `Timestamp` was split in 100 groups for the `crw2` model.
-We fitted the **ou** model both with and without sum-to-zero constraint.
+We fitted the `ou` model both with and without sum-to-zero constraint.
 The time stamp was rounded to 0.01 hours for the `rw1` model.
 
 ```{r}

@@ -12,7 +12,9 @@ knitr:
 ---
 
 [`inlabru`](https://www.inlabru.org) is an R package which builds on top of the [`INLA`](https://www.r-inla.org) package.
-I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop [ISEC2018](https://www.isec2018.org) in St Andrews.
+I had the opportunity to take a workshop on it during the International Statistical Ecology Workshop [
+ISEC2018<!-- spell-check: ignore -->
+](https://www.isec2018.org) in St Andrews.
 This was a five day workshop condensed into a single day, hence the pace was very high.
 It gave us a good overview of the possibilities of `inlabru` but no time to try it on our own data.
 _This is an updated version of the original post due to changes in the package used in the original post._
@@ -25,14 +27,19 @@ I will focus on `bru` and compare it with `INLA::inla()` as I find that [`bru()`
 # Tundra bean goose
 
 The test data is derived from the "Wintering waterbirds in Flanders, Belgium", freely available at GBIF (https://doi.org/10.15468/lj0udq).
-I've extracted the observations from the [tundra bean goose](https://www.gbif.org/species/6178319) (_Anser fabalis rossicus_, @fig-tundra-bean-goose).
+I've extracted the observations from the [tundra bean goose](https://www.gbif.org/species/6178319)
+(_Anser fabalis rossicus_, @fig-tundra-bean-goose).<!-- spell-check: ignore -->
 The dataset was limited to those locations with at least 6 occurrences during at least 3 years.
 Months with lower number of count were removed.
 @fig-observed-total indicates the sum of all observed geese in the data.
 Note that these totals are somewhat misleading since there are a fair amount of missing observations (@fig-missing).
 The geographic distribution of the data is given in @fig-map-goose.
 
-![Tundra bean goose _Anser fabalis rossicus_ by [Roar Ottesen](https://www.gbif.org/occurrence/1798469433) CC BY 4.0](media/tundra-bean-goose.jpg){#fig-tundra-bean-goose}
+![Tundra bean goose
+_Anser fabalis rossicus_<!-- spell-check: ignore -->
+by [
+Roar Ottesen<!-- spell-check: ignore -->
+](https://www.gbif.org/occurrence/1798469433) CC BY 4.0](media/tundra-bean-goose.jpg){#fig-tundra-bean-goose}
 
 ```{r}
 #| label: load-packages
@@ -116,7 +123,7 @@ A drawback is that [`bru()`](https://inlabru-org.github.io/inlabru/reference/bru
 In a previous version it yielded a warning about invalid factor levels when fitting the model.
 Unfortunately you didn't get the warning when getting the summary.
 You needed to be critical and noticed that the parameters of the model are not what you would expect.
-The current version throws a criptic error.
+The current version throws a cryptic error.
 The workaround is to convert the factor variable into a set of dummy variables and use those.
 Creating the dummy variable is straight forward with `model.matrix()`.
 But adding them to the model is not very efficient when you have factor variables with more than a just few levels.

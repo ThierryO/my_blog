@@ -9,11 +9,11 @@ categories: [bats, tool review]
 
 The default way to download recordings from a [Peersonic](http://peersonic.co.uk) bat detector is to connect the detector via a USB cable to the computer and copy them to the computer.
 The file transfer rate is quite low.
-In case you have to copy 100 to 200 files, this is OKish.
+In case you have to copy 100 to 200 files, this is doable.
 But copying a full SD card takes half a day.
 In case you have a set-up with multiple detectors, this becomes a nightmare.
 
-Peersonic bat detectors use a custom [file allocation table](https://en.wikipedia.org/wiki/File_Allocation_Table) called BatFAT.
+Peersonic bat detectors use a custom [file allocation table](https://en.wikipedia.org/wiki/File_Allocation_Table) called `BatFAT`.
 Therefore it can not be read on computers.
 Recently, Peersonic made the [ReadRPA software](http://peersonic.co.uk/technical-support/) freely available on their website.
 This is Windows software which makes a fast copy from all the files on the SD card to the computer.

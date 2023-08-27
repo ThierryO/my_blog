@@ -138,7 +138,7 @@ lmer(y ~ (1|school/class2), data = schools)
 
 Crossed random effects appear when two (or more) variables can be used to create distinct groupings.
 Think about factories and products where a factory can produce a range of products, and a product can be manufactured in different factories.
-The contigency matrix of such a design is shown in the next figure.
+The contingency matrix of such a design is shown in the next figure.
 
 ```{r}
 #| label: crossed-design

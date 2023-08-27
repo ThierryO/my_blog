@@ -138,6 +138,6 @@ The RPA2 will be recognised as an external storage device and you can use a file
 Note that the files on the RPA2 are read-only and can't be deleted from the computer.
 File deletions must be done from within the menu of the RPA2.
 
-Here the edirol is easier.
+Here the Edirol is easier.
 Take the SD card from the Edirol and plug it in the computer.
 Do what ever you like to do with the file on the SD card.

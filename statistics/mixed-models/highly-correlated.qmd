@@ -177,7 +177,7 @@ dataset_cleaned %>% mutate(Resid = resid(model_cleaned)) %>%
   ggplot(aes(sample = Resid)) + stat_qq()
 ```
 
-## Centering and scaling
+## Centring and scaling
 
 Another thing that often can help is centring and scaling the data.
 In this case we centre to a zero mean and scale to a standard deviation of 1.

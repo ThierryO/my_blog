@@ -90,7 +90,7 @@ In order to visualise the result, we have to do a few step.
 First convert the dataframe into a simple object with points.
 Then convert the points into a grid of polygons.
 Next we attach the estimated density as counts per grid cell.
-Finaly we re-project the coordinates back to WGS84.
+Finally we re-project the coordinates back to WGS84.
 Then we can display the grid with a web based background image (@fig-density).
 
 ```{r}

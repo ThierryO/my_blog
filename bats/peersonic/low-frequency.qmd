@@ -7,7 +7,9 @@ image: low-frequency_files/figure-html/truth-spec-1.png
 fixed: true
 ---
 
-Recently René Janssen from [Bionet Natuuronderzoek](http://www.bionetnatuur.eu/) was looking for an automatic bat-detector which could record sounds starting from 4 kHz.
+Recently René Janssen from [
+Bionet Natuuronderzoek<!-- spell-check: ignore -->
+](http://www.bionetnatuur.eu/) was looking for an automatic bat-detector which could record sounds starting from 4 kHz.
 That was an incentive to put the Peersonic RPA2 to the test.
 
 ## Generating a test sound
@@ -54,7 +56,9 @@ writeWave(w, "test.wav")
 ![Test setup with RPA2 detector.](peersonic-headphones.jpg){fig-alt="RPA2 detector with headphones mounted over the microphone." style="float: left; padding: 10px;"}
 Now I have a file [test.wav](test.wav) which has sounds ranging from `r sprintf("%.0fkHz", min(sound.freq.range) / 1e3)` up to `r sprintf("%.0fkHz", max(sound.freq.range) / 1e3)`.
 I played this file using [Audacity](http://www.audacityteam.org/) on a [Ubuntu](https://www.ubuntu.com) laptop.
-The laptop speakers failed to play sounds above 15 kHz, so I tried my [Philips SHB9850NC headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones).
+The laptop speakers failed to play sounds above 15 kHz, so I tried my [
+Philips SHB9850NC<!-- spell-check: ignore -->
+headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones).
 Some testing revealable that I was able to hear sounds up to 22,5 kHz.
 I'm not sure whether the headphones, my ears or both failed at higher frequencies ;-)
 So I placed the headphones over the Peersonic RPA2 as show in the photo.

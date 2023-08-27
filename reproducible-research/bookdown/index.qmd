@@ -6,7 +6,7 @@ categories: [reproducible research, text]
 ---
 
 [Bookdown](https://bookdown.org/yihui/bookdown/) is an [R package](https://www.r-project.org/) that makes writing technical documents based on R much easier.
-One of the nice things is that you can create a corporate identity using [LaTex](https://www.latextemplates.com/what-is-latex) styles for pdf output and [Cascading Style Sheets](https://en.wikipedia.org/wiki/Cascading_Style_Sheets) for HTML output.
+One of the nice things is that you can create a corporate identity using [LaTeX](https://www.latextemplates.com/what-is-latex) styles for pdf output and [Cascading Style Sheets](https://en.wikipedia.org/wiki/Cascading_Style_Sheets) for HTML output.
 I'm in the process of preparing such styles for the [Research Institute for Nature and Forest](https://www.inbo.be/en).
 
 Here are a few things that I figured out while testing a complex `bookdown` report.
@@ -75,5 +75,5 @@ Using labels adds two bonusses: 1) you can use to label to refer to create [cros
 Unnumbered headings are created by adding ` {-}` at the end of the table.
 Note that unnumbered headings currently (bookdown [version 0.4.1](https://github.com/rstudio/bookdown/tree/7fe1b999ef4bd41671af384ce739812542144df1)) don't work levels 5 and 6 for pdf output.
 
-In case you want both and unnumbered heading and a labeled heading, you need to combine both within a single set of curly braces.
+In case you want both and unnumbered heading and a labelled heading, you need to combine both within a single set of curly braces.
 E.g. ` {- #my-label}`
