@@ -47,7 +47,7 @@ library(leaflet)
 library(scales)
 library(sf)
 library(tidyverse)
-goose <- readRDS("data/anser_fabalis_rossicus.Rds")
+goose <- readRDS("data/anser_fabalis_rossicus.rds")
 set.seed(20180712)
 ```
 
