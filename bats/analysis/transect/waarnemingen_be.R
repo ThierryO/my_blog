@@ -2,7 +2,7 @@ library(fs)
 library(sf)
 library(XML)
 
-source_dir <- "~/Downloads"
+source_dir <- path_home("Downloads")
 target_dir <- "bats/analysis/transect"
 
 dir_ls(source_dir, regexp = "transect") |>
