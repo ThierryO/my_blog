@@ -1,0 +1,322 @@
+---
+title: Highly correlated random effects
+author: Thierry Onkelinx
+date: "2018-02-16"
+categories: [statistics, mixed-models]
+image: highly-correlated_files/figure-html/fig-scatter-is-1.png
+---
+
+Recently, I got a question on a mixed model with highly correlated random slopes.
+I requested a copy of the data because it is much easier to diagnose the problem when you have the actual data.
+The data owner gave permission to use an anonymised version of the data for this blog post.
+In this blog post, I will discuss how I'd tackle this problem.
+
+# Data exploration
+
+Every data analysis should start with some data exploration.
+The dataset contains three variables: the response $Y$, a covariate $X$ and a grouping variable $ID$.
+
+```{r}
+#| label: setup
+#| message: false
+library(tidyverse)
+library(lme4)
+dataset <- read_csv("data/highly-correlated.csv")
+summary(dataset)
+```
+
+Let's start by looking at a scatter plot (@fig-scatter).
+This suggests a strong linear relation between $X$ and $Y$.
+Plotting the point with transparency reveals that the density of the observations depends on the value.
+This is confirmed by the skewed distribution shown in @fig-density.
+This is something we have to keep in mind.
+
+```{r}
+#| label: fig-scatter
+#| fig.cap: "Scattterplot"
+ggplot(dataset, aes(x = X, y = Y)) + geom_point(alpha = 0.1)
+```
+
+```{r}
+#| label: fig-density
+#| fig.cap: "Density of the variables"
+#| dev: svg
+dataset %>%
+  select(-ID) %>%
+  gather("Variable", "Value") %>%
+  ggplot(aes(x = Value)) + geom_density() + facet_wrap(~Variable, scales = "free")
+```
+
+The mathematical equation of the random slope model is given in @eq-original.
+It contains a fixed intercept and fixed slope along $X$ and a random intercept and random slope along $X$ for each $ID$.
+The random intercept $b_{0i}$ and random slope stem $b_{1i}$ from a bivariate normal distribution.
+
+$$Y \sim N(\mu, \sigma^2_\varepsilon)$${#eq-original}
+$$\mu = \beta_0 + \beta_1 X + b_{0i} + b_{1i} X$$
+$$b \sim N(0, \Sigma^2)$$
+
+The number of groups and the number of observations per group are two important things to check before running a mixed model.
+@fig-hist-id indicates that there are plenty of groups but a large number of groups have only one or just a few observations.
+This is often problematic in combination with a random slope.
+Let's see what the random slope actually does by cutting some corners and simplifying the mixed model into a set of hierarchical linear models.
+We have one linear model 'FE' that fits the response using only the fixed effects.
+For each group we fit another linear model on the _residuals_ of model 'FE'.
+So when there are only two observations in a group, the random slope model fits a straight line through only two points...
+To make things even worse, many groups have quite a small span (@fig-id-span).
+Image the worst case were a group has only two observations, both have extreme and opposite residuals from model 'FE' and their span is small.
+The result will be an extreme random slope...
+
+```{r}
+#| label: fig-hist-id
+#| fig.cap: "Histogram of the number of observations per group"
+#| dev: svg
+dataset %>%
+  count(ID) %>%
+  ggplot(aes(x = n)) + geom_histogram(binwidth = 1)
+```
+
+```{r}
+#| label: fig-id-span
+#| fig.cap: "Density of the span (difference between min and max) for all groups with at least 2 observations"
+#| dev: svg
+dataset %>% 
+  group_by(ID) %>% 
+  summarise(
+    span = max(X) - min(X),
+    n = n()
+  ) %>%
+  filter(n > 1) %>%
+  ggplot(aes(x = span)) + geom_density()
+```
+
+# Original model
+
+First we fit the original model.
+Notice the perfect negative correlation between the random intercept and the random slope.
+This triggered, rightly, an alarm with the researcher.
+The perfect correlation is clear when looking at a scatter plot of the random intercepts and random slopes (@fig-scatter-is).
+@fig-extreme-slopes show the nine most extreme random slopes.
+The Y-axis displays the difference between the observed $Y$ and the model fit using only the fixed effects ($\beta_0 + \beta_1X$).
+Note that the random slopes are not as strong as what we would expect from the naive hierarchical model we described above.
+Mixed models apply shrinkage to the coefficients of the random effects, making them less extreme.
+
+```{r}
+#| label: model
+model <- lmer(Y ~ X + (X|ID), data = dataset)
+summary(model)
+```
+
+```{r}
+#| label: fig-scatter-is
+#| fig.cap: "Scatterplot of the random intercepts and random slopes."
+rf <- ranef(model)$ID %>%
+  select(RandomIntercept = 1, RandomSlope = 2) %>%
+  rownames_to_column("ID") %>%
+  mutate(ID = as.integer(ID))
+ggplot(rf, aes(x = RandomIntercept, y = RandomSlope)) + geom_point()
+```
+
+```{r}
+#| label: fig-extreme-slopes
+#| fig.cap: "Illustration of the most extreme random slopes."
+#| dev: svg
+dataset <- dataset %>%
+  mutate(
+    Resid = resid(model),
+    Fixed = predict(model, re.form = ~0)
+  )
+rf %>%
+  arrange(desc(abs(RandomSlope))) %>%
+  slice(1:9) %>%
+  inner_join(dataset, by = "ID") %>%
+  ggplot(aes(x = X, y = Y - Fixed)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2) + 
+  geom_abline(aes(intercept = RandomIntercept, slope = RandomSlope)) +
+  facet_wrap(~ID)
+```
+
+Until now, we focused mainly on the random effects.
+Another thing one must check are the residuals.
+The QQ-plot (@fig-qq) indicates that several observations have quite strong residuals.
+Those should be checked by an expert with domain knowledge on the data.
+I recommend to start by looking at the top 20 observations with the most extreme residuals.
+Question the data for these observations: e.g. was the measurement correct, was the data entry correct, ...
+When the data turns out to be OK, question it's relevance for the model (e.g. is the observation a special case) and question the model itself (e.g. are missing something important in the model, does the model makes sense).
+Refit the model after the data cleaning and repeat the process until you are happy with both the model and the data.
+
+```{r}
+#| label: fig-qq
+#| fig.cap: "Density of the residuals"
+ggplot(dataset, aes(sample = Resid)) + stat_qq()
+```
+
+# Potential solutions
+
+## Removing questionable observations
+
+Here we demonstrate what happens in case all observations with strong residuals turn out to be questionable and are removed from the data.
+Note that we **do not** recommend to simply remove all observation with strong residuals.
+Instead have a domain expert scrutinise each observation and remove only those observations which are plain wrong or not relevant.
+This is something I can't do in this case because I don't have the required domain knowledge.
+For demonstration purposes I've removed all observations who's residuals are outside the (0.5%, 99.5%) quantile of the theoretical distribution of the residuals.
+The QQ-plot (fig. \@ref(fig:qq-cleaned)) now looks OK, but we still have perfect correlation among the random effects.
+
+```{r}
+#| label: fit-model-cleaned
+dataset_cleaned <- dataset %>%
+  filter(abs(Resid) < qnorm(0.995, mean = 0, sd = sigma(model)))
+model_cleaned <- lmer(Y ~ X + (X|ID), data = dataset_cleaned)
+summary(model_cleaned)
+```
+
+```{r}
+#| label: fig-qq-cleaned
+#| fig.cap: "QQ-plot for the original model on the cleaned dataset."
+dataset_cleaned %>% mutate(Resid = resid(model_cleaned)) %>%
+  ggplot(aes(sample = Resid)) + stat_qq()
+```
+
+## Centring and scaling
+
+Another thing that often can help is centring and scaling the data.
+In this case we centre to a zero mean and scale to a standard deviation of 1.
+Personally I prefer to centre to some meaningful value in the data.
+E.g. when the variable is the year of the observation I would centre to the first year, last year or some other important year within the dataset.
+This makes the interpretation of the model parameters easier.
+I usually scale variables by some power of 10 again because of the interpretation of the parameters.
+
+We will keep using the cleaned dataset so that the problematic observation don't interfere with the effect of centring and scaling.
+Scaling improves the correlation between the random intercept and the random slope.
+It is no longer a perfect correlation but still quite strong (@fig-scatter-is-centred).
+Note that the sign of the correlation has changed.
+Although we removed the questionable observations, there are still some groups of observations with quite strong deviations from the fixed effects part from the model (@fig-extreme-slopes-centred).
+
+```{r}
+#| label: model-centered
+dataset_cleaned <- dataset_cleaned %>%
+  mutate(
+    Xcs = scale(X, center = TRUE, scale = TRUE)
+  )
+model_centered <- lmer(Y ~ X + (Xcs | ID), data = dataset_cleaned)
+summary(model_centered)
+```
+
+```{r}
+#| label: fig-scatter-is-centred
+#| fig.cap: "Scatterplot of the random intercepts and random slopes after centering and scaling."
+rf <- ranef(model_centered)$ID %>%
+  select(RandomIntercept = 1, RandomSlope = 2) %>%
+  rownames_to_column("ID") %>%
+  mutate(ID = as.integer(ID))
+ggplot(rf, aes(x = RandomIntercept, y = RandomSlope)) + geom_point()
+```
+
+```{r}
+#| label: fig-extreme-slopes-centred
+#| fig.cap: "Illustration of the most extreme random slopes after centering and scaling."
+#| dev: svg
+dataset_cleaned <- dataset_cleaned %>%
+  mutate(
+    Resid = resid(model_centered),
+    Fixed = predict(model_centered, re.form = ~0)
+  )
+rf %>%
+  arrange(desc(abs(RandomSlope))) %>%
+  slice(1:9) %>%
+  inner_join(dataset_cleaned, by = "ID") %>%
+  ggplot(aes(x = X, y = Y - Fixed)) + 
+  geom_point() + 
+  geom_hline(yintercept = 0, linetype = 2) + 
+  geom_abline(aes(intercept = RandomIntercept, slope = RandomSlope)) +
+  facet_wrap(~ID)
+```
+
+## Simplifying the model
+
+Based on @fig-hist-id and @fig-id-span we already concluded that a random slope might be pushing it for this data set.
+So an obvious solution is to remove the random slope and only keep the random intercept.
+Though there still are quite a large number of groups with only one observation (@fig-hist-id), this is often less problematic in case you have plenty of groups with multiple observations.
+Note that the variance of the random intercept of this model is much smaller than in the previous models.
+The random intercept model is not as good as the random slope model in terms of AIC, but this comparison is a bit pointless since the random slope model is not trustworthy.
+
+```{r}
+#| label: model-simple
+model_simple <- lmer(Y ~ X + (1|ID), data = dataset_cleaned)
+summary(model_simple)
+anova(model_centered, model_simple)
+```
+
+## Transformations
+
+@fig-density indicated that the distribution of both $X$ and $Y$ is quite skewed.
+A $log$-transformation reduces the skewness (@fig-log-density) and reveals a quadratic relation between $\log(X)$ and $\log(Y)$ (@fig-scatter-log).
+
+```{r}
+#| label: fig-log-density
+#| fig.cap: "Density of $X$ and $Y$ after log-transformation"
+#| dev: svg
+dataset_cleaned %>%
+  select(X, Y) %>%
+  gather("Variable", "Value") %>%
+  ggplot(aes(x = log(Value))) + geom_density() + facet_wrap(~Variable, scales = "free")
+```
+
+```{r}
+#| label: fig-scatter-log
+#| fig.cap: "Scatterplot after log-transformation."
+ggplot(dataset_cleaned, aes(x = X, y = Y)) + geom_point(alpha = 0.1) + 
+  coord_trans(x = "log", y = "log")
+```
+
+This might be a relevant transformation, but it needs to be checked by a domain expert because this random slope model @eq-log expresses a different relation between $X$ and $Y$.
+The fixed part of model @eq-log becomes $Y \sim e^{\gamma_0 }X^{\gamma_1}$ after back transformation.
+
+$$\log(Y) \sim N(\eta, \sigma^2_\varepsilon)$${#eq-log}
+$$\eta = \gamma_0 + \gamma_1 \log(X) + c_{0i}$$
+$$c \sim N(0, \sigma^2)$$
+
+
+```{r}
+#| label: model-log
+dataset_cleaned <- dataset_cleaned %>% 
+  mutate(
+    logY = log(Y), 
+    logX = log(X)
+)
+model_log <- lmer(logY ~ logX + (1|ID), data = dataset_cleaned)
+summary(model_log)
+```
+
+A quadratic fixed effect of $\log(X)$ improves the model a lot.
+The resulting fit is given in @fig-fit-log.
+
+```{r}
+#| label: model-log2
+model_log2 <- lmer(logY ~ poly(logX, 2) + (1|ID), data = dataset_cleaned)
+anova(model_log, model_log2)
+summary(model_log2)
+```
+
+```{r}
+#| label: fig-fit-log
+#| fig.cap: "Predictions for the fixed effect of the quadratic model on $\\log(X)$"
+dataset_cleaned <- dataset_cleaned %>%
+  mutate(Fixed = predict(model_log2, re.form = ~0))
+ggplot(dataset_cleaned, aes(x = logX, y = logY)) +
+  geom_point(alpha = 0.1) +
+  geom_line(aes(y = Fixed), colour = "blue")
+```
+
+# Conclusions
+
+- First of all the data set needs to be checked for potential errors in the data.
+- The current design of the data does not support a random slope model.
+- A transformation of the variables might be relevant.
+
+## Session info
+
+```{r}
+#| label: session-info
+sessioninfo::session_info()
+```

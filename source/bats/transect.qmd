@@ -1,0 +1,437 @@
+---
+title: "Analysing data from bat observations along transects"
+author: "Thierry Onkelinx"
+date: "2017-07-02"
+categories: [bats, analysis]
+image: media/prediction.png
+tags: ["spatial point process", "kml", "leaflet"]
+knitr: 
+  opts_chunk: 
+    echo: false
+    warning: false
+    message: false
+    fig.width: 6
+    dev: svg
+params:
+  resolution: 100
+  crs: 31370
+  range: 20
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(git2rdata)
+library(INLA)
+library(knitr)
+library(leaflet)
+library(mapview)
+library(plotROC)
+library(scales)
+library(sf)
+library(tidyverse)
+```
+
+This post will handle observations of bats along a set of transects.
+It is a work in progress simply because I'm still collecting more data.
+So come back once and awhile to see potential updates.
+
+# The survey
+
+The principle of the survey is quite simple: walk around with a bat detector and note the route you took and were you encounter bats.
+Repeat this several times.
+I choose to take a different route each time so I can cover the same area at different times of night.
+
+I use [ObsMapp](https://play.google.com/store/apps/details?id=org.obsmapp&hl=en) to trace the route and the observations.
+The bat detector is a [Peersonic
+RPA2<!-- spell-check: ignore -->
+](../peersonic/index.html) with [Philips
+SHB9850NC <!-- spell-check: ignore -->
+headphones](http://www.philips.co.uk/c-p/SHB9850NC_00/wireless-noise-cancelling-headphones).
+This set-up is quite handy.
+At the start of the route you start listening to the bat detector and tell ObsMapp to start tracking the route.
+Each time you encounter a bat you a) make a sound recording of the bat and b) mark the observation in ObsMapp^[can be done in as little as three taps.].
+At home you upload the observations to
+[waarnemingen.be](https://www.waarnemingen.be),<!-- spell-check: ignore -->
+[waarneming.nl](https://www.waarneming.nl) <!-- spell-check: ignore -->
+or
+[observation.org](https://www.observation.org/).<!-- spell-check: ignore -->
+Then you check the observations based on the recorded sounds and update the observations on the website.
+Each survey is downloadable from the website under several formats.
+Here we will use both the [KML format](https://developers.google.com/kml/documentation/) and the csv format.
+The KML is required because it contains both the track of each route and the observations.
+The csv is needed for the date, the start time and end time of the track.
+
+# Survey effort
+
+[waarnemingen.be<!-- spell-check: ignore -->
+](https://www.waarnemingen.be) has unfortunately no API to download our data.
+We had to download every track manually as a KML file.
+Then we parse those files to get the observations and the tracks.
+The code to parse the files is available in the source code of the blog.
+The result is the set of all tracks and observations (@fig-raw-data).
+
+```{r}
+#| label: read-data
+#| fig-cap: Map with all tracks and all observations.
+repo <- repository()
+read_vc("source/bats/data/observation", root = repo) |>
+  mutate(
+    date = round.POSIXt(.data$timestamp, units = "days") |>
+      as.Date(),
+    date = .data$date - 1
+  ) |>
+  st_as_sf(coords = c("x", "y"), crs = st_crs(4326)) -> point
+read_vc("source/bats/data/transect", root = repo) |>
+  select(-"order") |>
+  nest(.by = "transect", .key = "coordinates") |>
+  mutate(
+    coordinates = map(.data$coordinates, as.matrix) |>
+      map(st_linestring)
+  ) |>
+  st_as_sf(crs = st_crs(4326)) -> route
+```
+
+```{r}
+#| label: fig-raw-data
+#| fig-cap: Map with all tracks and all observations.
+leaflet(route) |>
+  addTiles() |>
+  addPolylines() |>
+  addMarkers(data = point)
+```
+
+We determine the survey effort as the cumulative proportion on the area of grid cells that a covered by a survey.
+So we start by defining a grid with `r sprintf("%1$ix%1$im", params$resolution)` resolution.
+Then we create of buffer on `r sprintf("%im", params$range)` around the tracks because assume that we can here most bats up to this distance on the bat detector.
+The result is a ribbon marking the area where we could have detected bats.
+The total area of ribbon per grid cell is an indicator of the total survey effort per grid cell (@fig-survey-effort).
+
+```{r}
+#| label: survey-effort
+route_local <- st_transform(route, crs = st_crs(params$crs))
+route_buffer_local <- st_buffer(route_local, dist = params$range)
+route_buffer <- st_transform(route_buffer_local, crs = st_crs(4326))
+st_bbox(route_buffer_local) |>
+  head(2) -> offset
+route_buffer_local |>
+  st_union() |>
+  st_make_grid(
+    cellsize = params$resolution,
+    offset = (round(offset / params$resolution) - 0.5) * params$resolution
+  ) |>
+  st_as_sf() |>
+  mutate(grid_id = row_number()) -> grid
+st_overlaps(grid, route_buffer_local, sparse = FALSE) |>
+  apply(1, any) -> relevant
+grid <- grid[relevant, ]
+survey_effort <- st_intersection(grid, route_buffer_local, by_feature = TRUE)
+survey_effort |>
+  mutate(
+    area = st_area(survey_effort) |>
+      as.vector(),
+    effort = .data$area / params$resolution ^ 2
+  ) |>
+  st_drop_geometry() |>
+  inner_join(x = grid, by = "grid_id") -> survey_effort
+```
+
+```{r}
+#| label: fig-survey-effort
+#| fig-cap: "Map with total survey effort."
+survey_effort |>
+  st_drop_geometry() |>
+  group_by(.data$grid_id) |>
+  summarise(effort = sum(.data$effort)) |>
+  inner_join(x = grid, by = "grid_id") -> total_effort
+pal <- colorNumeric(palette = "Reds", domain = total_effort$effort)
+total_effort |>
+  st_transform(crs = st_crs(4326)) |>
+  leaflet() |>
+  addTiles() |>
+  addPolygons(color = ~pal(effort),  stroke = FALSE, fillOpacity = 0.5) |>
+  addPolygons(data = route_buffer, stroke = FALSE) |>
+  addLegend(
+    "bottomright", pal = pal, values = ~effort,
+    title = "Total<br>survey<br>effort", opacity = 1
+  )
+```
+
+# Presence of bats
+
+The number of observations per species is quite different.
+Only the common pipistrelle
+(_Pipistrellus pipistrellus_)<!-- spell-check: ignore -->
+has currently enough observations for the analysis (@tbl-observation-species).
+Note that the table also contains other mammal species because I note all mammal species that I encounter.
+
+```{r}
+#| label: tbl-observation-species
+#| tbl-cap: Number of observations per species and per track
+point |>
+  st_drop_geometry() |>
+  group_by(.data$date) |>
+  count(.data$species) |>
+  ungroup() |>
+  mutate(species = reorder(.data$species, -.data$n, sum)) |>
+  pivot_wider(names_from = "date", values_from = "n", values_fill = 0) |>
+  arrange(.data$species) |>
+  kable()
+```
+
+Next we check for each combination of track and grid cell whether we detected pipistrelles or not.
+@fig-presence displays the average presence over all tracks.
+
+```{r}
+#| label: prepare-data
+point |>
+  filter(.data$species == "Pipistrellus pipistrellus") -> pipistrelle
+pipistrelle_local <- st_transform(pipistrelle, crs = st_crs(params$crs))
+survey_effort |>
+  st_drop_geometry() |>
+  left_join(
+    st_intersection(survey_effort, pipistrelle_local) |>
+      st_drop_geometry() |>
+      distinct(.data$grid_id, transect = as.Date(.data$date), pipistrelle = 1),
+    by = c("grid_id", "transect")
+  ) |>
+  mutate(
+    pipistrelle = replace_na(.data$pipistrelle, 0),
+    route_id = factor(.data$transect) |>
+      as.integer()
+  ) -> observation_grid
+observation_grid |>
+  filter(.data$pipistrelle > 0) |>
+  semi_join(x = survey_effort, by = "grid_id") |>
+  st_centroid() |>
+  distinct(.data$grid_id, .data$x) -> observed
+survey_effort |>
+  st_centroid() -> centroids
+centroids |>
+  st_distance(observed) -> distances
+distances[distances == min(distances)] <- Inf
+survey_effort$pipi_nn <- apply(distances, 1, min)
+survey_effort |>
+  st_drop_geometry() |>
+  select("grid_id", "pipi_nn") |>
+  inner_join(x = observation_grid, by = "grid_id") -> observation_grid
+centroids |>
+  st_coordinates() |>
+  as.data.frame() -> coords
+unique(coords$X) |>
+  length() -> n_x
+unique(coords$Y) |>
+  length() -> n_y
+```
+
+```{r}
+#| label: fig-presence
+#| fig-cap: Map with presence of common pipistrelle.
+observation_grid |>
+  group_by(.data$grid_id) |>
+  summarise(pipistrelle = mean(.data$pipistrelle)) |>
+  inner_join(x = survey_effort, by = "grid_id") |>
+  st_transform(crs = st_crs(4326)) -> average_presence
+pal <- colorNumeric(
+  palette = rainbow(20, start = 2 / 3, end = 1),
+  domain = average_presence$pipistrelle
+)
+leaflet(average_presence) |>
+  addTiles() |>
+  addPolygons(color = ~pal(pipistrelle),  stroke = FALSE, fillOpacity = 0.5) |>
+  addPolygons(data = route_buffer, stroke = FALSE) |>
+  addLegend(
+    "bottomright", pal = pal, values = ~pipistrelle,
+    title = "Presence of<br>common pipistrelle", opacity = 1
+  )
+```
+
+@fig-nearest-neighbour show the distance from the centre of each grid cell to the centre of the nearest other grid cell were we detected common pipistrelle during the entire study.
+This can given an indication of clustering or repulsion.
+
+```{r}
+#| label: fig-nearest-neighbour
+#| fig-cap: Map with nearest neighbour distance of common pipistrelle.
+pal <- colorNumeric(palette = "RdYlBu", domain = survey_effort$pipi_nn)
+survey_effort |>
+  st_transform(crs = st_crs(4326)) |>
+  leaflet() |>
+  addTiles() |>
+  addPolygons(color = ~pal(pipi_nn), stroke = FALSE, fillOpacity = 0.5) |>
+  addPolygons(data = route_buffer, stroke = FALSE) |>
+  addLegend(
+    "bottomright", pal = pal, values = ~pipi_nn,
+    title = "Nearest neighbour of<br>common pipistrelle", opacity = 1
+  )
+```
+
+# Exploratory data analysis
+
+The current analysis used only very basic variables: survey effort (@fig-eda-effort) and nearest neighbour distance (@fig-eda-nn).
+
+```{r}
+#| label: fig-eda-effort
+#| fig-cap: Dection of common pipistrelle in terms of survey effort.
+ggplot(observation_grid, aes(x = effort, y = pipistrelle)) +
+  geom_smooth(
+    method = "gam",  formula = y ~ s(x, bs = "cs", k = 4),
+    method.args = list(family = binomial)
+  ) +
+  geom_point(alpha = 0.2) +
+  xlab("sampling effort") + 
+  scale_y_continuous("Detection", labels = percent)
+```
+
+```{r}
+#| label: fig-eda-nn
+#| fig-cap: "Dection of common pipistrelle in terms of distance to nearest
+#| neighbouring grid cell were common pipistrelle was observed.
+#| A small jitter was added due to heavy overlap between points."
+ggplot(observation_grid, aes(x = pipi_nn, y = pipistrelle)) +
+  geom_smooth(
+    method = "gam", formula = y ~ s(x, bs = "cs", k = 4),
+    method.args = list(family = binomial)
+  ) +
+  geom_jitter(alpha = 0.1, height = 0.05, width = 10) +
+  scale_x_continuous("Distance to nearest neighbouring grid cell (m)") +
+  scale_y_continuous("Detection", labels = percent)
+```
+
+# Modelling
+
+```{r}
+#| label: prepare-stacks
+a_observation <- Diagonal(n_x * n_y)[observation_grid$grid_id, ]
+stack_observation <- inla.stack(
+  tag = "observation", data = list(present = observation_grid$pipistrelle),
+  A = list(a_observation, 1),
+  effects = list(
+    grid_id = seq_len(n_x * n_y),
+    observation_grid |>
+      transmute(
+        intercept = 1, .data$grid_id, .data$route_id, log_effect = .data$effort,
+        pipi_nn1 = (.data$pipi_nn / 200) - 1, pipi_nn2 = .data$pipi_nn1 ^ 2
+      )
+  )
+)
+survey_effort |>
+  distinct(.data$grid_id, .data$pipi_nn) |>
+  mutate(
+    intercept = 1, log_effort = log(1), pipi_nn1 = (.data$pipi_nn / 200) - 1,
+    pipi_nn2 = .data$pipi_nn1 ^ 2
+  ) -> prediction_poly
+a_prediction <- Diagonal(n_x * n_y)[prediction_poly$grid_id, ]
+stack_predict <- inla.stack(
+  tag = "prediction",
+  data = list(present = rep(NA, nrow(grid))),
+  A = list(a_prediction, 1),
+  effects = list(grid_id = seq_len(n_x * n_y), prediction_poly)
+)
+stacks <- inla.stack(stack_observation, stack_predict)
+```
+
+```{r}
+#| label: model
+m <- inla(
+  present ~ 0 + intercept + log_effort + pipi_nn1 + pipi_nn2 +
+    f(
+      grid_id, model = "rw2d", nrow = n_x, ncol = n_y, scale.model = TRUE,
+      hyper = list(theta = list(prior = "pc.prec", param = c(1, 0.01)))
+    ),
+  family = "binomial", data = inla.stack.data(stacks),
+  control.compute = list(waic = TRUE, dic = TRUE),
+  control.predictor = list(link = 1, A = inla.stack.A(stacks))
+)
+```
+
+```{r}
+#| label: prediction
+grid_index <- inla.stack.index(stacks, "prediction")$data
+m$summary.fitted.values[grid_index, ] |>
+  select(median = 4, lcl = 3, ucl = 5) |>
+  bind_cols(prediction_poly) |>
+  inner_join(x = grid, by = "grid_id") |>
+  st_transform(crs = st_crs(4236)) -> predicted
+```
+
+@fig-prediction-mean show the median predicted probability for common pipistrelle.
+This is an estimation of the change to encounter common pipistrelles in each grid cell.
+The lower credible limit of these prediction are useful to detect the important locations (@fig-prediction-lcl).
+The higher the lower credible limit, the more certain the model is about the presence of common pipistrelles.
+Likewise, the upper credible limit (@fig-prediction-ucl) is useful to detect locations where the model is more certain about the absence of common pipistrelle.
+
+```{r}
+#| label: fig-prediction-mean
+#| fig-cap: "Median of predicted probability for common pipistrelle assuming
+#| fully surveyed grid cells."
+pal <- colorNumeric(palette = "RdYlBu", domain = 0:1, reverse = TRUE)
+map <- leaflet(predicted) |>
+  addTiles() |>
+  addPolygons(color = ~pal(median), stroke = FALSE, fillOpacity = 0.5) |>
+  addLegend(
+    "bottomright", pal = pal, values = ~median, title = "Probability",
+    opacity = 1
+  )
+map
+```
+
+```{r}
+#| label: thumbnail
+#| results: hide
+junk <- mapshot(map, file = "media/prediction.png")
+```
+
+```{r}
+#| label: fig-prediction-lcl
+#| fig-cap: "Lower credible interval of predicted probability for common
+#| pipistrelle assuming fully surveyed grid cells."
+leaflet(predicted) |>
+  addTiles() |>
+  addPolygons(color = ~pal(lcl), stroke = FALSE, fillOpacity = 0.5) |>
+  addLegend(
+    "bottomright", pal = pal, values = ~lcl,title = "Probability", opacity = 1
+  )
+```
+
+```{r}
+#| label: fig-prediction-ucl
+#| fig-cap: "Upper credible interval of predicted probability for common
+#| pipistrelle assuming fully surveyed grid cells."
+pal <- colorNumeric(palette = "RdYlBu",domain = predicted$ucl, reverse = TRUE)
+leaflet(predicted) |>
+  addTiles() |>
+  addPolygons(color = ~pal(ucl),  stroke = FALSE, fillOpacity = 0.5) |>
+  addLegend(
+    "bottomright", pal = pal, values = ~ucl, title = "Probability", opacity = 1
+  )
+```
+
+The [receiver operating characteristic](https://en.wikipedia.org/wiki/Receiver_operating_characteristic) (ROC, @fig-roc) gives an indication of the quality of the model.
+It can be summarised by the [area under the curve](https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve) (AUC).
+The closer the AUC value get to 1, the better the model.
+
+```{r}
+#| label: fig-roc
+#| fig-cap: Receiver operating curve.
+observed_index <- inla.stack.index(stacks, "observation")$data
+dataset <- data.frame(
+  fitted = m$summary.fitted.values[observed_index, "mean"],
+  observed = observation_grid$pipistrelle
+)
+ggroc <- ggplot(dataset, aes(m = fitted, d = observed)) +
+  geom_roc(labels = FALSE, size.point = NA)
+auc <- calc_auc(ggroc)
+ggroc +
+  geom_abline(linetype = 3) +
+  coord_fixed() +
+  xlab("False positive fraction") + 
+  ylab("True positive fraction") + 
+  ggtitle(sprintf("AUC: %.3f", auc$AUC))
+```
+
+## Session info
+
+```{r}
+#| label: session-info
+sessioninfo::session_info()
+```

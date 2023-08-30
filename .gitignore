@@ -10,6 +10,7 @@
 *.shp*
 *.shx
 *.xls*
+*_cache
 *_files
 .DS_Store
 .RData
