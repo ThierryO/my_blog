@@ -5,6 +5,8 @@ allowed:
   notes: []
 required:
 - checklist
+- filename conventions
+- folder conventions
 - lintr
 - spelling
 spelling:
