@@ -44,7 +44,8 @@ ggplot(dataset, aes(x = X, y = Y)) + geom_point(alpha = 0.1)
 dataset %>%
   select(-ID) %>%
   gather("Variable", "Value") %>%
-  ggplot(aes(x = Value)) + geom_density() + facet_wrap(~Variable, scales = "free")
+  ggplot(aes(x = Value)) + geom_density() +
+  facet_wrap(~Variable, scales = "free")
 ```
 
 The mathematical equation of the random slope model is given in @eq-original.
@@ -77,10 +78,11 @@ dataset %>%
 
 ```{r}
 #| label: fig-id-span
-#| fig.cap: "Density of the span (difference between min and max) for all groups with at least 2 observations"
+#| fig.cap: "Density of the span (difference between min and max) for all groups
+#| with at least 2 observations"
 #| dev: svg
-dataset %>% 
-  group_by(ID) %>% 
+dataset %>%
+  group_by(ID) %>%
   summarise(
     span = max(X) - min(X),
     n = n()
@@ -102,7 +104,7 @@ Mixed models apply shrinkage to the coefficients of the random effects, making t
 
 ```{r}
 #| label: model
-model <- lmer(Y ~ X + (X|ID), data = dataset)
+model <- lmer(Y ~ X + (X | ID), data = dataset)
 summary(model)
 ```
 
@@ -129,9 +131,9 @@ rf %>%
   arrange(desc(abs(RandomSlope))) %>%
   slice(1:9) %>%
   inner_join(dataset, by = "ID") %>%
-  ggplot(aes(x = X, y = Y - Fixed)) + 
-  geom_point() + 
-  geom_hline(yintercept = 0, linetype = 2) + 
+  ggplot(aes(x = X, y = Y - Fixed)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = 2) +
   geom_abline(aes(intercept = RandomIntercept, slope = RandomSlope)) +
   facet_wrap(~ID)
 ```
@@ -166,14 +168,15 @@ The QQ-plot (fig. \@ref(fig:qq-cleaned)) now looks OK, but we still have perfect
 #| label: fit-model-cleaned
 dataset_cleaned <- dataset %>%
   filter(abs(Resid) < qnorm(0.995, mean = 0, sd = sigma(model)))
-model_cleaned <- lmer(Y ~ X + (X|ID), data = dataset_cleaned)
+model_cleaned <- lmer(Y ~ X + (X | ID), data = dataset_cleaned)
 summary(model_cleaned)
 ```
 
 ```{r}
 #| label: fig-qq-cleaned
 #| fig.cap: "QQ-plot for the original model on the cleaned dataset."
-dataset_cleaned %>% mutate(Resid = resid(model_cleaned)) %>%
+dataset_cleaned %>%
+  mutate(Resid = resid(model_cleaned)) %>%
   ggplot(aes(sample = Resid)) + stat_qq()
 ```
 
@@ -204,7 +207,8 @@ summary(model_centered)
 
 ```{r}
 #| label: fig-scatter-is-centred
-#| fig.cap: "Scatterplot of the random intercepts and random slopes after centering and scaling."
+#| fig.cap: "Scatterplot of the random intercepts and random slopes after
+#| centering and scaling."
 rf <- ranef(model_centered)$ID %>%
   select(RandomIntercept = 1, RandomSlope = 2) %>%
   rownames_to_column("ID") %>%
@@ -214,7 +218,8 @@ ggplot(rf, aes(x = RandomIntercept, y = RandomSlope)) + geom_point()
 
 ```{r}
 #| label: fig-extreme-slopes-centred
-#| fig.cap: "Illustration of the most extreme random slopes after centering and scaling."
+#| fig.cap: "Illustration of the most extreme random slopes after centering and
+#| scaling."
 #| dev: svg
 dataset_cleaned <- dataset_cleaned %>%
   mutate(
@@ -225,9 +230,9 @@ rf %>%
   arrange(desc(abs(RandomSlope))) %>%
   slice(1:9) %>%
   inner_join(dataset_cleaned, by = "ID") %>%
-  ggplot(aes(x = X, y = Y - Fixed)) + 
-  geom_point() + 
-  geom_hline(yintercept = 0, linetype = 2) + 
+  ggplot(aes(x = X, y = Y - Fixed)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = 2) +
   geom_abline(aes(intercept = RandomIntercept, slope = RandomSlope)) +
   facet_wrap(~ID)
 ```
@@ -242,7 +247,7 @@ The random intercept model is not as good as the random slope model in terms of 
 
 ```{r}
 #| label: model-simple
-model_simple <- lmer(Y ~ X + (1|ID), data = dataset_cleaned)
+model_simple <- lmer(Y ~ X + (1 | ID), data = dataset_cleaned)
 summary(model_simple)
 anova(model_centered, model_simple)
 ```
@@ -259,13 +264,14 @@ A $log$-transformation reduces the skewness (@fig-log-density) and reveals a qua
 dataset_cleaned %>%
   select(X, Y) %>%
   gather("Variable", "Value") %>%
-  ggplot(aes(x = log(Value))) + geom_density() + facet_wrap(~Variable, scales = "free")
+  ggplot(aes(x = log(Value))) + geom_density() +
+  facet_wrap(~Variable, scales = "free")
 ```
 
 ```{r}
 #| label: fig-scatter-log
 #| fig.cap: "Scatterplot after log-transformation."
-ggplot(dataset_cleaned, aes(x = X, y = Y)) + geom_point(alpha = 0.1) + 
+ggplot(dataset_cleaned, aes(x = X, y = Y)) + geom_point(alpha = 0.1) +
   coord_trans(x = "log", y = "log")
 ```
 
@@ -279,12 +285,9 @@ $$c \sim N(0, \sigma^2)$$
 
 ```{r}
 #| label: model-log
-dataset_cleaned <- dataset_cleaned %>% 
-  mutate(
-    logY = log(Y), 
-    logX = log(X)
-)
-model_log <- lmer(logY ~ logX + (1|ID), data = dataset_cleaned)
+dataset_cleaned <- dataset_cleaned %>%
+  mutate(logY = log(Y), logX = log(X))
+model_log <- lmer(logY ~ logX + (1 | ID), data = dataset_cleaned)
 summary(model_log)
 ```
 
@@ -293,14 +296,15 @@ The resulting fit is given in @fig-fit-log.
 
 ```{r}
 #| label: model-log2
-model_log2 <- lmer(logY ~ poly(logX, 2) + (1|ID), data = dataset_cleaned)
+model_log2 <- lmer(logY ~ poly(logX, 2) + (1 | ID), data = dataset_cleaned)
 anova(model_log, model_log2)
 summary(model_log2)
 ```
 
 ```{r}
 #| label: fig-fit-log
-#| fig.cap: "Predictions for the fixed effect of the quadratic model on $\\log(X)$"
+#| fig.cap: "Predictions for the fixed effect of the quadratic model on
+#| $\\log(X)$"
 dataset_cleaned <- dataset_cleaned %>%
   mutate(Fixed = predict(model_log2, re.form = ~0))
 ggplot(dataset_cleaned, aes(x = logX, y = logY)) +

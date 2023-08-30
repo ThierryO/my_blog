@@ -131,9 +131,8 @@ map
 #| label: thumbnail
 #| results: hide
 #| echo: false
-junk <- mapview::mapshot(map, file = "data/prediction.png")
+junk <- mapview::mapshot(map, file = "media/prediction.png")
 ```
-
 
 ## Session info
 

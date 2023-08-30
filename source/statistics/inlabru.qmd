@@ -137,7 +137,7 @@ m1_inla <- inla(
 )
 m1_inlabru <- bru(count ~ cyear + month, data = goose, family = "nbinomial")
 summary(m1_inla)
-goose |> 
+goose |>
   model.matrix(object = ~month) |>
   as.data.frame() |>
   select(-1) |>
@@ -171,7 +171,7 @@ goose |>
       as.integer()
   ) -> goose
 n_loc <- max(goose$loc_id)
-comp_inlabru <- count ~ cyear + monthdec + monthjan + monthfeb + 
+comp_inlabru <- count ~ cyear + monthdec + monthjan + monthfeb +
   site(main = loc_id, model = "iid", n = n_loc)
 m2_inlabru <- bru(comp_inlabru, data = goose, family = "nbinomial")
 summary(m2_inla)
@@ -191,18 +191,18 @@ goose |>
     cyear2 = .data$cyear
   ) -> goose2
 n_year <- max(goose2$cyear)
-comp_inla <- count ~ cyear + f(cyear2, model = "iid") + 
+comp_inla <- count ~ cyear + f(cyear2, model = "iid") +
   month + f(location_id, model = "iid")
 m3_inla <- inla(
-  comp_inla, data = goose2, family = "nbinomial", 
+  comp_inla, data = goose2, family = "nbinomial",
   control.compute = list(waic = TRUE, dic = TRUE)
 )
 comp_inlabru <- count ~ cyear + monthdec + monthjan + monthfeb +
   rtrend(main = cyear, model = "iid", n = n_year) +
   site(main = loc_id, model = "iid", n = n_loc)
 m3_inlabru <- bru(comp_inlabru, data = goose2, family = "nbinomial")
-comp_inlabru <- count ~ 
-  lintrend(main = cyear, model = "linear") + 
+comp_inlabru <- count ~
+  lintrend(main = cyear, model = "linear") +
   quadtrend(main = cyear ^ 2, model = "linear") +
   rtrend(main = cyear, model = "iid", n = n_year) +
   monthdec + monthjan + monthfeb + site(main = loc_id, model = "iid", n = n_loc)
@@ -228,7 +228,7 @@ This creates larger triangles outside the boundary, which will speed up the comp
 
 ```{r}
 #| label: fig-flanders-mesh
-#| fig-cap: Mesh for Flanders. Red circles indicate the sites.,
+#| fig-cap: Mesh for Flanders. Red circles indicate the sites.
 #| message: false
 st_as_sf(goose, coords = c("long", "lat"), crs = st_crs(4326)) |>
   st_transform(st_crs(31370)) -> goose_lambert
@@ -269,11 +269,11 @@ This functions returns the coordinates of an `sf` object, so [`inlabr::bru()`](h
 ```{r}
 #| label: fit-spde
 ## INLA
-A <- inla.spde.make.A(mesh = flanders_mesh, loc = goose_lambert)
+a_flanders <- inla.spde.make.A(mesh = flanders_mesh, loc = goose_lambert)
 goose_stack <- inla.stack(
-  tag = 'estimation', ## tag
+  tag = "estimation", ## tag
   data = list(count = goose$count), ## response
-  A = list(A, 1), ## two projector matrices (SPDE and fixed effects)
+  A = list(a_flanders, 1), ## two projector matrices (SPDE and fixed effects)
   effects = list(## two elements:
     site = seq_len(flanders_spde$n.spde), ## RF index
     goose |>
@@ -282,7 +282,7 @@ goose_stack <- inla.stack(
 )
 comp_inla <- count ~ 0 + month + cyear + f(site, model = flanders_spde)
 m4_inla <- inla(
-  comp_inla, data = inla.stack.data(goose_stack), family = "nbinomial", 
+  comp_inla, data = inla.stack.data(goose_stack), family = "nbinomial",
   control.compute = list(waic = TRUE, dic = TRUE),
   control.predictor = list(A = inla.stack.A(goose_stack))
 )
@@ -325,14 +325,14 @@ pc_prior <- list(theta = list(prior = "pc.prec", param = c(1, 0.01)))
 goose |>
   mutate(iyear = .data$cyear - min(.data$cyear) + 1) -> goose
 n_year <- max(goose$iyear)
-comp_inla <- count ~ month + 
-  f(cyear, model = "rw1", hyper = pc_prior) + 
+comp_inla <- count ~ month +
+  f(cyear, model = "rw1", hyper = pc_prior) +
   f(location_id, model = "iid", hyper = pc_prior)
 m5_inla <- inla(
-  comp_inla, data = goose, family = "nbinomial", 
+  comp_inla, data = goose, family = "nbinomial",
   control.compute = list(waic = TRUE, dic = TRUE)
 )
-comp_inlabru <- count ~ monthdec + monthjan + monthfeb + 
+comp_inlabru <- count ~ monthdec + monthjan + monthfeb +
   trend(main = iyear, model = "rw1", n = n_year, hyper = pc_prior) +
   site(main = loc_id, model = "iid", n = n_loc, hyper = pc_prior)
 m5_inlabru <- bru(comp_inlabru, data = goose, family = "nbinomial")
@@ -347,16 +347,16 @@ plot(m5_inla)
 ```{r}
 #| label: fig-plot-fixed
 #| fig-cap: Posterior density plots of the fixed effects
-p_intercept <- plot(m5_inlabru, "Intercept") + 
+p_intercept <- plot(m5_inlabru, "Intercept") +
   geom_vline(xintercept = 0, linetype = 2) +
   xlim(-1, 4)
-p_monthdec <- plot(m5_inlabru, "monthdec") + 
+p_monthdec <- plot(m5_inlabru, "monthdec") +
   geom_vline(xintercept = 0, linetype = 2) +
   xlim(-1, 4)
-p_monthjan <- plot(m5_inlabru, "monthjan") + 
+p_monthjan <- plot(m5_inlabru, "monthjan") +
   geom_vline(xintercept = 0, linetype = 2) +
   xlim(-1, 4)
-p_monthfeb <- plot(m5_inlabru, "monthfeb") + 
+p_monthfeb <- plot(m5_inlabru, "monthfeb") +
   geom_vline(xintercept = 0, linetype = 2) +
   xlim(-1, 4)
 multiplot(p_intercept, p_monthdec, p_monthjan, p_monthfeb)
@@ -392,7 +392,8 @@ multiplot(p_trend, p_site)
 
 ```{r}
 #| label: fig-mesh-range-var
-#| fig-cap: Posterior distributions of the range and log variance of the Matérn covariace for the sites.
+#| fig-cap: "Posterior distributions of the range and log variance of the Matérn
+#| covariace for the sites."
 spde_range <- spde.posterior(m4b_inlabru, "site", what = "range")
 spde_logvar <- spde.posterior(m4b_inlabru, "site", what = "log.variance")
 range_plot <- plot(spde_range)
@@ -484,10 +485,11 @@ goose |>
     .data$monthfeb
   ) |>
   predict(
-    object = m5_inlabru, 
+    object = m5_inlabru,
     formula = ~ exp(Intercept + trend + monthdec + monthjan + monthfeb)
   ) -> pred_trend_month
-ggplot(pred_trend_month, aes(x = year, y = mean, ymin = q0.025, ymax = q0.975)) +
+pred_trend_month |>
+  ggplot(aes(x = year, y = mean, ymin = q0.025, ymax = q0.975)) +
   geom_ribbon(aes(fill = month), alpha = 0.1) +
   geom_line(aes(colour = month))
 ```
@@ -512,7 +514,7 @@ goose |>
   distinct(.data$year, .data$iyear, .data$month, .data$monthjan) |>
   filter(.data$year == max(.data$year), .data$month == "jan") |>
   predict(
-    object = m5_inlabru, 
+    object = m5_inlabru,
     formula =   ~ data.frame(
       n = 0:450,
       dnbinom(0:450, size = size, mu = exp(Intercept + trend + monthjan))
@@ -541,7 +543,7 @@ goose |>
   distinct(.data$year, .data$iyear, .data$month, .data$monthjan) |>
   filter(.data$year == max(.data$year), .data$month == "jan") |>
   predict(
-    object = m5_inlabru, 
+    object = m5_inlabru,
     formula =   ~ data.frame(
       n = 0:450,
       dnbinom(0:450, size = size, mu = exp(Intercept + trend + monthjan))
@@ -577,7 +579,7 @@ The example below illustrated how you can use aggregation.
 goose |>
   filter(.data$year == max(.data$year), .data$month == "jan") |>
   predict(
-    object = m5_inlabru, 
+    object = m5_inlabru,
     formula = ~ exp(
       Intercept + trend + monthdec + monthjan + monthfeb + site
     ) |>
@@ -590,7 +592,7 @@ high <- qnbinom(0.999, mu = pred_total$q0.975, size = size)
 goose |>
   filter(.data$year == max(.data$year), .data$month == "jan") |>
   predict(
-    object = m5_inlabru, 
+    object = m5_inlabru,
     formula =   ~ data.frame(
       n = low:high,
       dnbinom(
@@ -625,16 +627,16 @@ st_crs(pred_mesh) <- 31370
 site_mean <- ggplot() +
   geom_sf(data = pred_mesh, aes(colour = median)) +
   geom_sf(data = flanders, fill = NA, colour = "red", linewidth = 0.5)
-site_q0.025 <- ggplot() +
+site_q0_025 <- ggplot() +
   geom_sf(data = pred_mesh, aes(colour = q0.025)) +
   geom_sf(data = flanders, fill = NA, colour = "red", linewidth = 0.5)
-site_q0.975 <- ggplot() +
+site_q0_975 <- ggplot() +
   geom_sf(data = pred_mesh, aes(colour = q0.975)) +
   geom_sf(data = flanders, fill = NA, colour = "red", linewidth = 0.5)
 site_cv <- ggplot() +
   geom_sf(data = pred_mesh, aes(colour = sd)) +
   geom_sf(data = flanders, fill = NA, colour = "red", linewidth = 0.5)
-multiplot(site_mean, site_q0.025, site_cv, site_q0.975, cols = 2)
+multiplot(site_mean, site_q0_025, site_cv, site_q0_975, cols = 2)
 ```
 
 ## Session info

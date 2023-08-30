@@ -96,10 +96,10 @@ None of the recordings was longer than 10 seconds.
 
 ```{r}
 #| label: fig-length
-#| fig.cap: !expr sprintf("Distribution of the number of recordings per %i minutes", binwidth)
-#| fig.alt: !expr sprintf("Distribution of the number of recordings per %i minutes", binwidth)
+#| fig-cap: !expr sprintf("Distribution of the number of recordings per %i minutes", binwidth) # nolint: line_length_linter.
+#| fig-alt: !expr sprintf("Distribution of the number of recordings per %i minutes", binwidth) # nolint: line_length_linter.
 ggplot(
-  observation, 
+  observation,
   aes(x = timestamp, fill = factor(length, levels = c(10, 5)))
 ) +
   geom_histogram(binwidth = binwidth * 60) +

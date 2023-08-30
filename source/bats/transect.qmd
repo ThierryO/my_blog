@@ -278,7 +278,7 @@ ggplot(observation_grid, aes(x = effort, y = pipistrelle)) +
     method.args = list(family = binomial)
   ) +
   geom_point(alpha = 0.2) +
-  xlab("sampling effort") + 
+  xlab("sampling effort") +
   scale_y_continuous("Detection", labels = percent)
 ```
 
@@ -389,7 +389,7 @@ leaflet(predicted) |>
   addTiles() |>
   addPolygons(color = ~pal(lcl), stroke = FALSE, fillOpacity = 0.5) |>
   addLegend(
-    "bottomright", pal = pal, values = ~lcl,title = "Probability", opacity = 1
+    "bottomright", pal = pal, values = ~lcl, title = "Probability", opacity = 1
   )
 ```
 
@@ -397,7 +397,7 @@ leaflet(predicted) |>
 #| label: fig-prediction-ucl
 #| fig-cap: "Upper credible interval of predicted probability for common
 #| pipistrelle assuming fully surveyed grid cells."
-pal <- colorNumeric(palette = "RdYlBu",domain = predicted$ucl, reverse = TRUE)
+pal <- colorNumeric(palette = "RdYlBu", domain = predicted$ucl, reverse = TRUE)
 leaflet(predicted) |>
   addTiles() |>
   addPolygons(color = ~pal(ucl),  stroke = FALSE, fillOpacity = 0.5) |>
@@ -424,8 +424,8 @@ auc <- calc_auc(ggroc)
 ggroc +
   geom_abline(linetype = 3) +
   coord_fixed() +
-  xlab("False positive fraction") + 
-  ylab("True positive fraction") + 
+  xlab("False positive fraction") +
+  ylab("True positive fraction") +
   ggtitle(sprintf("AUC: %.3f", auc$AUC))
 ```
 

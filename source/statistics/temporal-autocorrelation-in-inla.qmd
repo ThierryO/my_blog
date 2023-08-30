@@ -73,7 +73,7 @@ example %>%
 #| label: fig-true-trend
 #| fig.cap: "Overal true trend in carving for the 'average' participant."
 library(plotly)
-p <- ggplot(example, aes(x = DayTime, y = plogis(fixed))) + 
+p <- ggplot(example, aes(x = DayTime, y = plogis(fixed))) +
   geom_line() +
   xlab("Time (in days)") +
   ylab("Probability of craving")
@@ -114,42 +114,34 @@ We fitted the `ar1` model once without sum-to-zero constraint (default) and once
 ```{r}
 #| label: model-ar1
 library(INLA)
-model.ar1 <- inla(
-  Craving ~ f(Hour, model = "ar1") + f(ID, model = "iid"), 
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+model_ar1 <- inla(
+  Craving ~ f(Hour, model = "ar1") + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: model-ar1c
-model.ar1c <- inla(
-  Craving ~ f(Hour, model = "ar1", constr = TRUE) + f(ID, model = "iid"), 
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+model_ar1c <- inla(
+  Craving ~ f(Hour, model = "ar1", constr = TRUE) + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: model-rw1
-pc.prec <- list(theta = list(prior = "pc.prec", param = c(0.5, 0.01)))
-model.rw1 <- inla(
-  Craving ~ f(Hour, model = "rw1", hyper = pc.prec) + f(ID, model = "iid"), 
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+pc_prec <- list(theta = list(prior = "pc.prec", param = c(0.5, 0.01)))
+model_rw1 <- inla(
+  Craving ~ f(Hour, model = "rw1", hyper = pc_prec) + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: model-rw2
-model.rw2 <- inla(
+model_rw2 <- inla(
   Craving ~ f(Hour, model = "rw2") + f(ID, model = "iid"),
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
@@ -170,21 +162,22 @@ When the sum-to-zero constraint it also added to the `ar1` model, then the resul
 
 ```{r}
 #| label: fig-fitted
-#| fig.cap: "Comparsion of the fitted values for `ID == 1` under the different models"
+#| fig.cap: "Comparsion of the fitted values for `ID == 1` under the different
+#| models"
 p <- bind_rows(
-  model.ar1$summary.fitted.values %>%
+  model_ar1$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "ar1") %>%
     bind_cols(example),
-  model.ar1c$summary.fitted.values %>%
+  model_ar1c$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "ar1c") %>%
     bind_cols(example),
-  model.rw1$summary.fitted.values %>%
+  model_rw1$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "rw1") %>%
     bind_cols(example),
-  model.rw2$summary.fitted.values %>%
+  model_rw2$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "rw2") %>%
     bind_cols(example)
@@ -200,18 +193,19 @@ ggplotly(p)
 
 ```{r}
 #| label: fig-rf
-#| fig.cap: "Comparsion of the random effects of `Hour` under the different models"
+#| fig.cap: "Comparsion of the random effects of `Hour` under the different
+#| models"
 p <- bind_rows(
-  model.ar1$summary.random$Hour %>%
+  model_ar1$summary.random$Hour %>%
     select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "ar1"),
-  model.ar1c$summary.random$Hour %>%
+  model_ar1c$summary.random$Hour %>%
     select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "ar1c"),
-  model.rw1$summary.random$Hour %>%
+  model_rw1$summary.random$Hour %>%
     select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "rw1"),
-  model.rw2$summary.random$Hour %>%
+  model_rw2$summary.random$Hour %>%
     select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "rw2")
 ) %>%
@@ -225,16 +219,16 @@ ggplotly(p)
 #| label: fig-fixed
 #| fig.cap: "Comparison of the fixed effects of the different models"
 bind_rows(
-  model.ar1$summary.fixed %>%
+  model_ar1$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "ar1"),
-  model.ar1c$summary.fixed %>%
+  model_ar1c$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "ar1c"),
-  model.rw1$summary.fixed %>%
+  model_rw1$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "rw1"),
-  model.rw2$summary.fixed %>%
+  model_rw2$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "rw2")
 ) %>%
@@ -248,9 +242,11 @@ The $WAIC$ values of the three models are also very similar.
 
 ```{r}
 #| label: waic
-sort(c(
-  ar1 = model.ar1$waic$waic, ar1c = model.ar1c$waic$waic, 
-  rw1 = model.rw1$waic$waic, rw2 = model.rw2$waic$waic))
+c(
+  ar1 = model_ar1$waic$waic, ar1c = model_ar1c$waic$waic,
+  rw1 = model_rw1$waic$waic, rw2 = model_rw2$waic$waic
+) |>
+  sort()
 ```
 
 # Continuous time step
@@ -280,41 +276,35 @@ The time stamp was rounded to 0.01 hours for the `rw1` model.
 
 ```{r}
 #| label: model-crw2
-model.crw2 <- inla(
-  Craving ~ f(inla.group(Timestamp, n = 100), model = "crw2") + f(ID, model = "iid"),
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+model_crw2 <- inla(
+  Craving ~ f(inla.group(Timestamp, n = 100), model = "crw2") +
+    f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: model-ou
-model.ou <- inla(
+model_ou <- inla(
   Craving ~ f(Timestamp, model = "ou") + f(ID, model = "iid"),
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: model-ouc
-model.ouc <- inla(
+model_ouc <- inla(
   Craving ~ f(Timestamp, model = "ou", constr = TRUE) + f(ID, model = "iid"),
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: model-rw1t
-model.rw1t <- inla(
-  Craving ~ f(Timestamp2, model = "rw1", hyper = pc.prec) + f(ID, model = "iid"), 
-  family = "binomial", 
-  data = example,
-  control.compute = list(waic = TRUE)
+model_rw1t <- inla(
+  Craving ~ f(Timestamp2, model = "rw1", hyper = pc_prec) +
+    f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
 )
 ```
 
@@ -330,21 +320,22 @@ Adding the sum-to-zero constrains to `ou` shrinks the credible intervals, althou
 
 ```{r}
 #| label: fig-fitted2
-#| fig.cap: "Comparsion of the fitted values for `ID == 1` under the different continuous time step models"
+#| fig.cap: "Comparsion of the fitted values for `ID == 1` under the different
+#| continuous time step models"
 p <- bind_rows(
-  model.ou$summary.fitted.values %>%
+  model_ou$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "ou") %>%
     bind_cols(example),
-  model.ouc$summary.fitted.values %>%
+  model_ouc$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "ouc") %>%
     bind_cols(example),
-  model.rw1t$summary.fitted.values %>%
+  model_rw1t$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "rw1t") %>%
     bind_cols(example),
-  model.crw2$summary.fitted.values %>%
+  model_crw2$summary.fitted.values %>%
     select(fitted = 1, lcl = 3, ucl = 5) %>%
     mutate(Model = "crw2") %>%
     bind_cols(example)
@@ -360,18 +351,19 @@ ggplotly(p)
 
 ```{r}
 #| label: fig-rf2
-#| fig.cap: "Comparsion of the random effects of `Timestamp` under the different continuous time step models"
+#| fig.cap: "Comparsion of the random effects of `Timestamp` under the different
+#| continuous time step models"
 p <- bind_rows(
-  model.ou$summary.random$Timestamp %>%
+  model_ou$summary.random$Timestamp %>%
     select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "ou"),
-  model.ouc$summary.random$Timestamp %>%
+  model_ouc$summary.random$Timestamp %>%
     select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "ouc"),
-  model.rw1t$summary.random$Timestamp2 %>%
+  model_rw1t$summary.random$Timestamp2 %>%
     select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
     mutate(Model = "rw1t"),
-  model.crw2$summary.random$`inla.group(Timestamp, n = 100)` %>%
+  model_crw2$summary.random$`inla.group(Timestamp, n = 100)` %>%
     select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
     filter(Timestamp > 0) %>%
     mutate(Model = "crw2")
@@ -384,18 +376,19 @@ ggplotly(p)
 
 ```{r}
 #| label: fig-fixed2
-#| fig.cap: "Comparison of the fixed effects of the different continuous time step models"
+#| fig.cap: "Comparison of the fixed effects of the different continuous time
+#| step models"
 bind_rows(
-  model.ou$summary.fixed %>%
+  model_ou$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "ou"),
-  model.ouc$summary.fixed %>%
+  model_ouc$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "ouc"),
-  model.rw1t$summary.fixed %>%
+  model_rw1t$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "rw1t"),
-  model.crw2$summary.fixed %>%
+  model_crw2$summary.fixed %>%
     select(mean = 1, lcl = 3, ucl = 5) %>%
     mutate(model = "crw2")
 ) %>%
@@ -411,10 +404,10 @@ Note that the data was generated using an `rw1` model at this fine grained level
 ```{r}
 #| label: waic2
 sort(c(
-  ar1 = model.ar1$waic$waic, rw1 = model.rw1$waic$waic, 
-  rw2 = model.rw2$waic$waic, crw2 = model.crw2$waic$waic, 
-  ou = model.ou$waic$waic, ouc = model.ouc$waic$waic, 
-  rw1t = model.rw1t$waic$waic))
+  ar1 = model_ar1$waic$waic, rw1 = model_rw1$waic$waic,
+  rw2 = model_rw2$waic$waic, crw2 = model_crw2$waic$waic,
+  ou = model_ou$waic$waic, ouc = model_ouc$waic$waic,
+  rw1t = model_rw1t$waic$waic))
 ```
 
 Each fitted `inla` object contains information on the time that was used to fit the model.
@@ -424,10 +417,13 @@ Applying the sum-to-zero constraint on `ar1` and `ou` requires some extra time.
 
 ```{r}
 #| label: cpu
-sort(c(ar1 = model.ar1$cpu.used[4], ar1c = model.ar1c$cpu.used[4], 
-  rw1 = model.rw1$cpu.used[4], rw2 = model.rw2$cpu.used[4], 
-  rw1t = model.rw1t$cpu.used[4], crw2 = model.crw2$cpu.used[4], 
-  ou = model.ou$cpu.used[4], ouc = model.ouc$cpu.used[4]))
+c(
+  ar1 = model_ar1$cpu.used[4], ar1c = model_ar1c$cpu.used[4],
+  rw1 = model_rw1$cpu.used[4], rw2 = model_rw2$cpu.used[4],
+  rw1t = model_rw1t$cpu.used[4], crw2 = model_crw2$cpu.used[4],
+  ou = model_ou$cpu.used[4], ouc = model_ouc$cpu.used[4]
+) |>
+  sort()
 ```
 
 ## Session info

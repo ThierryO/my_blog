@@ -33,8 +33,8 @@ set.seed(20170823)
 n_a <- 6
 n_b <- 2
 n_sample <- 3
-sd_A <- 2
-sd_B <- 1
+sd_a <- 2
+sd_b <- 1
 sd_noise <- 1
 dataset <- expand.grid(
   B = paste0("b", seq_len(n_a * n_b)),
@@ -43,8 +43,7 @@ dataset <- expand.grid(
   mutate(
     A = paste0("a", as.integer(B) %% n_a) %>%
       factor(),
-    mu = rnorm(n_a, sd = sd_A)[A] + 
-         rnorm(n_a * n_b, sd = sd_B)[B],
+    mu = rnorm(n_a, sd = sd_a)[A] + rnorm(n_a * n_b, sd = sd_b)[B],
     Y = mu + rnorm(n(), sd = sd_noise)
   )
 ```
@@ -69,18 +68,18 @@ Again the `lme4` estimate has more uncertainty.
 ```{r}
 #| label: fit-both
 library(lme4)
-model.1 <- lmer(Y ~ 0 + A + (1|A), data = dataset)
-summary(model.1)
+model_1 <- lmer(Y ~ 0 + A + (1 | A), data = dataset)
+summary(model_1)
 library(INLA)
-model.2 <- inla(Y ~ 0 + A + f(A, model = "iid"), data = dataset)
-summary(model.2)
+model_2 <- inla(Y ~ 0 + A + f(A, model = "iid"), data = dataset)
+summary(model_2)
 ```
 
 ```{r}
 #| label: fig-cat-fixed
 #| fig.cap: "Comparison of fixed effects parameters for model `A + (1|A)`"
 #| echo: false
-coef(summary(model.1)) %>%
+coef(summary(model_1)) %>%
   as.data.frame() %>%
   select(mean.1 = 1, se.1 = 2) %>%
   mutate(
@@ -88,12 +87,12 @@ coef(summary(model.1)) %>%
     ucl.1 = qnorm(0.975, mean.1, se.1)
   ) %>%
   bind_cols(
-    model.2$summary.fixed %>%
+    model_2$summary.fixed %>%
       select(mean.2 = 1, lcl.2 = 3, ucl.2 = 5)
   ) %>%
   ggplot(
     aes(
-      x = mean.1, xmin = lcl.1, xmax = ucl.1, 
+      x = mean.1, xmin = lcl.1, xmax = ucl.1,
       y = mean.2, ymin = lcl.2, ymax = ucl.2
     )
   ) +
@@ -109,23 +108,23 @@ coef(summary(model.1)) %>%
 #| label: fig-cat-random
 #| fig.cap: "Comparison of random effects parameters for model `A + (1|A)`"
 #| echo: false
-rf.1 <- ranef(model.1, condVar = TRUE)$A
-rf.1 %>%
+rf_1 <- ranef(model_1, condVar = TRUE)$A
+rf_1 %>%
   select(mean.1 = 1) %>%
   mutate(
-    se.1 = attr(rf.1, "postVar") %>%
+    se.1 = attr(rf_1, "postVar") %>%
       as.vector() %>%
       sqrt(),
     lcl.1 = qnorm(0.025, mean.1, se.1),
     ucl.1 = qnorm(0.975, mean.1, se.1)
   ) %>%
   bind_cols(
-    model.2$summary.random$A %>%
+    model_2$summary.random$A %>%
       select(mean.2 = 2, lcl.2 = 4, ucl.2 = 6)
   ) %>%
   ggplot(
     aes(
-      x = mean.1, xmin = lcl.1, xmax = ucl.1, 
+      x = mean.1, xmin = lcl.1, xmax = ucl.1,
       y = mean.2, ymin = lcl.2, ymax = ucl.2
     )
   ) +
@@ -142,17 +141,16 @@ The correct way of doing this is to use `A` as a fixed effect and `B` as an [imp
 
 ```{r}
 #| label: fit-nesting
-model.1 <- lmer(Y ~ 0 + A + (1|A/B), data = dataset)
-summary(model.1)
-model.1b <- lmer(Y ~ 0 + A + (1|B), data = dataset)
-summary(model.1b)
-model.2 <- inla(
-  Y ~ 0 + A + f(A, model = "iid") + f(B, model = "iid"), 
-  data = dataset
+model_1 <- lmer(Y ~ 0 + A + (1 | A / B), data = dataset)
+summary(model_1)
+model_1b <- lmer(Y ~ 0 + A + (1 | B), data = dataset)
+summary(model_1b)
+model_2 <- inla(
+  Y ~ 0 + A + f(A, model = "iid") + f(B, model = "iid"), data = dataset
 )
-summary(model.2)
-model.2b <- inla(Y ~ 0 + A + f(B, model = "iid"), data = dataset)
-summary(model.2b)
+summary(model_2)
+model_2b <- inla(Y ~ 0 + A + f(B, model = "iid"), data = dataset)
+summary(model_2b)
 ```
 
 # Discrete variable
@@ -185,8 +183,9 @@ dataset <- expand.grid(
 ```{r}
 #| label: fig-discrete-dummy
 #| echo: false
-#| fig.cap: "Dummy dataset with a discrete variable. The line represents the true model."
-ggplot(dataset, aes(x = X, y = Y)) + 
+#| fig-cap: "Dummy dataset with a discrete variable.
+#| The line represents the true model."
+ggplot(dataset, aes(x = X, y = Y)) +
   geom_line(aes(y = mu)) +
   geom_point()
 ```
@@ -201,19 +200,20 @@ We use first `lme4` to illustrate the principle.
 
 ```{r}
 #| label: fit-discrete-lme4
-model.1 <- lmer(Y ~ X + (1|X), data = dataset)
-summary(model.1)
+model_1 <- lmer(Y ~ X + (1 | X), data = dataset)
+summary(model_1)
 ```
 
 ```{r}
 #| label: fit-discrete-fit
-#| fig.cap: "Fitted values (line) and observed values (points) from the lme4 model."
+#| fig.cap: "Fitted values (line) and observed values (points) from the lme4
+#| model."
 #| echo: false
 #| warning: false
 dataset %>%
   mutate(
-    random = fitted(model.1),
-    fixed = predict(model.1, re.form = NA)
+    random = fitted(model_1),
+    fixed = predict(model_1, re.form = NA)
   ) %>%
   gather("Type", "Fitted", random, fixed) %>%
   ggplot(aes(x = X, y = Fitted)) +
@@ -229,27 +229,28 @@ The effect on the fitted values with the random effect is marginal.
 
 ```{r}
 #| label: compare-lme4
-model.1b <- lmer(Y ~ X + I(X ^ 2) + (1|X), data = dataset)
-model.1c <- lmer(Y ~ X + I(X ^ 2) + I(X ^ 3) + (1|X), data = dataset)
-anova(model.1, model.1b, model.1c)
-summary(model.1b)
-summary(model.1c)
+model_1b <- lmer(Y ~ X + I(X ^ 2) + (1 | X), data = dataset)
+model_1c <- lmer(Y ~ X + I(X ^ 2) + I(X ^ 3) + (1 | X), data = dataset)
+anova(model_1, model_1b, model_1c)
+summary(model_1b)
+summary(model_1c)
 ```
 
 ```{r}
 #| label: fit-discrete-fit2
-#| fig.cap: "Fitted values from the fixed and random part of the `lme4` models. Points represent the true model."
+#| fig.cap: "Fitted values from the fixed and random part of the `lme4` models.
+#| Points represent the true model."
 #| echo: false
 #| warning: false
 dataset %>%
   select(X, mu) %>%
   mutate(
-    random.1 = fitted(model.1),
-    random.2 = fitted(model.1b),
-    random.3 = fitted(model.1c),
-    fixed.1 = predict(model.1, re.form = NA),
-    fixed.2 = predict(model.1b, re.form = NA),
-    fixed.3 = predict(model.1c, re.form = NA)
+    random.1 = fitted(model_1),
+    random.2 = fitted(model_1b),
+    random.3 = fitted(model_1c),
+    fixed.1 = predict(model_1, re.form = NA),
+    fixed.2 = predict(model_1b, re.form = NA),
+    fixed.3 = predict(model_1c, re.form = NA)
   ) %>%
   gather("Type", "Fitted", -X, -mu) %>%
   extract(Type, c("Type", "Order"), "(.*)\\.(.*)") %>%
@@ -287,33 +288,31 @@ dataset2 <- dataset %>%
 
 ```{r}
 #| label: fit-inla-quadratic
-model.2 <- inla(
-  Y ~ X + f(X.copy, model = "iid"), 
-  data = dataset2, 
+model_2 <- inla(
+  Y ~ X + f(X.copy, model = "iid"), data = dataset2,
   control.compute = list(waic = TRUE)
 )
-model.2b <- inla(
-  Y ~ X + I(X ^ 2) + f(X.copy, model = "iid"), 
-  data = dataset2, 
+model_2b <- inla(
+  Y ~ X + I(X ^ 2) + f(X.copy, model = "iid"), data = dataset2,
   control.compute = list(waic = TRUE)
 )
-model.2c <- inla(
-  Y ~ X + I(X ^ 2) + I(X ^ 3) + f(X.copy, model = "iid"), 
-  data = dataset2, 
+model_2c <- inla(
+  Y ~ X + I(X ^ 2) + I(X ^ 3) + f(X.copy, model = "iid"), data = dataset2,
   control.compute = list(waic = TRUE)
 )
 ```
 
 ```{r}
 #| label: fig-discrete-fit3
-#| fig.cap: "Fitted values from the fixed and random part of the `INLA` models. Points represent the true model."
+#| fig.cap: "Fitted values from the fixed and random part of the `INLA` models.
+#| Points represent the true model."
 #| echo: false
 #| warning: false
 dataset2 %>%
   mutate(
-    fitted.1 = model.2$summary.fitted.values$mean,
-    fitted.2 = model.2b$summary.fitted.values$mean,
-    fitted.3 = model.2c$summary.fitted.values$mean,
+    fitted.1 = model_2$summary.fitted.values$mean,
+    fitted.2 = model_2b$summary.fitted.values$mean,
+    fitted.3 = model_2c$summary.fitted.values$mean,
     type = ifelse(is.na(Y), "fixed", "random")
   ) %>%
   gather("order", "fitted", fitted.1, fitted.2, fitted.3) %>%
@@ -351,8 +350,9 @@ dataset <- data.frame(
 ```{r}
 #| label: fig-continuous-dummy
 #| echo: false
-#| fig.cap: "Dummy dataset with a continuous variable. The line represents the true model."
-ggplot(dataset, aes(x = X, y = Y)) + 
+#| fig.cap: "Dummy dataset with a continuous variable.
+#| The line represents the true model."
+ggplot(dataset, aes(x = X, y = Y)) +
   geom_line(aes(y = mu)) +
   geom_point()
 ```
@@ -363,10 +363,9 @@ The `lmer` model fails because the random effect has as many unique values as ob
 #| label: fit-lme4-error
 #| error: true
 tryCatch(
-  lmer(Y ~ X + (1|X), data = dataset),
-  error = function(e){e}
+  lmer(Y ~ X + (1 | X), data = dataset), error = identity
 )
-lmer(Y ~ X + (1|X), data = dataset)
+lmer(Y ~ X + (1 | X), data = dataset)
 ```
 
 The `INLA` model yields output but the variance of the random effect is very high.
@@ -374,14 +373,15 @@ A good indicator that there is something wrong.
 
 ```{r}
 #| label: fit-inla-both
-model.2 <- inla(
-  Y ~ X + f(X.copy, model = "iid"), 
-  data = dataset, 
+model_2 <- inla(
+  Y ~ X + f(X.copy, model = "iid"), data = dataset,
   control.compute = list(waic = TRUE)
 )
 inla.tmarginal(
-  function(x){x^-1}, 
-  model.2$marginals.hyperpar$`Precision for X.copy`
+  function(x) {
+    x ^ -1
+  },
+  model_2$marginals.hyperpar$`Precision for X.copy`
 ) %>%
   inla.zmarginal()
 ```

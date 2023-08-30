@@ -3,7 +3,7 @@ title: Nested and crossed random effects in `lme4`
 author: Thierry Onkelinx
 date: "2017-07-18"
 categories: [statistics, mixed models]
-image: /statistics/mixed-models/index_files/figure-html/fig-school-design-1.svg
+image: nested_files/figure-html/fig-school-design-1.svg
 bibliography: ../references.bib
 knitr:
   opts_chunk: 
@@ -34,12 +34,9 @@ mean_n_student <- 5
 
 n_class <- rpois(n_school, mean_n_class)
 schools <- map2_df(
-  seq_len(n_school), 
-  n_class, 
+  seq_len(n_school), n_class,
   ~tibble(
-    school = .x, 
-    class = seq_len(.y),
-    students = rpois(.y, mean_n_student)
+    school = .x, class = seq_len(.y), students = rpois(.y, mean_n_student)
   )
 ) %>%
   group_by(school, class) %>%
@@ -65,9 +62,7 @@ The next step is adding the expected and observed values.
 #| fig.alt: "Contingency matrix for the `schools`data set"
 with(schools, table(class2, school)) %>%
   image(
-    col = grey.colors(10, start = 1, end = 0), 
-    axes = FALSE, 
-    xlab = "Class", 
+    col = grey.colors(10, start = 1, end = 0),  axes = FALSE,  xlab = "Class",
     ylab = "School"
   )
 ```
@@ -101,8 +96,8 @@ The nice thing about this notation is twofold: a) the nesting is explicit and cl
 #| label: explicit-nesting
 #| message: false
 library(lme4)
-lmer(y ~ (1|school) + (1|school:class), data = schools)
-lmer(y ~ (1|class:school) + (1|school), data = schools)
+lmer(y ~ (1 | school) + (1 | school:class), data = schools)
+lmer(y ~ (1 | class:school) + (1 | school), data = schools)
 ```
 
 ### Shorthand nesting
@@ -114,8 +109,8 @@ I've seen many people being confused about the order, therefore I recommend to b
 
 ```{r}
 #| label: shorthand-nesting
-lmer(y ~ (1|school/class), data = schools)
-lmer(y ~ (1|class/school), data = schools)
+lmer(y ~ (1 | school / class), data = schools)
+lmer(y ~ (1 | class / school), data = schools)
 ```
 
 ### Implicit nesting
@@ -129,9 +124,9 @@ Note that the `(1|A) + (1|A:B)` and `(1|A/B)` notations remain valid.
 
 ```{r}
 #| label: implicit-nesting
-lmer(y ~ (1|school) + (1|class2), data = schools)
-lmer(y ~ (1|school) + (1|school:class2), data = schools)
-lmer(y ~ (1|school/class2), data = schools)
+lmer(y ~ (1 | school) + (1 | class2), data = schools)
+lmer(y ~ (1 | school) + (1 | school:class2), data = schools)
+lmer(y ~ (1 | school / class2), data = schools)
 ```
 
 ## Crossed random effects
@@ -172,9 +167,7 @@ Product 1 in factory 1 is the same product as product 1 in factory 2 (@fig-facto
 #| fig.cap: "Contingency matrix for the `factories`data set"
 with(factories, table(product, factory)) %>%
   image(
-    col = grey.colors(10, start = 1, end = 0), 
-    axes = FALSE, 
-    xlab = "Product", 
+    col = grey.colors(10, start = 1, end = 0),  axes = FALSE, xlab = "Product",
     ylab = "Factory"
   )
 ```
@@ -202,7 +195,7 @@ The coding for crossed random effects is easy: `(1|A) + (1|B) + (1|C)`.
 
 ```{r}
 #| label: crossed
-lmer(y ~ (1|factory) + (1|product), data = factories)
+lmer(y ~ (1 | factory) + (1 | product), data = factories)
 ```
 
 ## Recommendations
