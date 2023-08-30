@@ -10,6 +10,9 @@ about:
     - icon: orcid
       text: ORCiD
       href: https://orcid.org/0000-0001-8804-4216
+    - icon: mastodon
+      href: https://fosstodon.org/%40ThierryO
+      rel: me
     - icon: linkedin
       text: LinkedIn
       href: https://www.linkedin.com/in/thierryonkelinx/
