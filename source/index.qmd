@@ -9,6 +9,7 @@ listing:
     - statistics
   sort: "date desc"
   type: grid
+  date-format: YYYY-MM-DD
   image-placeholder: media/full-moon.jpg
   categories: cloud
   sort-ui: true
