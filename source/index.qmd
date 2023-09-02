@@ -1,0 +1,19 @@
+---
+title: "Stats & bats"
+listing:
+  contents:
+    - bats
+    - generic
+    - reproducible-research
+    - silhouette
+    - statistics
+  sort: "date desc"
+  type: grid
+  date-format: YYYY-MM-DD
+  image-placeholder: media/full-moon.jpg
+  categories: cloud
+  sort-ui: true
+  filter-ui: true
+page-layout: full
+title-block-banner: true
+---

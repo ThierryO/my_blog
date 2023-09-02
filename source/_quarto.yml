@@ -1,0 +1,28 @@
+project:
+  output-dir: ../output
+  type: website
+
+execute:
+  freeze: auto
+
+website:
+  title: "Stats & bats"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/ThierryO
+      - icon: mastodon
+        href: https://fosstodon.org/%40ThierryO
+        rel: me
+      - icon: linkedin
+        href: https://www.linkedin.com/in/thierryonkelinx/
+  image: media/androidify.png
+  cookie-consent: false
+
+format:
+  html:
+    theme: flatly
+    css: styles.css
+
+editor: source

@@ -1,0 +1,434 @@
+---
+title: Temporal autocorrelation in INLA
+author: Thierry Onkelinx
+date: "2018-03-05"
+image: temporal-autocorrelation-in-inla_files/figure-html/fig-fixed-1.png
+categories: [statistics, mixed-models]
+knitr:
+  opts_chunk: 
+    cache: true
+    autodep: true
+---
+
+One of the reason why I often use `INLA` is because it allows for correlated random effects.
+In this blog post, I will handle random effect with temporal autocorrelation.
+`INLA` has several options for this.
+There are two major types of model, the first handles discrete time step, the latter continuous time steps.
+
+# Dummy data set
+
+This blog post was inspired by a post on the [
+R-Sig-Mixed<!-- spell-check: ignore -->
+models](https://stat.ethz.ch/pipermail/r-sig-mixed-models/2018q1/026481.html) mailing list.
+Therefore I created some example data relevant for that post.
+The set-up were 34 participants received five random prompts per day for six weeks, asking them whether they were craving a particular drug.
+
+The chunk below sets the design.
+`Timestamp` assumes that the participant were only prompted between 8:00 and 22:00.
+`Hour` are the timestamps rounded to the hour.
+
+```{r}
+#| label: dataset-design
+library(tidyverse)
+set.seed(20180305)
+n_id <- 34
+n_day <- 7 * 6
+n_prompt <- 5
+expand.grid(
+  ID = seq_len(n_id),
+  Day = seq_len(n_day),
+  Prompt = seq_len(n_prompt)
+) %>%
+  mutate(
+    Timestamp = runif(n(), min = 8, max = 21.99999),
+    Timestamp2 = round(Timestamp, 2),
+    Hour = floor(Timestamp)
+  ) -> example
+```
+
+Next we need to create a true model.
+Let's assume a first order random walking along `Timestamp` and a random intercept per participant (@fig-true-trend).
+A real life model would be more complicated.
+Choosing a simpler model keeps the computation time down.
+
+```{r}
+#| label: dataset-true-model
+data.frame(
+  Timestamp2 = seq(min(example$Timestamp2), max(example$Timestamp2), by = 0.01)
+) %>%
+  mutate(fixed = cumsum(rnorm(n(), sd = 0.05))) -> effect
+re <- rnorm(n_id, sd = 0.5)
+example %>%
+  inner_join(effect, by = "Timestamp2") %>%
+  mutate(
+    random = re[ID],
+    eta = fixed + random,
+    mu = plogis(eta + rnorm(n(), sd = 0.1)),
+    Craving = rbinom(n(), size = 1, prob = mu),
+    DayTime = Day + Timestamp / 24
+  ) -> example
+```
+
+```{r}
+#| label: fig-true-trend
+#| fig.cap: "Overal true trend in carving for the 'average' participant."
+library(plotly)
+p <- ggplot(example, aes(x = DayTime, y = plogis(fixed))) +
+  geom_line() +
+  xlab("Time (in days)") +
+  ylab("Probability of craving")
+ggplotly(p)
+```
+
+# Discrete time step
+
+## Some temporal models
+
+- `ar1`
+    - the current value is $\rho$ times the previous value + a noise term $\varepsilon_{ij}$
+    - $x_i = \rho x_{i-1} + \varepsilon_{ij}$
+    - restrictions
+        - $|\rho|<1$
+        - $\varepsilon_{ij} \sim \mathcal{N}(0, \tau^{-1})$
+- `rw1`
+    - the current value is the previous value plus an increment $\Delta x_i$
+    - $x_i = x_{i - 1} + \Delta x_i$
+    - restrictions
+        - $\Delta x_i \sim \mathcal{N}(0, \tau^{-1})$
+        - $\sum \Delta x_i = 0$
+- `rw2`
+    - while `rw1` models the difference between two time points, `rw2` models the difference between the two consecutive differences.
+    - think of `rw1` as the first derivative and `rw2` as the second derivative
+    - $\Delta ^2 x_i = (x_{i + 1} - x_i) - (x_i - x_{i - 1})$
+    - $x_i = \frac{x_{i + 1} + x_{i - 1}}{2} - \frac{\Delta ^2 x_i}{2}$
+    - So the current value is the average of the next and the previous value minus half of $\Delta ^2 x_i$
+    - restrictions
+        - $\Delta^2 x_i \sim \mathcal{N}(0, \tau^{-1})$
+        - $\sum \Delta x_i = 0$
+
+## Fitting the models
+
+We are using the defaults priors, except for the `rw1` model where we use the [currently recommended prior](https://www.math.ntnu.no/inla/r-inla.org/doc/latent/rw1.pdf), which is not the default prior.
+We fitted the `ar1` model once without sum-to-zero constraint (default) and once with sum-to-zero constraint.
+
+```{r}
+#| label: model-ar1
+library(INLA)
+model_ar1 <- inla(
+  Craving ~ f(Hour, model = "ar1") + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+```{r}
+#| label: model-ar1c
+model_ar1c <- inla(
+  Craving ~ f(Hour, model = "ar1", constr = TRUE) + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+```{r}
+#| label: model-rw1
+pc_prec <- list(theta = list(prior = "pc.prec", param = c(0.5, 0.01)))
+model_rw1 <- inla(
+  Craving ~ f(Hour, model = "rw1", hyper = pc_prec) + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+```{r}
+#| label: model-rw2
+model_rw2 <- inla(
+  Craving ~ f(Hour, model = "rw2") + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+## Comparing the models
+
+The fitted values for the models are very similar (@fig-fitted).
+The main difference is that the `rw2` model is much smoother than the other models.
+The fitted values for the `ar1` and `rw1` model are very similar.
+
+@fig-rf show the effect of the random effect of `Hour` under the different models.
+Overall, the pattern are very similar to those of the fitted values.
+This is expected since, besides the temporal pattern of `Hour`, the models only contains random intercepts.
+Note that uses the original scale, whereas @fig-rf uses the logit scale.
+
+The default `ar1` model has a much larger uncertainty than `rw1` for both the random effect of `Hour` and the fixed intercept and yet the uncertainty for the fitted values is nearly identical for both models.
+This is because the default `ar1` has no sum-to-zero constraint which makes the intercept unidentifiable when there is only one replica of the `ar1` model.
+When the sum-to-zero constraint it also added to the `ar1` model, then the results are very similar to those from the `rw1` model.
+
+```{r}
+#| label: fig-fitted
+#| fig.cap: "Comparsion of the fitted values for `ID == 1` under the different
+#| models"
+p <- bind_rows(
+  model_ar1$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "ar1") %>%
+    bind_cols(example),
+  model_ar1c$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "ar1c") %>%
+    bind_cols(example),
+  model_rw1$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "rw1") %>%
+    bind_cols(example),
+  model_rw2$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "rw2") %>%
+    bind_cols(example)
+) %>%
+  filter(ID == 1) %>%
+  ggplot(aes(x = Hour, y = fitted, ymin = lcl, ymax = ucl)) +
+  geom_ribbon(alpha = 0.1, aes(fill = Model)) +
+  geom_line(aes(y = lcl, colour = Model), linetype = 3) +
+  geom_line(aes(y = ucl, colour = Model), linetype = 3) +
+  geom_line(aes(colour = Model))
+ggplotly(p)
+```
+
+```{r}
+#| label: fig-rf
+#| fig.cap: "Comparsion of the random effects of `Hour` under the different
+#| models"
+p <- bind_rows(
+  model_ar1$summary.random$Hour %>%
+    select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "ar1"),
+  model_ar1c$summary.random$Hour %>%
+    select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "ar1c"),
+  model_rw1$summary.random$Hour %>%
+    select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "rw1"),
+  model_rw2$summary.random$Hour %>%
+    select(Hour = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "rw2")
+) %>%
+  ggplot(aes(x = Hour, y = mean, ymin = lcl, ymax = ucl)) +
+  geom_ribbon(alpha = 0.1, aes(fill = Model)) +
+  geom_line(aes(colour = Model))
+ggplotly(p)
+```
+
+```{r}
+#| label: fig-fixed
+#| fig.cap: "Comparison of the fixed effects of the different models"
+bind_rows(
+  model_ar1$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "ar1"),
+  model_ar1c$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "ar1c"),
+  model_rw1$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "rw1"),
+  model_rw2$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "rw2")
+) %>%
+  ggplot(aes(x = model, y = mean, ymin = lcl, ymax = ucl, colour = model)) +
+  geom_errorbar() +
+  geom_point() +
+  coord_flip()
+```
+
+The $WAIC$ values of the three models are also very similar.
+
+```{r}
+#| label: waic
+c(
+  ar1 = model_ar1$waic$waic, ar1c = model_ar1c$waic$waic,
+  rw1 = model_rw1$waic$waic, rw2 = model_rw2$waic$waic
+) |>
+  sort()
+```
+
+# Continuous time step
+
+## Some temporal models
+
+- `crw2`
+    - the equivalent of `rw2` for irregular locations
+    - might required some grouping when the distance between some locations is small
+    - no equation provided in the [online helpfile](https://www.math.ntnu.no/inla/r-inla.org/doc/latent/crw2.pdf)
+    - restrictions
+        - $\sum \Delta x_i = 0$
+- `ou`
+    - Stands for the
+      Ornstein-Uhlenbeck<!-- spell-check: ignore -->
+      process
+    - continuous time analogue to the discrete time `ar1`
+    - $dx_t = -\phi x_t + \sigma dW_t$
+- `rw1`
+    - binning the continuous time stamps in a large number of equally spaces bins allows to apply `rw1` (also `ar1` and `rw2`)
+
+## Fitting the models
+
+The `Timestamp` was split in 100 groups for the `crw2` model.
+We fitted the `ou` model both with and without sum-to-zero constraint.
+The time stamp was rounded to 0.01 hours for the `rw1` model.
+
+```{r}
+#| label: model-crw2
+model_crw2 <- inla(
+  Craving ~ f(inla.group(Timestamp, n = 100), model = "crw2") +
+    f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+```{r}
+#| label: model-ou
+model_ou <- inla(
+  Craving ~ f(Timestamp, model = "ou") + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+```{r}
+#| label: model-ouc
+model_ouc <- inla(
+  Craving ~ f(Timestamp, model = "ou", constr = TRUE) + f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+```{r}
+#| label: model-rw1t
+model_rw1t <- inla(
+  Craving ~ f(Timestamp2, model = "rw1", hyper = pc_prec) +
+    f(ID, model = "iid"),
+  family = "binomial", data = example, control.compute = list(waic = TRUE)
+)
+```
+
+## Comparing the models
+
+The fitted values in @fig-fitted2 are more fine grained than those in @fig-fitted, simply because we use more fine grained time information.
+The `crw2` model generates a rather smooth pattern.
+The `rw1` model produces similar patterns that the `ou` model, although the `ou` seems to be a bit more extreme than the `rw1` model.
+The credible interval of `ou`, `ouc` and `rw1` are very similar.
+
+When we look at the random effects (@fig-rf2) and the fixed effects (@fig-fixed2), we can draw similar conclusions as from @fig-rf and @fig-fixed2: the `ou` without sum-to-zero constraint has wider credible intervals.
+Adding the sum-to-zero constrains to `ou` shrinks the credible intervals, although they remain wide than those for `rw1`.
+
+```{r}
+#| label: fig-fitted2
+#| fig.cap: "Comparsion of the fitted values for `ID == 1` under the different
+#| continuous time step models"
+p <- bind_rows(
+  model_ou$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "ou") %>%
+    bind_cols(example),
+  model_ouc$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "ouc") %>%
+    bind_cols(example),
+  model_rw1t$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "rw1t") %>%
+    bind_cols(example),
+  model_crw2$summary.fitted.values %>%
+    select(fitted = 1, lcl = 3, ucl = 5) %>%
+    mutate(Model = "crw2") %>%
+    bind_cols(example)
+) %>%
+  filter(ID == 1) %>%
+  ggplot(aes(x = Timestamp, y = fitted, ymin = lcl, ymax = ucl)) +
+  geom_ribbon(alpha = 0.1, aes(fill = Model)) +
+  geom_line(aes(y = lcl, colour = Model), linetype = 3) +
+  geom_line(aes(y = ucl, colour = Model), linetype = 3) +
+  geom_line(aes(colour = Model))
+ggplotly(p)
+```
+
+```{r}
+#| label: fig-rf2
+#| fig.cap: "Comparsion of the random effects of `Timestamp` under the different
+#| continuous time step models"
+p <- bind_rows(
+  model_ou$summary.random$Timestamp %>%
+    select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "ou"),
+  model_ouc$summary.random$Timestamp %>%
+    select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "ouc"),
+  model_rw1t$summary.random$Timestamp2 %>%
+    select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    mutate(Model = "rw1t"),
+  model_crw2$summary.random$`inla.group(Timestamp, n = 100)` %>%
+    select(Timestamp = 1, mean = 2, lcl = 4, ucl = 6) %>%
+    filter(Timestamp > 0) %>%
+    mutate(Model = "crw2")
+) %>%
+  ggplot(aes(x = Timestamp, y = mean, ymin = lcl, ymax = ucl)) +
+  geom_ribbon(alpha = 0.1, aes(fill = Model)) +
+  geom_line(aes(colour = Model))
+ggplotly(p)
+```
+
+```{r}
+#| label: fig-fixed2
+#| fig.cap: "Comparison of the fixed effects of the different continuous time
+#| step models"
+bind_rows(
+  model_ou$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "ou"),
+  model_ouc$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "ouc"),
+  model_rw1t$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "rw1t"),
+  model_crw2$summary.fixed %>%
+    select(mean = 1, lcl = 3, ucl = 5) %>%
+    mutate(model = "crw2")
+) %>%
+  ggplot(aes(x = model, y = mean, ymin = lcl, ymax = ucl, colour = model)) +
+  geom_errorbar() +
+  geom_point() +
+  coord_flip()
+```
+
+The `ou` model and the `rw1` model on the fine grained time stamps have the lowest $WAIC$.
+Note that the data was generated using an `rw1` model at this fine grained level. 
+
+```{r}
+#| label: waic2
+sort(c(
+  ar1 = model_ar1$waic$waic, rw1 = model_rw1$waic$waic,
+  rw2 = model_rw2$waic$waic, crw2 = model_crw2$waic$waic,
+  ou = model_ou$waic$waic, ouc = model_ouc$waic$waic,
+  rw1t = model_rw1t$waic$waic))
+```
+
+Each fitted `inla` object contains information on the time that was used to fit the model.
+It is interesting to see that with this example the `ar1` model is much faster than the `rw1` model with similar detail (on `Hour`).
+Likewise is the `ou` model faster than the `rw1` model (both on `Timestamp`).
+Applying the sum-to-zero constraint on `ar1` and `ou` requires some extra time. 
+
+```{r}
+#| label: cpu
+c(
+  ar1 = model_ar1$cpu.used[4], ar1c = model_ar1c$cpu.used[4],
+  rw1 = model_rw1$cpu.used[4], rw2 = model_rw2$cpu.used[4],
+  rw1t = model_rw1t$cpu.used[4], crw2 = model_crw2$cpu.used[4],
+  ou = model_ou$cpu.used[4], ouc = model_ouc$cpu.used[4]
+) |>
+  sort()
+```
+
+## Session info
+
+```{r}
+#| label: session-info
+sessioninfo::session_info()
+```

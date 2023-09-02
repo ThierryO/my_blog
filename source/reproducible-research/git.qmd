@@ -1,0 +1,386 @@
+---
+title: A git workflow for ecologists
+author: Thierry Onkelinx
+date: "2017-08-23"
+categories: [reproducible research, version control]
+image: git_files/figure-html/fig-prepare-repo-1.svg
+knitr: 
+  opts_chunk: 
+    echo: false
+    warning: false
+    message: false
+    fig.width: 6
+    dev: svg
+---
+
+# Git
+
+For those how don't know [git](https://git-scm.com/), it is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency.
+I use git daily, including for this [blog](https://github.com/thierryo/my_blog).
+Have a look at [Wikipedia](https://en.wikipedia.org/wiki/Git) for more background.
+
+Although it requires some overhead, it saves a lot of time once you get the hang of it.
+Why?
+Because you have the confidence that you can go back to any point in the history of a project.
+So you can explore new things without risking to ruin everything.
+The new things don't work out? Just go back to the last good point in the history and start over.
+
+Each point in the history is called a `commmit`.
+A `commit` contains all essential information on _what_ needs to change to recreate the current state starting from the previous `commit`.
+It also contains useful metadata: _who_ created the `commit`, _when_ and _why^[Assuming that the user entered a sensible commit message.]_.
+
+Git works great with plain text files like R scripts, RMarkdown files, data in txt or csv format, ...
+You can add binary files (Word, Excel, pdf, jpg, ...) to a git project, but not as efficient as plain text files and with less options.
+In case of a plain text file, git notes which lines in the file are removed and where a line was inserted.
+A change in a line is a combination of removing the old line and inserting the new line.
+Have a look a [this commit](https://github.com/ThierryO/my_blog/commit/fcab2804b75e7848283ef460f945f93aa3538bf5) if you want a real life example.
+Such granular approach is not available for binary files.
+Hence the old version is removed and the new version is added.
+
+# Target audience for this workflow
+
+The workflow is useful for anyone with basic computer skills.
+The workflow does not use all whistles and bells available in git.
+Only the minimal functionality which is all accessible via either a graphical user interface (GUI) or a website.
+We target ecologists who often write R scripts and have no prior knowledge on version control systems.
+
+This workflow seems to work for a team of scientists how work on the same project and have all write access to that project (`repository` in git terminology).
+
+# Basic workflow
+
+## Use case
+
+- First `repositories` of git novices.
+- Initial start of a `repository`.
+
+It is no longer valid as soon as more than one user commits to the `repository`.
+
+## Principle
+
+The basic workflow is just a simple linear history.
+The user makes a set of changes and commits those changes.
+This is repeated over and over until the project is finished.
+The resulting history will look like @fig-basic.
+
+One extra step is at least a daily `push` to another machine.
+This creates (or updates) a copy of the entire project history to that other machine.
+And thus serves as a backup copy.
+Therefore this should be done at least daily.
+The easiest way is to use an on-line service like [GitHub](https://github.com), [Bitbucket](https://bitbucket.com), [GitLab](https://gitlab.com), ...
+GitHub is free for public repositories and is popular for freeware open source projects.
+Bitbucket offers free private repositories but only for small teams (max. 5 users).
+Having the repository on an on-line platform has another benefit: it is easy to share your work and collaborate.
+
+```{r}
+#| label: fig-basic
+#| fig.cap: "An example of the history of a basic workflow"
+#| fig.height: 1.5
+library(tidyverse)
+data.frame(x = 1:10, y = "master") %>%
+  mutate(
+    xend = lead(.data$x) - 0.1, yend = .data$y
+  ) %>%
+  ggplot(aes(x = x, y = y, xend = xend, yend = yend)) +
+  geom_segment(
+    arrow = arrow(length = unit(2, "mm"), type = "closed")
+  ) +
+  geom_point(aes(colour = y), size = 3, show.legend = FALSE) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  xlab("Time")
+```
+
+# Branching workflow with pull requests
+
+## Use case
+
+- Working with several people on the same repository
+- More experienced git users
+
+## Principle
+
+1. Commits are only created in `feature branches`, not in the `master branch`.
+1. Finalised `branches` are `merged` into the `master branch` by `pull requests`.
+
+## Branch
+
+The [basic workflow](#basic-workflow) has a single `branch` which is called `master`.
+Git makes it easy to create new `branches`.
+A `branch` starts from a specific commit.
+Each user should create a new `branch` when he starts working on a new feature in the repository.
+Because each user works in his own branch, he is the only one writing to this part of the history.
+This avoids a lot of conflicts.
+@fig-branching illustrates how the history looks like when a few branches are created.
+
+```{r}
+#| label: fig-branching
+#| fig.cap: "An example of a history with a few feature branches"
+#| fig.height: 3
+dataset <- tribble(
+  ~commit, ~parent, ~branch,
+  1, NA, "master",
+  2, 1, "master",
+  3, 2, "feature A",
+  4, 3, "feature A",
+  5, 2, "feature B",
+  6, 4, "feature A",
+  7, 5, "feature B"
+)
+dataset %>%
+  select(parent = "commit", parent_branch = "branch") %>%
+  right_join(dataset, by = "parent") %>%
+  ggplot(aes(x = commit, y = branch)) +
+  geom_segment(
+    aes(x = commit - 0.1, xend = parent, yend = parent_branch),
+    arrow = arrow(length = unit(2, "mm"), type = "closed", ends = "first")
+  ) +
+  geom_point(aes(colour = branch), size = 3, show.legend = FALSE) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  xlab("Time")
+```
+
+## Pull request
+
+Creating branches is fine, but they diverge the history of the repository.
+So we need a mechanism to `merge` branches together.
+In this workflow we will work on a feature branch until it is finished.
+Then we merge it into the master branch.
+@fig-pull-request illustrates the resulting history.
+This can be done locally using a `merge`, but it is safer to do it on-line via a `pull request`.
+
+```{r}
+#| label: fig-pull-request
+#| fig.cap: "An example of a history after two pull requests"
+#| fig.height: 3
+dataset <- tribble(
+  ~commit, ~parent, ~branch,
+  1, NA, "master",
+  2, 1, "master",
+  3, 2, "feature A",
+  4, 3, "feature A",
+  5, 2, "feature B",
+  6, 4, "feature A",
+  7, 5, "feature B",
+  8, 2, "master",
+  8, 6, "master",
+  9, 8, "feature B",
+  9, 7, "feature B",
+  10, 8, "master",
+  10, 9, "master",
+  11, 10, "feature C"
+)
+dataset %>%
+  select(parent = commit, parent_branch = branch) %>%
+  right_join(dataset, by = "parent") %>%
+  ggplot(aes(x = commit, y = branch)) +
+  geom_segment(
+    aes(x = commit - 0.1, xend = parent, yend = parent_branch),
+    arrow = arrow(length = unit(2, "mm"), type = "closed", ends = "first")
+  ) +
+  geom_point(aes(colour = branch), size = 3, show.legend = FALSE) +
+  theme(
+    axis.text.x = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  xlab("Time")
+```
+
+A `pull request` is a two step procedure.
+First you create the `pull request` by indicating via the webapp which branches you would like to `merge`.
+The second step is to `merge` the pull request.
+Documentation on how to handle `pull requests` can be found on the websites of [GitHub](https://help.github.com/articles/about-pull-requests/), [Bitbucket](https://www.atlassian.com/git/tutorials/making-a-pull-request) and [GitLab](https://docs.gitlab.com/ee/gitlab-basics/add-merge-request.html).
+
+Pull requests have several advantages over local merges
+
+1. It works only when the branches are pushed to the on-line copy of the repository.
+  This ensures not only a backup but also gives access to the latest version to your collaborators.
+1. All pull requests are done against the common (on-line) master branch.
+  Local merges would create diverging master branches which will create a lot of conflicts.
+1. Since the pull request is a two step procedure, one user can create the pull request and another (e.g. the project leader) can do the actual merge.
+1. The pull request gives an overview of the aggregated changes of all the commits in the pull request.
+ This makes it easier to get a feeling on what has been changed within the range of the pull request.
+1. Most on-line tools allow to add comments and reviews to a pull request.
+  This is useful to discuss a feature prior to merging it.
+  In case additional changes are required, the user should update his feature branch.
+  The pull request gets automatically updated.
+
+## Conflicts
+
+Conflicts arise when a file is changed at the same location in two different branches and with different changes.
+Git cannot decide which version is correct and therefore blocks the merging of the pull request.
+It is up to the user to select the correct version and commit the required changes.
+See on-line [tutorials](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/) on how to do this.
+Once the conflicts are resolved, you can go ahead and merge the pull request.
+This is illustrated in @fig-pull-request.
+First `master` is merged back into `feature B` to handle the merge conflict and then `feature B` is merged into `master`.
+
+_What if I choose the wrong version?_ Don't panic, both versions remain in the history so you don't loose any.
+So you can create a new branch starting for the latest commit with the correct version and merge that branch.
+
+# Flowcharts
+
+Here a a few flowcharts that illustrate several components of the branching workflow with pull requests.
+@fig-prepare-repo illustrates the steps you need when you want to start working on a project.
+Once you have a local `clone` of the repository you can `check out` the required feature branch (@fig-create-branch).
+The last flowchart handles working in a feature branch and merge it when finished (@fig-commit).
+
+```{r}
+#| label: colours
+start <- rgb(0, 0.62, 0.451)
+end <- rgb(0.835, 0.369, 0)
+question <- rgb(0.941, 0.894, 0.259)
+```
+
+```{r}
+#| label: fig-prepare-repo
+#| fig.cap: "Flowchart for preparing a repository."
+library(diagram)
+par(mar = rep(0, 4))
+openplotmat()
+
+straightarrow(c(0.1, 0.9), c(0.5, 0.9))
+straightarrow(c(0.5, 0.9), c(0.85, 0.9))
+straightarrow(c(0.5, 0.9), c(0.5, 0.5))
+straightarrow(c(0.5, 0.5), c(0.1, 0.5))
+straightarrow(c(0.5, 0.5), c(0.5, 0.15))
+
+bentarrow(c(0.9, 0.85), c(0.5, 0.5), path = "V")
+bentarrow(c(0.1, 0.5), c(0.5, 0.15), path = "V")
+
+text(0.70, 0.95, "no")
+text(0.55, 0.7, "yes")
+text(0.30, 0.55, "no")
+text(0.55, 0.3, "yes")
+
+textellipse(c(0.1, 0.9), radx = 0.1, lab = "Start", box.col = start)
+textdiamond(
+  c(0.5, 0.9), radx = 0.1, rady = 0.1,  lab = "Repository\nexists?",
+  box.col = question
+)
+textrect(c(0.85, 0.9), radx = 0.1, lab = "Create\nrepository\nonline")
+textdiamond(
+  c(0.5, 0.5), radx = 0.1, rady = 0.1, lab = "Local clone\nexists?",
+  box.col = question
+)
+textrect(c(0.1, 0.5), radx = 0.1, lab = "Clone\nrepository")
+textellipse(
+  c(0.5, 0.15), radx = 0.1, lab = "Check out\nfeature branch",
+  box.col = end
+)
+```
+
+```{r}
+#| label: fig-create-branch
+#| fig.cap: "Flowchart for changing to a feature branch."
+par(mar = rep(0, 4))
+openplotmat()
+
+straightarrow(c(0.1, 0.9), c(0.5, 0.9))
+straightarrow(c(0.5, 0.9), c(0.85, 0.9))
+straightarrow(c(0.5, 0.9), c(0.5, 0.5))
+straightarrow(c(0.5, 0.5), c(0.1, 0.5))
+straightarrow(c(0.85, 0.9), c(0.85, 0.5))
+straightarrow(c(0.1, 0.5), c(0.1, 0.15))
+straightarrow(c(0.85, 0.5), c(0.85, 0.15))
+straightarrow(c(0.85, 0.15), c(0.5, 0.15))
+straightarrow(c(0.5, 0.15), c(0.1, 0.15))
+
+text(0.70, 0.95, "no")
+text(0.55, 0.7, "yes")
+
+textellipse(c(0.1, 0.9), radx = 0.1, lab = "Open\nrepository", box.col = start)
+textdiamond(
+  c(0.5, 0.9), radx = 0.1, rady = 0.1, lab = "Feature\nbranch\nexists?",
+  box.col = question
+)
+textrect(c(0.85, 0.9), radx = 0.1, lab = "Check out\nmaster branch")
+textrect(c(0.5, 0.5), radx = 0.1, lab = "Check out\nfeature branch")
+textrect(c(0.1, 0.5), radx = 0.1, lab = "Pull")
+textrect(c(0.85, 0.5), radx = 0.1, lab = "Pull")
+textrect(
+  c(0.85, 0.15), radx = 0.1, lab = "Create and\ncheck out\nfeature branch"
+)
+textrect(c(0.5, 0.15), radx = 0.1, lab = "Push")
+textellipse(c(0.1, 0.15), radx = 0.1, lab = "Start\nworking", box.col = end)
+```
+
+```{r}
+#| label: fig-commit
+#| fig.cap: "Flowchart for applying changes in a feature branch."
+par(mar = rep(0, 4))
+openplotmat()
+
+straightarrow(c(0.1, 0.9), c(0.1, 0.5))
+straightarrow(c(0.1, 0.5), c(0.1, 0.15))
+straightarrow(c(0.1, 0.15), c(0.5, 0.5))
+straightarrow(c(0.5, 0.5), c(0.1, 0.5))
+straightarrow(c(0.5, 0.5), c(0.5, 0.9))
+straightarrow(c(0.5, 0.9), c(0.1, 0.5))
+straightarrow(c(0.1, 0.15), c(0.5, 0.15))
+straightarrow(c(0.5, 0.15), c(0.85, 0.15))
+straightarrow(c(0.85, 0.15), c(0.85, 0.5))
+straightarrow(c(0.85, 0.5), c(0.85, 0.9))
+
+text(0.3, 0.2, "yes")
+text(0.3, 0.35, "no")
+text(0.3, 0.55, "no")
+text(0.55, 0.7, "yes")
+
+textellipse(c(0.1, 0.9), radx = 0.1, lab = "Start\nworking", box.col = start)
+textrect(c(0.1, 0.5), radx = 0.1, lab = "Change and\ncommit")
+textdiamond(
+  c(0.1, 0.15), radx = 0.1, rady = 0.1, lab = "Done with\nfeature?",
+  box.col = question
+)
+textdiamond(
+  c(0.5, 0.5), radx = 0.1, rady = 0.1, lab = "End of\nthe day?",
+  box.col = question
+)
+textrect(c(0.5, 0.9), radx = 0.1, lab = "Push")
+textrect(c(0.5, 0.15), radx = 0.1, lab = "Push")
+textrect(c(0.85, 0.15), radx = 0.1, lab = "Create\npull request")
+textrect(c(0.85, 0.5), radx = 0.1, lab = "Delete\nfeature\nbranch")
+textellipse(
+  c(0.85, 0.9), radx = 0.1,  lab = "Check out\nmaster branch", box.col = end
+)
+```
+
+# Rules for collaboration
+
+1. Always commit into a feature branch, never in the master branch.
+1. Always start features branches for the master branch.
+1. Only work in your own branches.
+1. Never merge someone else's pull request without their consent.
+1. Don't wait too long for merging a branch. Keep the scope of a feature branch narrow.
+
+## Exceptions
+
+**Starting branches not from master**
+
+In case you want to apply a change to someone else's branch. Create a new branch starting from the other's branch, add commits and create a pull request. Ask the branch owner to merge the pull request. Basically you use someone else's branch as the master branch.
+
+**Working with multiple users in the same branch**
+
+This is OK as long as users don't work simultaneously in the branch. 
+
+- Person A create the branch
+- Person A adds commits
+- Person A pushes and notifies person B
+- Person B adds commits
+- Person B pushes and notifies the next person
+- ...
+- Person A creates a pull request
+
+## Session info
+
+These R packages were used to create this post.
+
+```{r}
+#| label: session-info
+sessioninfo::session_info()
+```
