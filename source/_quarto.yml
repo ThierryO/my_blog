@@ -7,6 +7,8 @@ execute:
 
 website:
   title: "Stats & bats"
+  body-footer: >
+    [![](/media/kofi.svg){fig-alt="Support me on Ko-Fi"}](https://ko-fi.com/R5R063BR7)
   navbar:
     right:
       - about.qmd
