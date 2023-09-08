@@ -7,8 +7,18 @@ execute:
 
 website:
   title: "Stats & bats"
+  page-navigation: true
+  back-to-top-navigation: true
+  site-url: https://www.muscardinus.be
+  repo-url: https://github.com/ThierryO/my_blog
+  repo-subdir: source
+  issue-url: https://github.com/ThierryO/my_blog/issues
+  repo-actions: [source, edit, issue]
   body-footer: >
     [![](/media/kofi.svg){fig-alt="Support me on Ko-Fi"}](https://ko-fi.com/R5R063BR7)
+  image: /media/androidify.png
+  open-graph:
+    image: /media/androidify.png
   navbar:
     right:
       - about.qmd
@@ -19,8 +29,7 @@ website:
         rel: me
       - icon: linkedin
         href: https://www.linkedin.com/in/thierryonkelinx/
-  image: media/androidify.png
-  cookie-consent: false
+    logo: /media/androidify.png
 
 format:
   html:
